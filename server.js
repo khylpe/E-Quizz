@@ -18,16 +18,23 @@ app.get('/index.html', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', function (client) {
-
        client.on('startSession', () => {
+              // https://stackoverflow.com/a/56509065/19601188
+              // https://www.w3schools.com/nodejs/nodejs_mysql.asp
+              // https://wtools.io/generate-sql-create-table
+              // https://www.tabnine.com/code/javascript/functions/mysql/createConnection
               var connection = mysql.createConnection({
                      host: 'localhost',
+                     port: 6666,
                      user: 'root',
-                     password: ''
+                     password: 'admin',
+                     database: "equizz"
               });
 
-              connection.connect();
-              connection.end();
+              connection.connect(function(err) {
+                     if (err) throw err;
+                     console.log("Connected!");
+                   });
        });
        client.on('joined', (data) => {
               console.log(data);

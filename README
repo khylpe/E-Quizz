@@ -1,24 +1,17 @@
-
 # E-Quizz Website
 This branch is about the website and the technologies we are using.
-
-
-
-
 ## Tech Stack
-
 **Client:** HTML, JavaScript, CSS, Bootstrap
 
 **Server:** Node, Express, Socket.io (WebSoket)
-
-
+## Versions
+[![Node.js version](https://img.shields.io/badge/Node.js-18.12.1-green)](https://nodejs.org/dist/v18.12.1/node-v18.12.1-x64.msi)
+[![Express version](https://img.shields.io/badge/Express-4.18.2-blue)](https://expressjs.com/fr/)
+[![Socket.io version](https://img.shields.io/badge/Socket.io-4.5.4-orange)](https://socket.io/)
+![MySQL version](https://img.shields.io/badge/MySQL-2.18.1-lightgrey)
 ## Authors of this part of the project
-
 - [Arthur CRAHÉ](https://github.com/khylpe)
-
-
 ## Run Locally
-
 [**Requires Node**](https://nodejs.org/en/)
 
 Clone the project
@@ -33,7 +26,7 @@ Go to the project directory
   cd E-Quizz
 ```
 
-Install dependencies
+Install dependencies (should not be needed)
 
 ```bash
   npm install express --save
@@ -44,5 +37,10 @@ Start the server
 
 ```bash
   node server.js
+```
+Access it
+
+```bash
+  http://localhost:8100/
 ```
 

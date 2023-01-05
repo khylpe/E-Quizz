@@ -1,19 +1,27 @@
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
+
 <head>
        <meta charset="UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
        <title>E-Quizz</title>
-       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+              crossorigin="anonymous">
        <link rel="stylesheet" href="/styles/index.css">
 </head>
+
 <body>
+       <div class="container">
+              <h1 class="text-center">E-Quizz</h1>
+       </div>
        Compteur de réponses: <span id="compteur"></span>
 
        <button type="button" class="btn btn-primary" id="startSession">Démarer la session</button>
-              <button id="send">envoyer ma réponse</button>
+       <button id="send">envoyer ma réponse</button>
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
        <script src="/scripts/index.js"></script>
 
 </body>
+
 </html>
