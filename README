@@ -1,0 +1,48 @@
+
+# E-Quizz Website
+This branch is about the website and the technologies we are using.
+
+
+
+
+## Tech Stack
+
+**Client:** HTML, JavaScript, CSS, Bootstrap
+
+**Server:** Node, Express, Socket.io (WebSoket)
+
+
+## Authors of this part of the project
+
+- [Arthur CRAHÉ](https://github.com/khylpe)
+
+
+## Run Locally
+
+[**Requires Node**](https://nodejs.org/en/)
+
+Clone the project
+
+```bash
+  git clone -b website https://github.com/Tristan13R/E-Quizz
+```
+
+Go to the project directory
+
+```bash
+  cd E-Quizz
+```
+
+Install dependencies
+
+```bash
+  npm install express --save
+  npm install socket.io
+```
+
+Start the server
+
+```bash
+  node server.js
+```
+

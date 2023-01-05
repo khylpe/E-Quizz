@@ -1,19 +1,14 @@
 const express = require('express');
-const http = require('http');
-const WebSocket = require('ws');
-
 const app = express();
-
-//initialize a simple http server
+const http = require('http');
 const server = http.createServer(app);
-
-//initialize the WebSocket server instance
-const wss = new WebSocket.Server({ server });
-
-let clients = [];
+const { Server } = require("socket.io");
+const io = new Server(server);
+var mysql = require('mysql');
 
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
 
+let numberOfAnswers = 0;
 app.get('/', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/index.html');
 });
@@ -22,16 +17,27 @@ app.get('/index.html', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/index.html');
 });
 
-wss.on('connection', function (ws) {
-       ws.send('test')
-       console.log("Browser connected online...")
+io.on('connection', function (client) {
 
-       ws.on("message", function (str) {
-              console.log("Received: " + ob.content);
-});
+       client.on('startSession', () => {
+              var connection = mysql.createConnection({
+                     host: 'localhost',
+                     user: 'root',
+                     password: ''
+              });
+
+              connection.connect();
+              connection.end();
+       });
+       client.on('joined', (data) => {
+              console.log(data);
+       });
+       client.on('answer', () => {
+              io.emit("new answer", ++numberOfAnswers);
+       });
 });
 
-wss.on("close", function () {
+io.on("close", function () {
        console.log("Browser gone.")
 });
 
