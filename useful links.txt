@@ -3,3 +3,23 @@ https://forthebadge.com/
 https://shields.io/
 https://stackoverflow.com/a/65092058/19601188
 https://readme.so/
+
+https://stackoverflow.com/a/56509065/19601188
+https://www.w3schools.com/nodejs/nodejs_mysql.asp
+https://wtools.io/generate-sql-create-table
+https://www.tabnine.com/code/javascript/functions/mysql/createConnection
+https://stackoverflow.com/a/13932834/19601188
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
+
+CREATE TABLE `equizz`.`results` (
+  `Quizz name` TEXT(60) NOT NULL,
+  `Quizz number` INT UNSIGNED NOT NULL,
+  `Date` DATE NOT NULL,
+  `Student group` VARCHAR(25) NOT NULL,
+  `Student` VARCHAR(15) NOT NULL,
+  `Question` TINYTEXT NOT NULL,
+  `Answer submitted` TINYTEXT NULL,
+  `Question result` TINYINT(1) UNSIGNED NOT NULL);
+
+
