@@ -5,12 +5,7 @@ const express = require('express'),
        { Server } = require("socket.io"),
        io = new Server(server),
        mysql = require('mysql'),
-       php = require('php'),
-       path = require('path');
-
-app.set('views', path.join(__dirname, 'src/php'))
-app.set('view engine', 'php');
-app.engine('php', php.__express);
+       php = require('php');
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -40,12 +35,6 @@ app.get('/student', (dataFromClient, serverResponse) => {
 app.get('/student.html', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/student.html');
 });
-
-app.get('/getQuizzNames.php', (req, res) => {
-       res.render('getQuizzNames.php', {
-              _REGISTER_GLOBAL_MODEL: false
-       })
-});
 // End of Express routing
 
 io.on('connection', function (client) {
@@ -57,7 +46,7 @@ io.on('connection', function (client) {
        if (requestedUrl.includes('teacher')) {
               isSessionCreated = true;
               client.join('teacher');
-              
+
        } else if (requestedUrl.includes('student')) {
               client.join('student');
               client.to('teacher').emit('student connected changed', ++numberOfStudentConnected);
@@ -67,6 +56,10 @@ io.on('connection', function (client) {
               client.disconnect();
               return;
        }
+
+       client.on('teacher tries to connect', (data) => {
+              checkTeacherCredentials();
+       });
 
        // Signals from students (client side) when they are registered :
        client.on('registered', (studentName) => {
@@ -82,7 +75,7 @@ io.on('connection', function (client) {
                             status: "registered",
                             numberOfRegisteredStudents: numberOfRegisteredStudents
                      });
-              }else{
+              } else {
                      client.emit('session not created');
               }
        });
@@ -105,7 +98,9 @@ io.on('connection', function (client) {
        });
 });
 
-async function createQuizzInDB() { // not finished
+
+async function checkTeacherCredentials() {
+
        var connection = mysql.createConnection({
               host: 'localhost',
               user: 'equizzdbuser',
@@ -114,24 +109,32 @@ async function createQuizzInDB() { // not finished
        });
 
        connection.connect(async function (err) {
-              if (err) {
+              if (err)
                      throw err;
-              }
-              else {
-                     await fetch('http://localhost:3000/updateDB.php', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                            })
-                     })
-                            .then(response => response.json())
-                            .then(data => {
-                                   console.log(data);
-                            })
-                            .catch((error) => {
-                                   console.error('Error:', error);
-                            });
-              }
+
+              connection.query('select * from user', function (err, result, fields){
+                     console.log('err : ' + err);
+                     console.log('result' + result);
+                     console.log('fields' + fields);
+              })
        });
+}
+
+async function createQuizzInDB() { // not finished
+
+       await fetch('http://localhost:3000/updateDB.php', {
+              method: 'POST',
+              body: JSON.stringify({
+              })
+       })
+              .then(response => response.json())
+              .then(data => {
+                     console.log(data);
+              })
+              .catch((error) => {
+                     console.error('Error:', error);
+              });
+
 }
 
 function createUniqueID() {

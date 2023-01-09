@@ -3,8 +3,22 @@
 // Initial value of the DOM elements
 document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés`;
 document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
-document.querySelector('#createSession').style.display = "block";
+document.querySelector('#createSession').style.display = "none";
 document.querySelector('#sessionStatus').style.display = "none";
+
+document.querySelector('#connectionForm').addEventListener('submit', (e) => {
+       e.preventDefault();
+       let mail = document.querySelector('#teacherMail').value, password = document.querySelector('#teacherPassword').value;
+       socket = io();
+       socket.emit('teacher tries to connect', { mail, password });
+       socket.on('teacher connected', () => {
+              document.querySelector('#connection').style.display = "none";
+              document.querySelector('#createSession').style.display = "block";
+       });
+});
+
+/*socket.emit('teacher tries to connect', { mail})*/
+
 
 /*(async function fetchQuizzNames() {
        await fetch('getQuizzNames.php', { method: 'get' })
@@ -43,7 +57,7 @@ document.querySelector('#sessionStatus').style.display = "none";
 })();*/
 
 // Readonly and required don't work together, so we have to do it manually
-document.querySelectorAll('input[type="text"]').forEach((input) => {
+document.querySelectorAll('#createSession input[type="text"]').forEach((input) => {
        input.addEventListener('input', (e) => {
               e.target.value = "";
        });
@@ -58,6 +72,7 @@ document.querySelectorAll('#groupInList').forEach((studentGroupsInList) => {
 document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        e.preventDefault();
        socket = io();
+
 
        let quizzName = document.querySelector('#quizzName').value, studentGroup = document.querySelector('#quizzGroup').value;
        socket.emit('create session', { name: quizzName, group: studentGroup });
