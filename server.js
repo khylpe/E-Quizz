@@ -4,8 +4,8 @@ const express = require('express'),
        server = http.createServer(app),
        { Server } = require("socket.io"),
        io = new Server(server),
-       mysql = require('mysql'),
-       php = require('php');
+       mysql = require('mysql');
+//php = require('php');
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -102,22 +102,21 @@ io.on('connection', function (client) {
 async function checkTeacherCredentials() {
 
        var connection = mysql.createConnection({
-              host: 'localhost',
-              user: 'equizzdbuser',
-              password: 'equizzdbpasswd',
+              host: '10.69.88.25',
+              user: 'equizz',
+              password: 'equizz2023',
               database: "equizz"
        });
 
        connection.connect(async function (err) {
               if (err)
                      throw err;
-
-              connection.query('select * from user', function (err, result, fields){
-                     console.log('err : ' + err);
-                     console.log('result' + result);
-                     console.log('fields' + fields);
-              })
        });
+       connection.query('select * from user', function (err, result, fields) {
+              console.log('err : ' + err);
+              console.log('result' + result.json());
+              console.log('fields' + fields.json());
+       })
 }
 
 async function createQuizzInDB() { // not finished
