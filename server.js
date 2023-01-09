@@ -108,9 +108,8 @@ io.on('connection', function (client) {
 async function createQuizzInDB() { // not finished
        var connection = mysql.createConnection({
               host: 'localhost',
-              port: 6666,
-              user: 'root',
-              password: 'admin',
+              user: 'equizzdbuser',
+              password: 'equizzdbpasswd',
               database: "equizz"
        });
 

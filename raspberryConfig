@@ -1,0 +1,6 @@
+ssh : pi ; piequizz
+
+equizz:equizzpasswd
+
+mariadb root passwd : mariadbrootequizz
+equizzdbuser:equizzdbpasswd

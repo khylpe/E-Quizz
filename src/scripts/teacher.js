@@ -6,7 +6,7 @@ document.querySelector('#studentList').style.minHeight = document.querySelector(
 document.querySelector('#createSession').style.display = "block";
 document.querySelector('#sessionStatus').style.display = "none";
 
-(async function fetchQuizzNames() {
+/*(async function fetchQuizzNames() {
        await fetch('getQuizzNames.php', { method: 'get' })
               .then(response => response.json())
               .then((data) => {
@@ -40,7 +40,7 @@ document.querySelector('#sessionStatus').style.display = "none";
               .catch((error) => {
                      console.error('Error:', error);
               });
-})();
+})();*/
 
 // Readonly and required don't work together, so we have to do it manually
 document.querySelectorAll('input[type="text"]').forEach((input) => {
