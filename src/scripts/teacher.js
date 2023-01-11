@@ -6,19 +6,50 @@ document.querySelector('#studentList').style.minHeight = document.querySelector(
 document.querySelector('#createSession').style.display = "none";
 document.querySelector('#sessionStatus').style.display = "none";
 
+let socket;
 document.querySelector('#connectionForm').addEventListener('submit', (e) => {
        e.preventDefault();
-       let mail = document.querySelector('#teacherMail').value, password = document.querySelector('#teacherPassword').value;
+       let mailFromForm = document.querySelector('#teacherMail').value,
+              passwordFromForm = document.querySelector('#teacherPassword').value;
+
        socket = io();
-       socket.emit('teacher tries to connect', { mail, password });
-       socket.on('teacher connected', () => {
+       socket.emit('teacher tries to connect', { mail: mailFromForm,
+                                                 password: passwordFromForm });
+
+       socket.on('teacher connection success', (mail) => {
               document.querySelector('#connection').style.display = "none";
               document.querySelector('#createSession').style.display = "block";
+
+              // to do : Get the list of quizz names from the database
+
+              document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
+                     e.preventDefault();
+              
+                     let    quizzName = document.querySelector('#quizzName').value,
+                            studentGroup = document.querySelector('#quizzGroup').value;
+              
+                     socket.emit('create session', { name: quizzName, group: studentGroup });
+              
+                     document.querySelector('#createSession').style.display = "none";
+                     document.querySelector('#sessionStatus').style.display = "block";
+              
+                     // Whenever a student connects or disconnects, update the number of connected students
+                     // It doesn't mean that the student is registered
+                     socket.on('student connected changed', (numberOfStudentConnected) => {
+                            document.getElementById("connectedStudents").innerHTML = numberOfStudentConnected;
+                     });
+              
+                     // Whenever a student registers or disconnects, update the number of registered students
+                     // Student must be connected to register
+                     socket.on('students registered changed', (data) => {
+                            updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
+                     });
+              });
+       });
+
+       socket.on('teacher connection failed', () => {
        });
 });
-
-/*socket.emit('teacher tries to connect', { mail})*/
-
 
 /*(async function fetchQuizzNames() {
        await fetch('getQuizzNames.php', { method: 'get' })
@@ -69,31 +100,7 @@ document.querySelectorAll('#groupInList').forEach((studentGroupsInList) => {
        });
 });
 
-document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
-       e.preventDefault();
-       socket = io();
-
-
-       let quizzName = document.querySelector('#quizzName').value, studentGroup = document.querySelector('#quizzGroup').value;
-       socket.emit('create session', { name: quizzName, group: studentGroup });
-       document.querySelector('#createSession').style.display = "none";
-       document.querySelector('#sessionStatus').style.display = "block";
-
-       // Whenever a student connects or disconnects, update the number of connected students
-       // It doesn't mean that the student is registered
-       socket.on('student connected changed', (numberOfStudentConnected) => {
-              document.getElementById("connectedStudents").innerHTML = numberOfStudentConnected;
-       });
-
-       // Whenever a student registers or disconnects, update the number of registered students
-       // Student must be connected to register
-       socket.on('students registered changed', (data) => {
-              updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
-       });
-});
-
 function updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
-
        if (status == "not registered anymore") {
               document.querySelector(`#id${id}`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
               return;

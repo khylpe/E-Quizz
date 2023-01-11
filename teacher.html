@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-
 <head>
        <meta charset="UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,14 +10,11 @@
               crossorigin="anonymous">
        <link rel="stylesheet" href="/styles/teacher.css">
 </head>
-
 <body>
        <div class="container-fluid">
               <h1 class="text-center">E-Quizz</h1>
        </div>
        <hr class="container">
-
-
        <div class="container" id="connection">
               <div class="row">
                      <div class="col-6 offset-3">
@@ -29,28 +25,23 @@
                                                  <div class="mb-3 d-flex flex-column">
                                                         <label for="teacherMail" class="form-label">Mail de
                                                                l'enseignant</label>
-                                                        <input class="form-control" type="text" id="teacherMail"
+                                                        <input class="form-control" type="email" id="teacherMail"
                                                                required autocomplete="off">
 
                                                         <label for="teacherPassword" class="form-label">Mot de
                                                                passe</label>
-                                                        <input class="form-control" type="text" id="teacherPassword"
+                                                        <input class="form-control" type="password" id="teacherPassword"
                                                                required autocomplete="off">
                                                  </div>
                                                  <button type="submit" class="btn btn-primary mt-3">Se
                                                         connecter</button>
-
                                           </form>
                                    </div>
                             </div>
                      </div>
               </div>
        </div>
-
-
-
        </div>
-
        <div class="container text-center mt-5" id="createSession">
               <div class="row">
                      <div class="col-6 offset-3">
@@ -146,5 +137,4 @@
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
        <script src="/scripts/teacher.js"></script>
 </body>
-
 </html>

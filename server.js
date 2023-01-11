@@ -10,6 +10,8 @@ const express = require('express'),
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
 
+//dont forget to isSessionCreated = true;
+
 let numberOfStudentConnected = 0,
        numberOfRegisteredStudents = 0,
        numberOfAnswers = 0,
@@ -37,6 +39,19 @@ app.get('/student.html', (dataFromClient, serverResponse) => {
 });
 // End of Express routing
 
+var connection = mysql.createConnection({
+       host: '127.0.0.1',
+       user: 'equizz',
+       password: 'equizz2023',
+       database: 'equizz',
+       port: 6666
+});
+
+connection.connect(async function (err) {
+       if (err)
+              throw err;
+});
+
 io.on('connection', function (client) {
        client.modifiedID = createUniqueID();
 
@@ -44,8 +59,11 @@ io.on('connection', function (client) {
        let requestedUrl = client.handshake.headers.referer;
 
        if (requestedUrl.includes('teacher')) {
-              isSessionCreated = true;
               client.join('teacher');
+
+              client.on('teacher tries to connect', (data) => {
+                     checkTeacherCredentials(client, data);
+              });
 
        } else if (requestedUrl.includes('student')) {
               client.join('student');
@@ -57,9 +75,7 @@ io.on('connection', function (client) {
               return;
        }
 
-       client.on('teacher tries to connect', (data) => {
-              checkTeacherCredentials();
-       });
+       
 
        // Signals from students (client side) when they are registered :
        client.on('registered', (studentName) => {
@@ -67,7 +83,6 @@ io.on('connection', function (client) {
                      if (client.username == undefined) {
                             numberOfRegisteredStudents++;
                      }
-
                      client.username = studentName;
                      client.to('teacher').emit('students registered changed', {
                             id: client.modifiedID,
@@ -98,27 +113,27 @@ io.on('connection', function (client) {
        });
 });
 
+async function checkTeacherCredentials(client, data) {
+       if(client.rooms.has('teacher')) {
+       /* Safe query with mysql.format() : */
+       var queryCredential = "SELECT * FROM ?? WHERE ?? = ? and ?? = ?";
+       var insertsCredential = ['user', 'mail', data.mail, 'password', data.password];
+       queryCredential = mysql.format(queryCredential, insertsCredential);
 
-async function checkTeacherCredentials() {
+       connection.query(queryCredential, function (err, result, fields) {
+              if (err) throw err;
 
-       var connection = mysql.createConnection({
-              host: '10.69.88.25',
-              user: 'equizz',
-              password: 'equizz2023',
-              database: "equizz"
+              if (result.length > 0) {
+                     client.mail = data.mail;
+                     client.emit('teacher connection success', client.mail);
+              }
+              else {
+                     client.emit('teacher connection failed');
+              }
        });
-
-       connection.connect(async function (err) {
-              if (err)
-                     throw err;
-       });
-       connection.query('select * from user', function (err, result, fields) {
-              console.log('err : ' + err);
-              console.log('result' + result.json());
-              console.log('fields' + fields.json());
-       })
 }
-
+}
+/*
 async function createQuizzInDB() { // not finished
 
        await fetch('http://localhost:3000/updateDB.php', {
@@ -134,7 +149,7 @@ async function createQuizzInDB() { // not finished
                      console.error('Error:', error);
               });
 
-}
+}*/
 
 function createUniqueID() {
        let ID = Math.floor(Math.random() * 1000000);
