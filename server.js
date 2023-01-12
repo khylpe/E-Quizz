@@ -20,7 +20,8 @@ let numberOfStudentConnected = 0,
 
 // Express routing :
 app.get('/', (dataFromClient, serverResponse) => {
-       serverResponse.sendFile(__dirname + '/index.html');
+       console.log('index.html requested');
+       // serverResponse.sendFile(__dirname + '/index.html');
 });
 app.get('/index.html', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/index.html');
@@ -44,7 +45,7 @@ var connection = mysql.createConnection({
        user: 'equizz',
        password: 'equizz2023',
        database: 'equizz',
-       port: 6666
+       port: 3306
 });
 
 connection.connect(async function (err) {
@@ -53,6 +54,7 @@ connection.connect(async function (err) {
 });
 
 io.on('connection', function (client) {
+       console.log('a user connected');
        client.modifiedID = createUniqueID();
 
        // check if the client is a teacher or a student and join the right room:
@@ -60,22 +62,31 @@ io.on('connection', function (client) {
 
        if (requestedUrl.includes('teacher')) {
               client.join('teacher');
-
               client.on('teacher tries to connect', (data) => {
-                     checkTeacherCredentials(client, data);
+                     if (client.rooms.has('teacher')) {
+                            if (checkTeacherCredentials(data)) {
+                                   client.mail = data.mail;
+                                   client.emit('teacher connection success', client.mail);
+                                   client.on('fetch quizz', (author) => {
+                                          fetchQuizz(client, author);
+                                          client.on('fetch student groups', () => {
+                                                 fetchStudentGroups(client);
+                                          });
+                            });
+                            } else {
+                                   client.emit('teacher connection failed');
+                            }
+                     }
               });
-
        } else if (requestedUrl.includes('student')) {
               client.join('student');
               client.to('teacher').emit('student connected changed', ++numberOfStudentConnected);
        } else {
-              console.log("Unknown connected");
+              console.log('Error: client is neither a teacher nor a student');
               client.removeAllListeners();
               client.disconnect();
               return;
        }
-
-       
 
        // Signals from students (client side) when they are registered :
        client.on('registered', (studentName) => {
@@ -113,43 +124,56 @@ io.on('connection', function (client) {
        });
 });
 
-async function checkTeacherCredentials(client, data) {
-       if(client.rooms.has('teacher')) {
+async function checkTeacherCredentials(data) {
        /* Safe query with mysql.format() : */
        var queryCredential = "SELECT * FROM ?? WHERE ?? = ? and ?? = ?";
        var insertsCredential = ['user', 'mail', data.mail, 'password', data.password];
        queryCredential = mysql.format(queryCredential, insertsCredential);
 
-       connection.query(queryCredential, function (err, result, fields) {
+       connection.query(queryCredential, async  function (err, result, fields) {
               if (err) throw err;
 
               if (result.length > 0) {
-                     client.mail = data.mail;
-                     client.emit('teacher connection success', client.mail);
+                     return true;
               }
               else {
-                     client.emit('teacher connection failed');
+                     return false;
               }
        });
 }
+
+function fetchQuizz(client, author) {
+       var queryQuizz = "SELECT DISTINCT ?? FROM ?? WHERE ?? = ?";
+       var insertsQuizz = ['title', 'quizz', 'author', author];
+       queryQuizz = mysql.format(queryQuizz, insertsQuizz);
+
+       connection.query(queryQuizz, function (err, result, fields) {
+              if (err) throw err;
+              if (result.length > 0) {
+                     client.emit('result quizz list', result);
+              }
+              else {
+                     // no quizz found
+              }
+       });
 }
-/*
-async function createQuizzInDB() { // not finished
 
-       await fetch('http://localhost:3000/updateDB.php', {
-              method: 'POST',
-              body: JSON.stringify({
-              })
-       })
-              .then(response => response.json())
-              .then(data => {
-                     console.log(data);
-              })
-              .catch((error) => {
-                     console.error('Error:', error);
-              });
+function fetchStudentGroups(client) {
+       var queryGroups = "SELECT DISTINCT ?? FROM ??";
+       var insertsGroups = ['name', 'student group'];
+       queryGroups = mysql.format(queryGroups, insertsGroups);
 
-}*/
+       connection.query(queryGroups, function (err, result, fields) {
+              if (err) throw err;
+              if (result.length > 0) {
+                     console.log(result);
+                     client.emit('result student groups', result);
+              }
+              else {
+                     // no quizz found
+              }
+       });
+}
 
 function createUniqueID() {
        let ID = Math.floor(Math.random() * 1000000);
