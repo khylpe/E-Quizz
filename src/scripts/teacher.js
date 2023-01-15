@@ -92,6 +92,7 @@ function displayQuizzList(quizzListTitles){
                      document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
               });
        });
+       //document.querySelector('#quizzList').style.left = `calc(50% - ${document.querySelector('#quizzList').offsetWidth / 2}px)`;
 }
 
 function displayStudentGroups(groupsListNames){

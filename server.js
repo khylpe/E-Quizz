@@ -3,10 +3,10 @@ const express = require('express'),
        http = require('http'),
        server = http.createServer(app),
        { Server } = require("socket.io"),
-       io = new Server(server),
+       io = new Server(server, {allowEIO3: true}),
        mysql = require('mysql');
 //php = require('php');
-
+ 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
 
@@ -45,7 +45,7 @@ var connection = mysql.createConnection({
        user: 'equizz',
        password: 'equizz2023',
        database: 'equizz',
-       port: 3306
+       port: 6666
 });
 
 connection.connect(async function (err) {
