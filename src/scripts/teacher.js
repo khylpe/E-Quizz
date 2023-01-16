@@ -6,7 +6,12 @@ document.querySelector('#studentList').style.minHeight = document.querySelector(
 document.querySelector('#createSession').style.display = "none";
 document.querySelector('#sessionStatus').style.display = "none";
 
-let socket;
+socket = io();
+
+socket.on('teacher already connected', (mail) => {
+       document.querySelector('#teacherMail').value = mail;
+       document.querySelector('#teacherMail').innerHTML = mail;
+});
 document.querySelector('#connectionForm').addEventListener('submit', (e) => {
        e.preventDefault();
 
@@ -15,40 +20,50 @@ document.querySelector('#connectionForm').addEventListener('submit', (e) => {
               passwordFromForm = document.querySelector('#teacherPassword').value;
 
        /* Connect to the server and try to connect the teacher with the given credentials */
-       socket = io();
        socket.emit('teacher tries to connect', {
               mail: mailFromForm,
               password: passwordFromForm
        });
 
 
-       socket.on('teacher connection success', (mail) => {
-              document.querySelector('#connection').style.display = "none";
-              document.querySelector('#createSession').style.display = "block";
-              socket.emit('fetch quizz', mail);
-              socket.on('result quizz list', (quizzListTitles) => {
-                     displayQuizzList(quizzListTitles);
-                     socket.emit('fetch student groups');
+       socket.on('teacher connection success', (data) => {
+              if (data.sessionStatus == "session started") {
+                     document.querySelector('#connection').style.display = "none";
+              }
+              else if (data.sessionStatus == "session created but not started") {
+                     document.querySelector('#connection').style.display = "none";
+                     document.querySelector('#sessionStatus').style.display = "block";
+              }
+              else { // no session created
+                     document.querySelector('#connection').style.display = "none";
+                     document.querySelector('#createSession').style.display = "block";
 
-                     socket.on('result student groups', (studentGroups) => {
-                            displayStudentGroups(studentGroups);
+                     socket.emit('fetch quizz', data.mail);
+                     socket.on('result quizz list', (quizzListTitles) => {
+                            displayQuizzList(quizzListTitles);
+                            socket.emit('fetch student groups');
 
-                            let createSessionForm = document.querySelector('#createSessionForm');
-                            createSessionForm.addEventListener('submit', (e) => {
-                                   e.preventDefault();
-                                   let    quizzName = document.querySelector('#quizzSelected').value,
-                                          studentGroup = document.querySelector('#groupSelected').value;
+                            socket.on('result student groups', (studentGroups) => {
+                                   displayStudentGroups(studentGroups);
 
-                                   socket.emit('create session', { name: quizzName, group: studentGroup });
-                                   document.querySelector('#createSession').style.display = "none";
-                                   document.querySelector('#sessionStatus').style.display = "block";
+                                   let createSessionForm = document.querySelector('#createSessionForm');
+                                   createSessionForm.addEventListener('submit', (e) => {
+                                          e.preventDefault();
+                                          let quizzName = document.querySelector('#quizzSelected').value,
+                                                 studentGroup = document.querySelector('#groupSelected').value;
 
-                                   socket.on('student connected changed', (numberOfStudentConnected) => {
+                                          socket.emit('create session', { name: quizzName, group: studentGroup });
+                                          document.querySelector('#createSession').style.display = "none";
+                                          document.querySelector('#sessionStatus').style.display = "block";
 
+                                          socket.on('student connected changed', (numberOfStudentConnected) => {
+
+                                          });
                                    });
                             });
-                     });
-              })
+                     })
+              }
+
        });
 
        socket.on('teacher connection failed', () => {
@@ -77,10 +92,10 @@ document.querySelector('#connectionForm').addEventListener('submit', (e) => {
                      updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
               });
        });
-       
+
 });
 
-function displayQuizzList(quizzListTitles){
+function displayQuizzList(quizzListTitles) {
 
        let quizzList = document.querySelector('#quizzList');
 
@@ -110,7 +125,7 @@ function displayQuizzList(quizzListTitles){
        });
 }
 
-function displayStudentGroups(groupsListNames){
+function displayStudentGroups(groupsListNames) {
 
        let groupsList = document.querySelector('#groupsList');
 
