@@ -3,10 +3,10 @@ const express = require('express'),
        http = require('http'),
        server = http.createServer(app),
        { Server } = require("socket.io"),
-       io = new Server(server, {allowEIO3: true}),
+       io = new Server(server, { allowEIO3: true }),
        mysql = require('mysql');
 //php = require('php');
- 
+
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
 
@@ -16,6 +16,7 @@ let numberOfStudentConnected = 0,
        numberOfRegisteredStudents = 0,
        numberOfAnswers = 0,
        listOfRegisteredStudents = [],
+       isTeacherConnected = new Boolean(false),
        isSessionCreated = new Boolean(false);
 
 // Express routing :
@@ -45,7 +46,7 @@ var connection = mysql.createConnection({
        user: 'equizz',
        password: 'equizz2023',
        database: 'equizz',
-       port: 6666
+       port: 3306
 });
 
 connection.connect(async function (err) {
@@ -72,7 +73,12 @@ io.on('connection', function (client) {
                                           client.on('fetch student groups', () => {
                                                  fetchStudentGroups(client);
                                           });
-                            });
+
+                                   });
+
+                                   client.on('create session', (data) => {
+                                          createSession(client, data);
+                                   });
                             } else {
                                    client.emit('teacher connection failed');
                             }
@@ -80,48 +86,54 @@ io.on('connection', function (client) {
               });
        } else if (requestedUrl.includes('student')) {
               client.join('student');
-              client.to('teacher').emit('student connected changed', ++numberOfStudentConnected);
-       } else {
-              console.log('Error: client is neither a teacher nor a student');
-              client.removeAllListeners();
-              client.disconnect();
-              return;
-       }
+              if (isTeacherConnected && isSessionCreated) {
+                     client.to('teacher').emit('student connected changed', ++numberOfStudentConnected);
 
-       // Signals from students (client side) when they are registered :
-       client.on('registered', (studentName) => {
-              if (isSessionCreated) {
-                     if (client.username == undefined) {
-                            numberOfRegisteredStudents++;
-                     }
-                     client.username = studentName;
-                     client.to('teacher').emit('students registered changed', {
-                            id: client.modifiedID,
-                            studentName: client.username,
-                            status: "registered",
-                            numberOfRegisteredStudents: numberOfRegisteredStudents
-                     });
               } else {
                      client.emit('session not created');
               }
-       });
+       }
+ else {
+       console.log('Error: client is neither a teacher nor a student');
+       client.removeAllListeners();
+       client.disconnect();
+       return;
+}
 
-       client.on('disconnecting', () => {
-              if (client.rooms.has('teacher')) {
-                     isSessionCreated = false;
-                     client.to('student').emit('teacher disconnected'); // not used yet
-              } else if (client.rooms.has('student')) {
-                     client.to('teacher').emit('student connected changed', --numberOfStudentConnected);
-                     if (client.modifiedID != undefined && client.username != undefined) {
-                            client.to('teacher').emit('students registered changed', {
-                                   id: client.modifiedID,
-                                   studentName: client.username,
-                                   status: "not registered anymore",
-                                   numberOfRegisteredStudents: --numberOfRegisteredStudents
-                            });
-                     }
+       // Signals from students (client side) when they are registered :
+       client.on('student registered', (studentName) => {
+       if (isSessionCreated) {
+              if (client.username == undefined) {
+                     numberOfRegisteredStudents++;
               }
-       });
+              client.username = studentName;
+              client.to('teacher').emit('students registered changed', {
+                     id: client.modifiedID,
+                     studentName: client.username,
+                     status: "registered",
+                     numberOfRegisteredStudents: numberOfRegisteredStudents
+              });
+       } else {
+              client.emit('session not created');
+       }
+});
+
+client.on('disconnecting', () => {
+       if (client.rooms.has('teacher')) {
+              isSessionCreated = false;
+              client.to('student').emit('teacher disconnected'); // not used yet
+       } else if (client.rooms.has('student')) {
+              client.to('teacher').emit('student connected changed', --numberOfStudentConnected);
+              if (client.modifiedID != undefined && client.username != undefined) {
+                     client.to('teacher').emit('students registered changed', {
+                            id: client.modifiedID,
+                            studentName: client.username,
+                            status: "not registered anymore",
+                            numberOfRegisteredStudents: --numberOfRegisteredStudents
+                     });
+              }
+       }
+});
 });
 
 async function checkTeacherCredentials(data) {
@@ -130,7 +142,7 @@ async function checkTeacherCredentials(data) {
        var insertsCredential = ['user', 'mail', data.mail, 'password', data.password];
        queryCredential = mysql.format(queryCredential, insertsCredential);
 
-       connection.query(queryCredential, async  function (err, result, fields) {
+       connection.query(queryCredential, async function (err, result, fields) {
               if (err) throw err;
 
               if (result.length > 0) {
@@ -174,7 +186,15 @@ function fetchStudentGroups(client) {
               }
        });
 }
-
+function createSession(client, data) {
+       if (!isSessionCreated) {
+              isSessionCreated = true;
+              client.to('student').emit('session created', data);
+              client.emit('session created', data);
+       } else {
+              client.emit('session already created');
+       }
+}
 function createUniqueID() {
        let ID = Math.floor(Math.random() * 1000000);
        if (listOfRegisteredStudents.includes(ID)) {
@@ -187,3 +207,4 @@ function createUniqueID() {
 
 server.listen(8100, () => {
 });    
+

@@ -1,9 +1,11 @@
 @import "/bootstrap/css/bootstrap.css";
+.badge {
+  top: 2%;
+  right: 1%;
+}
 
-.badge{
-       top: 2%;
-       right: 1%;
+p {
+  margin-bottom: 0px;
 }
-p{
-       margin-bottom: 0px;
-}
+
+/*# sourceMappingURL=teacher.css.map */

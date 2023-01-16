@@ -32,6 +32,21 @@ document.querySelector('#connectionForm').addEventListener('submit', (e) => {
 
                      socket.on('result student groups', (studentGroups) => {
                             displayStudentGroups(studentGroups);
+
+                            let createSessionForm = document.querySelector('#createSessionForm');
+                            createSessionForm.addEventListener('submit', (e) => {
+                                   e.preventDefault();
+                                   let    quizzName = document.querySelector('#quizzSelected').value,
+                                          studentGroup = document.querySelector('#groupSelected').value;
+
+                                   socket.emit('create session', { name: quizzName, group: studentGroup });
+                                   document.querySelector('#createSession').style.display = "none";
+                                   document.querySelector('#sessionStatus').style.display = "block";
+
+                                   socket.on('student connected changed', (numberOfStudentConnected) => {
+
+                                   });
+                            });
                      });
               })
        });
@@ -90,9 +105,9 @@ function displayQuizzList(quizzListTitles){
        document.querySelectorAll('#quizzInList').forEach((nameInList) => {
               nameInList.addEventListener('click', () => {
                      document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
+                     document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
               });
        });
-       //document.querySelector('#quizzList').style.left = `calc(50% - ${document.querySelector('#quizzList').offsetWidth / 2}px)`;
 }
 
 function displayStudentGroups(groupsListNames){
@@ -119,10 +134,12 @@ function displayStudentGroups(groupsListNames){
 
        document.querySelectorAll('#groupInList').forEach((groupInList) => {
               groupInList.addEventListener('click', () => {
-                     document.querySelector('#quizzName').value = groupInList.innerHTML;
+                     document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
+                     document.querySelector('#submitCreateSession').classList.remove('disabled');
               });
        });
 }
+
 function updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
        if (status == "not registered anymore") {
               document.querySelector(`#id${id}`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
