@@ -1,0 +1,21 @@
+https://github.com/amplication/amplication#readme
+https://forthebadge.com/
+https://shields.io/
+https://stackoverflow.com/a/65092058/19601188
+https://readme.so/
+
+https://stackoverflow.com/a/56509065/19601188
+https://www.w3schools.com/nodejs/nodejs_mysql.asp
+https://wtools.io/generate-sql-create-table
+https://www.tabnine.com/code/javascript/functions/mysql/createConnection
+https://stackoverflow.com/a/13932834/19601188
+
+https://stackoverflow.com/a/50547109/19601188 :
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
+https://stackoverflow.com/questions/10236000/allow-all-remote-connections-mysql
+
+
+https://github.com/mysqljs/mysql#escaping-query-values  // equivalent of prepared query
+https://www.quennec.fr/trucs-astuces/applications/mysql/se-connecter-%C3%A0-un-serveur-mysql-%C3%A0-partir-de-nimporte-quel-host
+
+https://howchoo.com/javascript/how-to-manage-cookies-in-javascript#documentcookie
