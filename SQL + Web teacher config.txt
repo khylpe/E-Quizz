@@ -1,4 +1,0 @@
-sql login : 
-equizz:equizz2023
-mariadb root passwd : mariadbrootequizz
-equizzdbuser:equizzdbpasswd
