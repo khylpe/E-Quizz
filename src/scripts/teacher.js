@@ -3,96 +3,38 @@
 // Initial value of the DOM elements
 document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés`;
 document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
-document.querySelector('#createSession').style.display = "none";
 document.querySelector('#sessionStatus').style.display = "none";
 
-const socket = io('localhost:8100');
+const socket = io('http://10.69.88.32:8100');
 
-socket.on('teacher already connected', (mail) => {
-       document.querySelector('#teacherMail').value = mail;
-       document.querySelector('#teacherMail').innerHTML = mail;
+
+
+socket.on('teacher connection failed', () => {
 });
-document.querySelector('#connectionForm').addEventListener('submit', (e) => {
-       e.preventDefault();
 
-       /* Get the values from the form */
-       let mailFromForm = document.querySelector('#teacherMail').value,
-              passwordFromForm = document.querySelector('#teacherPassword').value;
+// document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
+//        e.preventDefault();
 
-       /* Connect to the server and try to connect the teacher with the given credentials */
-       socket.emit('teacher tries to connect', {
-              mail: mailFromForm,
-              password: passwordFromForm
-       });
+//        let quizzName = document.querySelector('#quizzName').value,
+//               studentGroup = document.querySelector('#quizzGroup').value;
 
-       socket.on('teacher connection success', (data) => {
-              if (data.sessionStatus == "session started") {
-                     document.querySelector('#connection').style.display = "none";
-              }
-              else if (data.sessionStatus == "session created but not started") {
-                     document.querySelector('#connection').style.display = "none";
-                     document.querySelector('#sessionStatus').style.display = "block";
-              }
-              else { // no session created
-                     document.querySelector('#connection').style.display = "none";
-                     document.querySelector('#createSession').style.display = "block";
+//        socket.emit('create session', { name: quizzName, group: studentGroup });
 
-                     socket.emit('fetch quizz', data.mail);
-                     socket.on('result quizz list', (quizzListTitles) => {
-                            displayQuizzList(quizzListTitles);
-                            socket.emit('fetch student groups');
+//        document.querySelector('#createSession').style.display = "none";
+//        document.querySelector('#sessionStatus').style.display = "block";
 
-                            socket.on('result student groups', (studentGroups) => {
-                                   displayStudentGroups(studentGroups);
+//        // Whenever a student connects or disconnects, update the number of connected students
+//        // It doesn't mean that the student is registered
+//        socket.on('student connected changed', (numberOfStudentConnected) => {
+//               document.getElementById("connectedStudents").innerHTML = numberOfStudentConnected;
+//        });
 
-                                   let createSessionForm = document.querySelector('#createSessionForm');
-                                   createSessionForm.addEventListener('submit', (e) => {
-                                          e.preventDefault();
-                                          let quizzName = document.querySelector('#quizzSelected').value,
-                                                 studentGroup = document.querySelector('#groupSelected').value;
-
-                                          socket.emit('create session', { name: quizzName, group: studentGroup });
-                                          document.querySelector('#createSession').style.display = "none";
-                                          document.querySelector('#sessionStatus').style.display = "block";
-
-                                          socket.on('student connected changed', (numberOfStudentConnected) => {
-
-                                          });
-                                   });
-                            });
-                     })
-              }
-
-       });
-
-       socket.on('teacher connection failed', () => {
-       });
-
-       document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
-              e.preventDefault();
-
-              let quizzName = document.querySelector('#quizzName').value,
-                     studentGroup = document.querySelector('#quizzGroup').value;
-
-              socket.emit('create session', { name: quizzName, group: studentGroup });
-
-              document.querySelector('#createSession').style.display = "none";
-              document.querySelector('#sessionStatus').style.display = "block";
-
-              // Whenever a student connects or disconnects, update the number of connected students
-              // It doesn't mean that the student is registered
-              socket.on('student connected changed', (numberOfStudentConnected) => {
-                     document.getElementById("connectedStudents").innerHTML = numberOfStudentConnected;
-              });
-
-              // Whenever a student registers or disconnects, update the number of registered students
-              // Student must be connected to register
-              socket.on('students registered changed', (data) => {
-                     updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
-              });
-       });
-
-});
+//        // Whenever a student registers or disconnects, update the number of registered students
+//        // Student must be connected to register
+//        socket.on('students registered changed', (data) => {
+//               updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
+//        });
+// });
 
 function displayQuizzList(quizzListTitles) {
 
