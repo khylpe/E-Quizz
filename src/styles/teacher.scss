@@ -1,12 +1,16 @@
-@import "/bootstrap/css/bootstrap.css";
-@import '../../node_modules/bootstrap/scss/functions';
-@import "../../node_modules/bootstrap/scss/variables";;
-
-
-.badge{
+.badge {
        top: 2%;
        right: 1%;
 }
-p{
+
+#sessionStatus p {
        margin-bottom: 0px;
+}
+
+.user.dropdown-menu{
+       --bs-dropdown-padding-y: 0.0rem;
+}
+
+#quizzList li:hover , #groupsList li:hover{
+       cursor: pointer;
 }

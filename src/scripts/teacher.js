@@ -1,100 +1,27 @@
-// Description: This file contains the javascript code for the teacher page
+/* Description: This file contains the javascript code for the teacher page */
 
-// Initial value of the DOM elements
-document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés`;
-document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
-document.querySelector('#sessionStatus').style.display = "none";
+mail = document.querySelector('#mail').innerText;
+let socket = io('http://localhost:8100/');
 
-const socket = io('http://10.69.88.32:8100');
-
-
-
-socket.on('teacher connection failed', () => {
+socket.on('connect', () => {
+       socket.emit('teacher', mail);
 });
+let fetchData = new FetchDataFromDB(mail);
+let manageFront = new ManageFront();
 
-// document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
-//        e.preventDefault();
+/*     fetch the list of quizz and display it by 
+       passing the returned value of 'fetchQuizzList' method from FetchDataFromDB class
+       to 'displayQuizzList' method from manageFront class */
 
-//        let quizzName = document.querySelector('#quizzName').value,
-//               studentGroup = document.querySelector('#quizzGroup').value;
+fetchData.fetchQuizzList()
+       .then(value => manageFront.displayQuizzList(value));
 
-//        socket.emit('create session', { name: quizzName, group: studentGroup });
+/*     fetch the list of groups and display it by 
+       passing the returned value of 'fetchStudentGroups' method from FetchDataFromDB class
+        to 'displayStudentGroups' method from manageFront class */
 
-//        document.querySelector('#createSession').style.display = "none";
-//        document.querySelector('#sessionStatus').style.display = "block";
-
-//        // Whenever a student connects or disconnects, update the number of connected students
-//        // It doesn't mean that the student is registered
-//        socket.on('student connected changed', (numberOfStudentConnected) => {
-//               document.getElementById("connectedStudents").innerHTML = numberOfStudentConnected;
-//        });
-
-//        // Whenever a student registers or disconnects, update the number of registered students
-//        // Student must be connected to register
-//        socket.on('students registered changed', (data) => {
-//               updateStudentList(data.studentName, data.id, data.status, data.numberOfRegisteredStudents);
-//        });
-// });
-
-function displayQuizzList(quizzListTitles) {
-
-       let quizzList = document.querySelector('#quizzList');
-
-       quizzListTitles.forEach((quizzName) => {
-              let li = document.createElement('li');
-              quizzList.appendChild(li);
-              let span = document.createElement('span');
-              span.classList = "dropdown-item";
-              span.id = "quizzInList";
-              span.innerHTML = quizzName.title;
-              li.appendChild(span);
-              let hr = document.createElement('hr');
-              hr.classList = "dropdown-divider quizzNameDivider";
-              quizzList.appendChild(hr);
-       });
-
-       // Remove the last divider // https://stackoverflow.com/a/5684878/19601188
-       var nodes = quizzList.querySelectorAll('.quizzNameDivider');
-       var last = nodes[nodes.length - 1];
-       quizzList.removeChild(last);
-
-       document.querySelectorAll('#quizzInList').forEach((nameInList) => {
-              nameInList.addEventListener('click', () => {
-                     document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
-                     document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
-              });
-       });
-}
-
-function displayStudentGroups(groupsListNames) {
-
-       let groupsList = document.querySelector('#groupsList');
-
-       groupsListNames.forEach((groupName) => {
-              let li = document.createElement('li');
-              groupsList.appendChild(li);
-              let span = document.createElement('span');
-              span.classList = "dropdown-item";
-              span.id = "groupInList";
-              span.innerHTML = groupName.name;
-              li.appendChild(span);
-              let hr = document.createElement('hr');
-              hr.classList = "dropdown-divider groupsNameDivider";
-              groupsList.appendChild(hr);
-       });
-
-       // Remove the last divider // https://stackoverflow.com/a/5684878/19601188
-       var nodes = groupsList.querySelectorAll('.groupsNameDivider');
-       var last = nodes[nodes.length - 1];
-       groupsList.removeChild(last);
-
-       document.querySelectorAll('#groupInList').forEach((groupInList) => {
-              groupInList.addEventListener('click', () => {
-                     document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
-                     document.querySelector('#submitCreateSession').classList.remove('disabled');
-              });
-       });
-}
+fetchData.fetchStudentGroups()
+       .then(value => manageFront.displayStudentGroups(value));
 
 function updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
        if (status == "not registered anymore") {

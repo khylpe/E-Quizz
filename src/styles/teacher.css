@@ -1,11 +1,16 @@
-@import "/bootstrap/css/bootstrap.css";
 .badge {
   top: 2%;
   right: 1%;
 }
 
-p {
+#sessionStatus p {
   margin-bottom: 0px;
 }
 
-/*# sourceMappingURL=teacher.css.map */
+.user.dropdown-menu {
+  --bs-dropdown-padding-y: 0.0rem;
+}
+
+#quizzList li:hover, #groupsList li:hover {
+  cursor: pointer;
+}/*# sourceMappingURL=teacher.css.map */

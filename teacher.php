@@ -1,7 +1,11 @@
 <?php
-require('src/php/connectToDB.php');
-?>
+session_start();
 
+if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connected' || !isset($_SESSION['mail'])) {
+       header('location:../../index.php');
+       die();
+}
+?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
@@ -11,15 +15,43 @@ require('src/php/connectToDB.php');
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
        <title>E-Quizz - Enseignant</title>
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-       <!-- <link rel="stylesheet" href="/styles/teacher.css"> -->
+       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+       <link rel="stylesheet" href="src/styles/teacher.css">
 </head>
 
 <body>
-       <div class="container-fluid">
-              <h1 class="text-center">E-Quizz</h1>
+       <div class="container">
+              <nav class="navbar navbar-expand">
+                     <div class="collapse navbar-collapse d-flex">
+                            <div class="d-flex col-3 justify-content-start">
+                                   <div class="btn-group">
+                                          <button class="btn btn-outline-light"><i class="bi bi-person"></i></button>
+                                          <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                          </button>
+
+                                          <ul class="user dropdown-menu dropdown-menu-start">
+                                                 <li class="dropdown-item disabled" id="mail"><?php echo $_SESSION['mail']; ?></li>
+                                                 <li>
+                                                        <hr class="dropdown-divider">
+                                                 </li>
+                                                 <li><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
+                                          </ul>
+                                   </div>
+
+                            </div>
+                            <h1 class="navbar-nav col-6 justify-content-center">
+                                   E-Quizz
+                            </h1>
+
+                     </div>
+              </nav>
        </div>
        <hr class="container">
        </div>
+
+       <div id="tempMessage" role="alert">
+       </div>
+
        <div class="container text-center mt-5" id="createSession">
               <div class="row">
                      <div class="col-6 offset-3">
@@ -33,7 +65,7 @@ require('src/php/connectToDB.php');
                                                                du
                                                                quizz</label>
                                                         <div class="btn-group">
-                                                               <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                               <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 
                                                                       <span id="quizzSelected">Selectionner un quizz</span>
                                                                </button>
@@ -45,7 +77,7 @@ require('src/php/connectToDB.php');
                                                         <label for="studentGroup" class="form-label">Groupe
                                                                d'étudiants</label>
                                                         <div class="btn-group">
-                                                               <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
+                                                               <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
                                                                       <span id="groupSelected">Selectionner un groupe</span>
                                                                </button>
                                                                <ul class="dropdown-menu w-100 text-center" id="groupsList">
@@ -88,6 +120,8 @@ require('src/php/connectToDB.php');
        </div>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+       <script src="src/scripts/classes/FetchDataFromDB.js"></script>
+       <script src="src/scripts/classes/manageFront.js"></script>
        <script src="src/scripts/teacher.js"></script>
 </body>
 

@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["teacher.scss"],"names":[],"mappings":"AAAQ;AAKR;EACO;EACA;;;AAEP;EACO","file":"teacher.css"}
+{"version":3,"sources":["teacher.scss","teacher.css"],"names":[],"mappings":"AAAA;EACO,OAAA;EACA,SAAA;ACCP;;ADEA;EACO,kBAAA;ACCP;;ADEA;EACO,+BAAA;ACCP;;ADEA;EACO,eAAA;ACCP","file":"teacher.css"}

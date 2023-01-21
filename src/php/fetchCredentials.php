@@ -1,31 +1,44 @@
 <?php
 require('connectToDB.php');
 
-$mail = $_POST['mail'];
-$password = $_POST['password'];
+if (!isset($_POST['mail']) || !isset($_POST['password']) || empty($_POST['mail']) || empty($_POST['password'])) {
+       $_SESSION['tempMessage'] = array(
+              'status' => 'warning',
+              'value' => "Vous devez renseigner un mail ainsi qu'un mot de passe"
+       );
+       header('location:../../index.php');
+       die();
+} else {
+       $mail = $_POST['mail'];
+       $password = $_POST['password'];
 
-session_start();
+       try {
+              $sql = $db->prepare('SELECT * from user WHERE mail = :identifier AND password = :password');
+              $sql->execute(array(
+                     ':identifier' => $mail,
+                     ':password' => $password
+              ));
+              $resul = $sql->fetch(PDO::FETCH_ASSOC);
+       } catch (Exception $e) {
+              $_SESSION['tempMessage'] = array(
+                     'status' => 'danger',
+                     'value' => 'An error occurred : ' . $e->getMessage()
+              );
+              header('location:../../index.php');
+              die();
+       }
 
-try{
-    $sql = $db->prepare('SELECT * from user WHERE mail = :identifier AND password = :password');
-    $sql->execute(array(':identifier' => $mail,
-                         ':password' => $password));
-    $resul = $sql->fetch(PDO::FETCH_ASSOC);
+       if ($resul) {
+              $_SESSION['mail'] = $mail;
+              $_SESSION['sessionStatus'] = 'connected';
+              header('location:../../teacher.php');
+              die();
+       } else {
+              $_SESSION['tempMessage'] = array(
+                     'status' => 'warning',
+                     'value' => 'Wrong credentials, try again'
+              );
+              header('location:../../index.php');
+              die();
+       }
 }
-
-catch(Exception $e){
-    $_SESSION['errorOccurred'] = $e->getMessage();
-    header('location:../../index.php');
-    die();
-}   
-
-if($resul){
-        header('location:../../teacher.php');
-        die();
-    }
-else{
-    $_SESSION['errorOccurred'] = "Wrong credentials, try again";
-    header('location:../../index.php');
-    die();    
-}    
-?>
