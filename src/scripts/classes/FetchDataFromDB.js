@@ -2,7 +2,7 @@ class FetchDataFromDB {
        constructor(mail) {
               this.mail = mail;
        }
-       
+
        fetchQuizzList() {
               return fetch('/src/php/fetchQuizzList.php', {
                      method: 'POST',
@@ -18,12 +18,12 @@ class FetchDataFromDB {
                                           return Array('error', 'Vous devez créer un quizz avant de pouvoir créer une session');
                                    }
                             } else {
-                                   return Array('error', 'Une erreur est survenue lors de la récupération de la liste des quizz : ' +  array[1]);
+                                   return Array('error', 'Une erreur est survenue lors de la récupération de la liste des quizz : ' + array[1]);
                             }
                      })
                      .catch(err => {
                             return Array('error', err);
-                     });                   
+                     });
        }
 
        fetchStudentGroups() {
@@ -38,12 +38,33 @@ class FetchDataFromDB {
                                           return Array('error', "Il n'y a pas de groupe d'étudiants enregistré");
                                    }
                             } else {
-                                   return Array('error', "Une erreur est survenue lors de la récupération de la liste des groupes d'étudiants : " +  array[1]);
+                                   return Array('error', "Une erreur est survenue lors de la récupération de la liste des groupes d'étudiants : " + array[1]);
                             }
                      })
                      .catch(err => {
                             return Array('error', err);
-                     }); 
-              
+                     });
+
+       }
+
+       fetchQuestionsAndAnswers(quizzName, author) {
+              return fetch('/src/php/fetchQuestionsAndAnswers.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            quizzName: quizzName,
+                            author: author
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            if (array[0] == "success") {
+                                   return Array('success', array[1]);
+                            } else {
+                                   return Array('error', "Une erreur est survenue lors de la récupération des questions et réponses : " + array[1]);
+                            }
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
        }
 }

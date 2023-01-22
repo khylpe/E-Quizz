@@ -52,76 +52,99 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <div id="tempMessage" role="alert">
        </div>
 
-       <div class="container text-center mt-5" id="createSession">
-              <div class="row">
-                     <div class="col-lg-6 offset-lg-3">
-                            <div class="card text-center">
-                                   <h5 class="card-header">Créer une session
-                                   </h5>
-                                   <div class="card-body">
-                                          <form id="createSessionForm">
-                                                 <div class="mb-3 d-flex flex-column">
-                                                        <label for="quizzName" class="form-label">Nom
-                                                               du
-                                                               quizz</label>
-                                                        <div class="btn-group">
-                                                               <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+       <section id="sectionCreateSession">
+              <div class="container text-center mt-5" id="createSession">
+                     <div class="row">
+                            <div class="col-lg-6 offset-lg-3">
+                                   <div class="card text-center">
+                                          <h5 class="card-header">Créer une session
+                                          </h5>
+                                          <div class="card-body">
+                                                 <form id="createSessionForm">
+                                                        <div class="mb-3 d-flex flex-column">
+                                                               <label for="quizzName" class="form-label">Nom
+                                                                      du
+                                                                      quizz</label>
+                                                               <div class="btn-group">
+                                                                      <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 
-                                                                      <span id="quizzSelected">Selectionner un quizz</span>
-                                                               </button>
-                                                               <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
-                                                               </ul>
+                                                                             <span id="quizzSelected">Selectionner un quizz</span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
+                                                                      </ul>
+                                                               </div>
                                                         </div>
-                                                 </div>
-                                                 <div class="mb-3 d-flex flex-column">
-                                                        <label for="studentGroup" class="form-label">Groupe
-                                                               d'étudiants</label>
-                                                        <div class="btn-group">
-                                                               <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
-                                                                      <span id="groupSelected">Selectionner un groupe</span>
-                                                               </button>
-                                                               <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="groupsList">
-                                                               </ul>
+                                                        <div class="mb-3 d-flex flex-column">
+                                                               <label for="studentGroup" class="form-label">Groupe
+                                                                      d'étudiants</label>
+                                                               <div class="btn-group">
+                                                                      <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
+                                                                             <span id="groupSelected">Selectionner un groupe</span>
+                                                                      </button>
+                                                                      <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="groupsList">
+                                                                      </ul>
+                                                               </div>
                                                         </div>
-                                                 </div>
-                                                 <button type="submit" class="btn btn-primary disabled" id="submitCreateSession">Créer la session</button>
-                                          </form>
+                                                        <button type="submit" class="btn btn-primary disabled" id="submitCreateSession">Créer la session</button>
+                                                 </form>
+                                          </div>
                                    </div>
                             </div>
                      </div>
               </div>
-       </div>
-       <div class="container mt-5" id="sessionStatus">
-              <div class="row">
-                     <div class="col-6">
-                            <div class="card text-center">
-                                   <h5 class="card-header">Nombre d'étudiants
-                                          connectés</h5>
-                                   <p class="card-body display-1" id="connectedStudents">0</p>
+       </section>
+       <section id="sectionSessionStatus">
+              <div class="container mt-5" id="sessionStatus">
+                     <div class="row">
+                            <div class="col-6">
+                                   <div class="card text-center">
+                                          <h5 class="card-header">Nombre d'étudiants
+                                                 connectés</h5>
+                                          <p class="card-body display-1" id="connectedStudents">0</p>
+                                   </div>
                             </div>
-                     </div>
-                     <div class="col-6">
-                            <div class="card text-center">
-                                   <h5 class="card-header" id="studentListTitle"></h5>
-                                   <ul class="text-center list-group" id="studentList">
-                                          <li class="list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start">
-                                                 <div class="ms-2">Arthur
+                            <div class="col-6">
+                                   <div class="card text-center">
+                                          <h5 class="card-header" id="studentListTitle"></h5>
+                                          <ul class="text-center list-group" id="studentList">
+                                                 <li class="list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start">
+                                                        <div class="ms-2">Arthur
+                                                        </div>
+                                                        <span class="badge bg-primary rounded-pill position-absolute">14</span>
+                                                 </li>
+                                          </ul>
+                                   </div>
+                            </div>
+                            <div class="container text-center mt-5" id="sessionInfo">
+                                   <div class="row">
+                                          <div class="col-lg-6 offset-lg-3">
+                                                 <div class="card text-center">
+                                                        <h5 class="card-header">Informations de la session
+                                                        </h5>
+                                                        <div class="card-body">
+                                                               <ui class="list-group">
+                                                                      <li class="list-group-item list-group-item-info" id="sessionStatusInfo"></li>
+                                                                      <li class="list-group-item list-group-item-info" id="teacherInfo"></li>
+                                                                      <li class="list-group-item list-group-item-info" id="quizzInfo"></li>
+                                                                      <li class="list-group-item list-group-item-info" id="groupInfo"></li>
+                                                               </ui>
+                                                        </div>
                                                  </div>
-                                                 <span class="badge bg-primary rounded-pill position-absolute">14</span>
-                                          </li>
-                                   </ul>
+                                          </div>
+                                   </div>
                             </div>
                      </div>
+                     <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-primary" id="startSession">Commencer
+                                   la session</button>
+                     </div>
               </div>
-              <div class="text-center mt-5">
-                     <button type="submit" class="btn btn-primary">Commencer
-                            la session</button>
-              </div>
-       </div>
+       </section>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
        <script src="src/scripts/classes/FetchDataFromDB.js"></script>
        <script src="src/scripts/classes/manageFront.js"></script>
+       <script src="src/scripts/classes/teacher.js"></script>
        <script src="src/scripts/teacher.js"></script>
 </body>
 

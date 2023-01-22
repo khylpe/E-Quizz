@@ -1,16 +1,19 @@
 class ManageFront {
        constructor() {
-              document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés`;
+              document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants enregistrés`;
               document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
-              document.querySelector('#sessionStatus').style.display = "none";
+              document.querySelector('#sectionSessionStatus').style.display = "none";
               document.querySelector('#tempMessage').style.display = "none";
        }
 
-       tempMessage(type, message) {
+       tempMessage(type, message) { // type = "error" or "success"
+              if (!message) return;
               if (type == "error") {
                      type = "alert alert-danger";
               } else if (type == "success") {
                      type = "alert alert-success";
+              } else {
+                     return;
               }
 
               let tempMessage = document.querySelector('#tempMessage');
@@ -19,7 +22,7 @@ class ManageFront {
               tempMessage.style.display = "block";
               setTimeout(() => {
                      tempMessage.style.display = "none";
-              }, 9000);
+              }, 18000);
        }
 
        displayQuizzList(data) { /* [0] = error or success, [1] = quizzListTitles[] || error message */
@@ -94,9 +97,72 @@ class ManageFront {
                      });
                      return true;
               }
-              else{
+              else {
                      this.tempMessage('error', "Il n'y a pas de groupe enregistré");
                      return false;
+              }
+       }       
+
+       changeCurrentSection(sectionToDisplay) {
+              document.querySelectorAll('section').forEach((section) => {
+                     section.style.display = "none";
+              });
+              document.querySelector(`#${sectionToDisplay}`).style.display = "block";
+       }
+
+       getCurrentSection() {
+              return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188
+       }
+
+       updateSessionInformations(data) {
+              let status;
+              if (data.sessionStatus == "notConnected")
+                     status = "Pas connecté";
+              else if (data.sessionStatus == "SessionStatus")
+                     status = "Session créée, en attente de démarrage";
+              else if (data.sessionStatus == "SessionStarted")
+                     status = "Session démarrée";
+              else if (data.sessionStatus == "SessionEnded")
+                     status = "Session terminée";
+              else if (data.sessionStatus == "SessionClosed")
+                     status = "Session fermée";
+              else
+                     status = "Session inconnue";
+
+              document.querySelector('#sessionStatusInfo').innerHTML = `Status de la session : ${status}`;
+              document.querySelector('#teacherInfo').innerHTML = `Enseignant : ${data.teacher}`;
+              document.querySelector('#quizzInfo').innerHTML = `Quizz : ${data.quizzTitle}`;
+              document.querySelector('#groupInfo').innerHTML = `Groupe : ${data.groupName}`;
+       }
+
+       updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
+              if (status == "not registered anymore") {
+                     document.querySelector(`#id${id}`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+                     return;
+              }
+              if (!document.getElementById(`id${id}`)) {
+                     document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés (${numberOfRegisteredStudents})`;
+
+                     let ul = document.getElementById("studentList");
+                     let li = document.createElement("li");
+                     li.setAttribute("id", `id${id}`);
+
+                     if (status == "registered") {
+                            li.classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
+
+                     } else if (status == "not registered") {
+                            li.classList = "list-group-item list-group-item-action list-group-item-danger d-flex justify-content-center align-items-start";
+                     } else {
+                            li.classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+                     }
+                     let div = document.createElement("div");
+                     div.classList = "ms-2";
+                     div.setAttribute("id", "studentName");
+                     div.appendChild(document.createTextNode(studentName));
+                     li.appendChild(div);
+                     ul.appendChild(li);
+              } else {
+                     document.querySelector(`#id${id} #studentName`).innerHTML = studentName;
               }
        }
 }

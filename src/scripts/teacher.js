@@ -1,49 +1,49 @@
 /* Description: This file contains the javascript code for the teacher page */
-
 mail = document.querySelector('#mail').innerText;
-let fetchData = new FetchDataFromDB(mail);
-let manageFront = new ManageFront();
-let socket = io('http://localhost:8100/');
+let maClasse = new teacher(mail);
 
-/*     fetch the list of quizz and display it by 
+/*     when socket is connected : fetch the list of quizz and display it by 
        passing the returned value of 'fetchQuizzList' method from FetchDataFromDB class
-       to 'displayQuizzList' method from manageFront class, if true is returned, do the same for the students */
+       to 'displayQuizzList' method from manageFront class. Do the same for the students */
 
-fetchData.fetchQuizzList()
-       .then(value => {
-              if (manageFront.displayQuizzList(value)) {
-                     fetchData.fetchStudentGroups()
-                     .then(value => manageFront.displayStudentGroups(value));
+maClasse.socketIO.on('connect', () => {
+       maClasse.fetchData.fetchQuizzList()
+              .then(value => {
+                     maClasse.manageFront.displayQuizzList(value);
+              });
+       maClasse.fetchData.fetchStudentGroups()
+              .then(value => { maClasse.manageFront.displayStudentGroups(value) });
+});
+
+maClasse.socketIO.on('sessionStatus', (data) => {
+       if (data.sessionStatus != 'notConnected') {
+              if(maClasse.mail != data.teacher){
+                     maClasse.manageFront.tempMessage('error', 'Une autre session est en cours');
+                     maClasse.manageFront.changeCurrentSection('sectionCreateSession');
+              maClasse.resetSession();
+                     return;
               }
-       });
-
-function updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
-       if (status == "not registered anymore") {
-              document.querySelector(`#id${id}`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
-              return;
-       }
-       if (!document.getElementById(`id${id}`)) {
-              document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés (${numberOfRegisteredStudents})`;
-
-              let ul = document.getElementById("studentList");
-              let li = document.createElement("li");
-              li.setAttribute("id", `id${id}`);
-
-              if (status == "registered") {
-                     li.classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
-
-              } else if (status == "not registered") {
-                     li.classList = "list-group-item list-group-item-action list-group-item-danger d-flex justify-content-center align-items-start";
-              } else {
-                     li.classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+              
+              maClasse.manageFront.changeCurrentSection(`section${data.sessionStatus}`);
+              if(data.sessionStatus == 'SessionStatus'){
+                     maClasse.manageFront.updateSessionInformations(data);
               }
-              let div = document.createElement("div");
-              div.classList = "ms-2";
-              div.setAttribute("id", "studentName");
-              div.appendChild(document.createTextNode(studentName));
-              li.appendChild(div);
-              ul.appendChild(li);
-       } else {
-              document.querySelector(`#id${id} #studentName`).innerHTML = studentName;
        }
-}
+});
+
+document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
+       e.preventDefault();
+       let quizzName = document.querySelector('#quizzSelected').innerText;
+       let groupName = document.querySelector('#groupSelected').innerText;
+       maClasse.createSession(quizzName, groupName);
+});
+
+maClasse.socketIO.on('sessionCreated', (data) => {
+       maClasse.manageFront.tempMessage('success', `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`);
+       maClasse.manageFront.changeCurrentSection('sectionSessionStatus');
+});
+
+document.querySelector('#startSession').addEventListener('click', () => {
+       maClasse.fetchData.fetchQuestionsAndAnswers('Quizz de teste 1', 'crahe.arthur@gmail.com').then(value => {
+              console.log(value);
+})});
