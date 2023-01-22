@@ -7,10 +7,17 @@
        margin-bottom: 0px;
 }
 
-.user.dropdown-menu{
+.user.dropdown-menu {
        --bs-dropdown-padding-y: 0.0rem;
 }
 
-#quizzList li:hover , #groupsList li:hover{
+#quizzList li:hover,
+#groupsList li:hover {
        cursor: pointer;
+}
+
+#quizzInList:hover,
+#groupInList:hover {
+       color: #fff;
+       background-color: #084298;
 }

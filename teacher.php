@@ -54,7 +54,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <div class="container text-center mt-5" id="createSession">
               <div class="row">
-                     <div class="col-6 offset-3">
+                     <div class="col-lg-6 offset-lg-3">
                             <div class="card text-center">
                                    <h5 class="card-header">Créer une session
                                    </h5>
@@ -69,7 +69,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
                                                                       <span id="quizzSelected">Selectionner un quizz</span>
                                                                </button>
-                                                               <ul class="dropdown-menu w-100 text-center" id="quizzList">
+                                                               <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
                                                                </ul>
                                                         </div>
                                                  </div>
@@ -80,7 +80,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                                <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
                                                                       <span id="groupSelected">Selectionner un groupe</span>
                                                                </button>
-                                                               <ul class="dropdown-menu w-100 text-center" id="groupsList">
+                                                               <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="groupsList">
                                                                </ul>
                                                         </div>
                                                  </div>

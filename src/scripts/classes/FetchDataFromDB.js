@@ -12,7 +12,7 @@ class FetchDataFromDB {
                      .then(array => {
                             if (array[0] == "success") {
                                    if (array[1].length > 0) {
-                                          return Array('sucessful', array[1]);
+                                          return Array('success', array[1]);
                                    }
                                    else {
                                           return Array('error', 'Vous devez créer un quizz avant de pouvoir créer une session');
@@ -32,7 +32,7 @@ class FetchDataFromDB {
                      .then(array => {
                             if (array[0] == "success") {
                                    if (array[1].length > 0) {
-                                          return Array('sucessful', array[1]);
+                                          return Array('success', array[1]);
                                    }
                                    else {
                                           return Array('error', "Il n'y a pas de groupe d'étudiants enregistré");

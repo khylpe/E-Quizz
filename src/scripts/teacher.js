@@ -1,27 +1,21 @@
 /* Description: This file contains the javascript code for the teacher page */
 
 mail = document.querySelector('#mail').innerText;
-let socket = io('http://localhost:8100/');
-
-socket.on('connect', () => {
-       socket.emit('teacher', mail);
-});
 let fetchData = new FetchDataFromDB(mail);
 let manageFront = new ManageFront();
+let socket = io('http://localhost:8100/');
 
 /*     fetch the list of quizz and display it by 
        passing the returned value of 'fetchQuizzList' method from FetchDataFromDB class
-       to 'displayQuizzList' method from manageFront class */
+       to 'displayQuizzList' method from manageFront class, if true is returned, do the same for the students */
 
 fetchData.fetchQuizzList()
-       .then(value => manageFront.displayQuizzList(value));
-
-/*     fetch the list of groups and display it by 
-       passing the returned value of 'fetchStudentGroups' method from FetchDataFromDB class
-        to 'displayStudentGroups' method from manageFront class */
-
-fetchData.fetchStudentGroups()
-       .then(value => manageFront.displayStudentGroups(value));
+       .then(value => {
+              if (manageFront.displayQuizzList(value)) {
+                     fetchData.fetchStudentGroups()
+                     .then(value => manageFront.displayStudentGroups(value));
+              }
+       });
 
 function updateStudentList(studentName, id, status, numberOfRegisteredStudents) {
        if (status == "not registered anymore") {
