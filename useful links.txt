@@ -21,3 +21,4 @@ https://www.quennec.fr/trucs-astuces/applications/mysql/se-connecter-%C3%A0-un-s
 https://howchoo.com/javascript/how-to-manage-cookies-in-javascript#documentcookie
 https://socket.io/docs/v4/handling-cors/
 https://stackoverflow.com/a/8945912/19601188
+https://stackoverflow.com/a/39813096/19601188
