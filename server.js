@@ -9,7 +9,12 @@ let quizzTitle = null;
 let groupName = null;
 let teacher = null;
 let sessionStatus = "notConnected";
+let listOfStudents = ["dd.dd@mm.cc"];
+let listOfStudentsID = [];
 let numberOfConnectedStudents = 0;
+let numberOfRegisteredStudents = 0;
+
+
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -20,7 +25,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', function (client) {
-       if (client.handshake.headers.origin == 'http://e-quizz.test') {
+       if (client.handshake.headers.origin == 'http://e-quizz.test') { // client is a teacher
               client.on('resetSession', () => {
                      quizzTitle = null;
                      groupName = null;
@@ -40,6 +45,8 @@ io.on('connection', function (client) {
 
               client.on('createSession', (data) => {
                      io.to('teacher').emit('sessionCreated', data);
+                     io.to('student').emit('sessionCreated', data);
+
                      quizzTitle = data.quizzName;
                      teacher = data.mail;
                      groupName = data.groupName;
@@ -51,6 +58,7 @@ io.on('connection', function (client) {
                             teacher: teacher,
                             numberOfConnectedStudents: numberOfConnectedStudents
                      });
+
               });
 
               client.on('startSession', (data) => {
@@ -64,7 +72,62 @@ io.on('connection', function (client) {
                      teacher: teacher,
                      numberOfConnectedStudents: numberOfConnectedStudents
               });
+              client.emit('teacherConnected');
+
+
+       }
+       else if (client.handshake.address.includes('127.0.0.1')) { // client is a student
+              console.log("je suis un étudiant");
+              
+              io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents)
+              client.on('studentRegistered', (msg) => {                     
+                     if (listOfStudents.includes(msg)) {
+                            client.emit('doublons');
+                     }
+                     else{
+                            client.join('student');
+                            client.ID = createUniqueID();
+                            io.to('teacher').emit('studentRegisteredChanged', {     mail:msg,
+                                                                                    numberOfRegisteredStudents:++numberOfRegisteredStudents,
+                                                                                    status:"registered",
+                                                                                    id:client.ID
+                                                                             });
+
+                                                                             console.log(client.ID);
+                     }
+                     console.log("Message:" + msg);
+              });
+
+              client.on('disconnect', (client) => {
+                     io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
+              });
+       } else { // unknown user
+              client.removeAllListeners();
+              client.disconnect();
+              return;
        }
 });
 
+
+
+// io.on('connection', (socket) => {
+//     console.log('Un utilisateur s\est connecté')
+
+//     socket.on('chat message', (msg) => {
+//          console.log("Message:" + msg);
+//      });
+// })
+
+// not registered anymore = disconnecté
+
 server.listen(8100);
+
+function createUniqueID() {
+       let ID = Math.floor(Math.random() * 1000000);
+       if (listOfStudentsID.includes(ID)) {
+              createUniqueID();
+       } else {
+              listOfStudentsID.push(ID);
+              return ID;
+       }
+}

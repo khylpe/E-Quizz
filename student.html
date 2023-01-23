@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,8 +10,18 @@
 </head>
 
 <body>
-    
-            <h1>Accueil</h1>
 
+    <h1>Accueil</h1>
+    <div id="identification"></div>
+
+    <form>
+        <input type="email" id="mailAddress" autocomplete="off" />
+        <button>Envoyer</button>
+    </form>
+    <p id="student"></p>
+    <p id="teacherNotConnect"></p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts/student.js"></script>
 </body>
+
 </html>
