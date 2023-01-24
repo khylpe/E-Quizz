@@ -50,6 +50,26 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <div id="tempMessage" role="alert">
        </div>
+       <div class="accordion-item container text-center mt-5" id="sessionInfo">
+              <div class="col-lg-6 offset-lg-3">
+                     <div class="card accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                   <h5 class="card-header w-100 text-center">
+                                          Informations de la session </h5>
+                            </button>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                   <div class="accordion-body">
+                                          <ui class="list-group">
+                                                 <li class="list-group-item list-group-item-info" id="sessionStatusInfo"></li>
+                                                 <li class="list-group-item list-group-item-info" id="teacherInfo"></li>
+                                                 <li class="list-group-item list-group-item-info" id="quizzInfo"></li>
+                                                 <li class="list-group-item list-group-item-info" id="groupInfo"></li>
+                                          </ui>
+                                   </div>
+                            </div>
+                     </div>
+              </div>
+       </div>
 
        <section id="sectionCreateSession">
               <div class="container text-center mt-5" id="createSession">
@@ -114,24 +134,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           </ul>
                                    </div>
                             </div>
-                            <div class="container text-center mt-5" id="sessionInfo">
-                                   <div class="row">
-                                          <div class="col-lg-6 offset-lg-3">
-                                                 <div class="card text-center">
-                                                        <h5 class="card-header">Informations de la session
-                                                        </h5>
-                                                        <div class="card-body">
-                                                               <ui class="list-group">
-                                                                      <li class="list-group-item list-group-item-info" id="sessionStatusInfo"></li>
-                                                                      <li class="list-group-item list-group-item-info" id="teacherInfo"></li>
-                                                                      <li class="list-group-item list-group-item-info" id="quizzInfo"></li>
-                                                                      <li class="list-group-item list-group-item-info" id="groupInfo"></li>
-                                                               </ui>
-                                                        </div>
-                                                 </div>
-                                          </div>
-                                   </div>
-                            </div>
                      </div>
                      <div class="text-center mt-5">
                             <button type="submit" class="btn btn-primary" id="startSession">Commencer
@@ -139,10 +141,37 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </div>
        </section>
+
+       <section id="sectionDisplayQuestions">
+              <div class="container col-8 mt-5" id="displayQuestions">
+                     <div class="card text-center list-group">
+                            <h5 class="card-header list-group-item list-group-item-primary border border-primary-subtle" id="question">Quelle est la capitale de la France ?</h5>
+                            <div class="card-body" id="possibleAnswers"> 
+                                   <!-- <div class="d-flex flex-column">
+                                          <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
+                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">1. Element</p>
+                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">2. Element</p>
+                                          </div>
+                                          <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
+                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">3. Element</p>
+                                          </div>
+                                   </div>                                   -->
+                            </div>
+
+                     </div>
+
+                     <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-primary" id="nextQuestion">Question
+                                   suivante</button>
+                     </div>
+
+       </section>
+
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
        <script src="src/scripts/classes/FetchDataFromDB.js"></script>
        <script src="src/scripts/classes/teacher.js"></script>
        <script src="src/scripts/teacher.js"></script>
 </body>
+
 </html>

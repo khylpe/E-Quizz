@@ -3,14 +3,16 @@ document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants en
 document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
 document.querySelector('#sectionSessionStatus').style.display = "none";
 document.querySelector('#tempMessage').style.display = "none";
+document.querySelector('#sessionInfo').style.display = "none";
+document.querySelector('#sectionDisplayQuestions').style.display = "none";
 
-let mail = document.querySelector('#mail').innerText; // attention
+
+mail = document.querySelector('#mail').innerText; // attention
 let maClasse = new teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
 
-socketIO = io('http://10.69.88.32:8100/', { transports: ["websocket"] });
+socketIO = io('http://127.0.0.1:8100/', { transports: ["websocket"] });
 
-////////////////////////////////////////////////////////
 socketIO.on('connect', () => {
        fetchData.fetchQuizzList()
               .then(value => {
@@ -33,13 +35,13 @@ socketIO.on('connect', () => {
                                           document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
                                           document.querySelector('#submitCreateSession').classList.remove('disabled');
                                    });
-                            });    
+                            });
                      }
               });
 });
 
-//////////////////////////////////////////////////////////////////////////
 socketIO.on('sessionStatus', (data) => {
+       console.log(data);
        if (data.sessionStatus != 'notConnected') {
               if (maClasse.mail != data.teacher) {
                      maClasse.tempMessage('error', 'Une autre session est en cours', '#tempMessage');
@@ -49,13 +51,22 @@ socketIO.on('sessionStatus', (data) => {
               }
 
               maClasse.changeCurrentSection(`section${data.sessionStatus}`);
-              if (data.sessionStatus == 'SessionStatus') {
+              if(data.sessionStatus == 'SessionStatus' || data.sessionStatus == 'DisplayQuestions'){
                      maClasse.updateSessionInformations(data);
+              }
+              if (data.sessionStatus == 'SessionStatus') {
+                     data.listOfRegisteredStudents.forEach((student) => {
+                            console.log(student)
+                            maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
+                     });
               }
        }
 });
 
-//////////////////////////////////////////////////////////////////////////
+socketIO.on('sessionStatusChanged', (data) => {
+       maClasse.changeCurrentSection(`section${data}`);
+});
+
 socketIO.on('sessionCreated', (data) => {
        maClasse.tempMessage('success',
               `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
@@ -72,14 +83,32 @@ socketIO.on('numberOfConnectedStudentChanged', (data) => {
 socketIO.on('studentRegisteredChanged', (data) => {
        let studentMail = data.mail;
        let status = data.status;
-       let studentID = data.id;
        let numberOfRegisteredStudents = data.numberOfRegisteredStudents;
 
-       maClasse.updateStudentList(studentMail, studentID, status, numberOfRegisteredStudents);
+       maClasse.updateStudentList(studentMail, status, numberOfRegisteredStudents);
 
 });
 
+socketIO.on('sessionStarted', (data) => {
+       maClasse.changeCurrentSection('sectionDisplayQuestions');
+       maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
+       socketIO.emit('getNextQuestion');
+});
+
+socketIO.on('nextQuestion', (data) => {
+       console.log(data);
+       let question, answers, questionNumber, numberOfQuestions;
+       if (data) {
+              question = data.question;
+              answers = data.answers;
+              questionNumber = data.questionNumber;
+              numberOfQuestions = data.numberOfQuestions; 
+              maClasse.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
+       }
+});
+
 //////////////////////////////////////////////////////////////////////////////
+
 document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        e.preventDefault();
        let quizzName = document.querySelector('#quizzSelected').innerText;
@@ -93,5 +122,14 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 document.querySelector('#startSession').addEventListener('click', () => {
        fetchData.fetchQuestionsAndAnswers('Quizz de teste 1', 'crahe.arthur@gmail.com').then(value => {
               console.log(value);
-       })
+              socketIO.emit('startSession', value);
+
+       });
+
 });
+
+document.querySelector('#nextQuestion').addEventListener('click', (e) => {
+       e.preventDefault();
+       socketIO.emit('getNextQuestion');
+
+})
