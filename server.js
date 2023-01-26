@@ -1,3 +1,5 @@
+const { url } = require('inspector');
+
 const express = require('express'),
        app = express(),
        http = require('http'),
@@ -24,7 +26,8 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', function (client) {
-       if (client.handshake.headers.origin == 'http://e-quizz.test') { // client is a teacher
+       console.log(client.handshake.headers.origin);
+              if (client.handshake.headers.origin.includes('10.69.88.55')) { // client is a teacher
               /* things to do when a teacher connects */
               client.join("teacher");
               client.emit('teacherConnected');
@@ -62,6 +65,8 @@ io.on('connection', function (client) {
               });
 
               client.on('createSession', (data) => {
+
+                     console.log('createSession');
                      io.to('teacher').emit('sessionCreated', data);
                      io.to('student').emit('sessionCreated', data);
 
@@ -100,15 +105,19 @@ io.on('connection', function (client) {
                      io.to('teacher').emit('nextQuestion', {question: questionAndAnswers[0], answers: questionAndAnswers[1], questionNumber: currentQuestion, numberOfQuestions: quizz[1].length});
               });              
        }
-       else if (client.handshake.address.includes('127.0.0.1')) { // client is a student
+       else if(client.handshake.headers.origin.includes('10.69.88.32')){ // client is a student
+              console.log('bjdibnhjiobnhjio');
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
-              client.on('studentRegistered', (msg) => {
+              client.on('studentVerificated', (msg) => {
                      listOfStudents.forEach(element => {
                             if (element.mail == msg) {
                                    client.emit('doublons');
+                            }
+                            else{
+                                   client.emit('studentRegistered');
                                    return;
                             }
                      });
@@ -127,12 +136,12 @@ io.on('connection', function (client) {
               client.on('disconnect', (client) => {
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });
-       } else { // unknown user
-              /* things to do when an unknown user connects */
-              client.removeAllListeners();
-              client.disconnect();
-              return;
-       }
+        } else { // unknown user
+               /* things to do when an unknown user connects */
+               client.removeAllListeners();
+               client.disconnect();
+               return;
+        }
 });
 
 
