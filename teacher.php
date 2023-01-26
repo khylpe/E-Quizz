@@ -34,7 +34,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li>
                                                         <hr class="dropdown-divider">
                                                  </li>
-                                                 <li><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
+                                                 <li>
+                                                        <a href="createQuizz.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
+                                                 </li>
+                                                 <li class="mt-1"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
 
@@ -46,7 +49,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </nav>
        </div>
        <hr class="container">
-       </div>
 
        <div id="tempMessage" role="alert">
        </div>
@@ -146,7 +148,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div class="container col-8 mt-5" id="displayQuestions">
                      <div class="card text-center list-group">
                             <h5 class="card-header list-group-item list-group-item-primary border border-primary-subtle" id="question">Quelle est la capitale de la France ?</h5>
-                            <div class="card-body" id="possibleAnswers"> 
+                            <div class="card-body" id="possibleAnswers">
                                    <!-- <div class="d-flex flex-column">
                                           <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
                                                  <p class="list-group-item border rounded-end rounded-start border-primary-subtle">1. Element</p>
@@ -155,7 +157,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
                                                  <p class="list-group-item border rounded-end rounded-start border-primary-subtle">3. Element</p>
                                           </div>
-                                   </div>                                   -->
+                                   </div> -->
                             </div>
 
                      </div>

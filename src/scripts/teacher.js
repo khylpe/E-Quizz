@@ -11,7 +11,7 @@ mail = document.querySelector('#mail').innerText; // attention
 let maClasse = new teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
 
-socketIO = io('http://127.0.0.1:8100/', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.32:8100/', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        fetchData.fetchQuizzList()
@@ -56,7 +56,6 @@ socketIO.on('sessionStatus', (data) => {
               }
               if (data.sessionStatus == 'SessionStatus') {
                      data.listOfRegisteredStudents.forEach((student) => {
-                            console.log(student)
                             maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
                      });
               }
@@ -111,6 +110,7 @@ socketIO.on('nextQuestion', (data) => {
 
 document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        e.preventDefault();
+       console.log('sessions should be created');
        let quizzName = document.querySelector('#quizzSelected').innerText;
        let groupName = document.querySelector('#groupSelected').innerText;
 

@@ -153,6 +153,7 @@ class teacher {
                      document.querySelector(`#${studentName}`).classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
               }
        }
+
        displayQuestion(question, answers, questionNumber, numberOfQuestions, selectorForQuestion, selectorForAnswers) {
               document.querySelector(selectorForAnswers).innerHTML = "";
               /*document.querySelector('#questionNumber').innerHTML = `Question ${questionNumber} sur ${numberOfQuestions}`;
