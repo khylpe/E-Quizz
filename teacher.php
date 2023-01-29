@@ -40,7 +40,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li class="mt-1"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
-
                             </div>
                             <h1 class="navbar-nav col-6 justify-content-center">
                                    E-Quizz

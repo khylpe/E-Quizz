@@ -11,9 +11,14 @@ mail = document.querySelector('#mail').innerText; // attention
 let maClasse = new teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
 
-socketIO = io('http://10.69.88.32:8100/', { transports: ["websocket"] });
+let quizzName;
+let groupName;
+
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
+       socketIO.emit('checkMail', mail);
+
        fetchData.fetchQuizzList()
               .then(value => {
                      let liListe = maClasse.displayQuizzList(value, '#quizzList');
@@ -40,28 +45,6 @@ socketIO.on('connect', () => {
               });
 });
 
-socketIO.on('sessionStatus', (data) => {
-       console.log(data);
-       if (data.sessionStatus != 'notConnected') {
-              if (maClasse.mail != data.teacher) {
-                     maClasse.tempMessage('error', 'Une autre session est en cours', '#tempMessage');
-                     maClasse.changeCurrentSection('sectionCreateSession');
-                     this.socketIO.emit('resetSession');
-                     return;
-              }
-
-              maClasse.changeCurrentSection(`section${data.sessionStatus}`);
-              if(data.sessionStatus == 'SessionStatus' || data.sessionStatus == 'DisplayQuestions'){
-                     maClasse.updateSessionInformations(data);
-              }
-              if (data.sessionStatus == 'SessionStatus') {
-                     data.listOfRegisteredStudents.forEach((student) => {
-                            maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
-                     });
-              }
-       }
-});
-
 socketIO.on('sessionStatusChanged', (data) => {
        maClasse.changeCurrentSection(`section${data}`);
 });
@@ -85,7 +68,6 @@ socketIO.on('studentRegisteredChanged', (data) => {
        let numberOfRegisteredStudents = data.numberOfRegisteredStudents;
 
        maClasse.updateStudentList(studentMail, status, numberOfRegisteredStudents);
-
 });
 
 socketIO.on('sessionStarted', (data) => {
@@ -95,24 +77,48 @@ socketIO.on('sessionStarted', (data) => {
 });
 
 socketIO.on('nextQuestion', (data) => {
-       console.log(data);
        let question, answers, questionNumber, numberOfQuestions;
        if (data) {
-              question = data.question;
-              answers = data.answers;
-              questionNumber = data.questionNumber;
-              numberOfQuestions = data.numberOfQuestions; 
+              question = data.currentQuestion;
+              answers = data.currentAnswers;
+              questionNumber = data.currentQuestionNumber;
+              numberOfQuestions = data.numberOfQuestions;
               maClasse.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
        }
+});
+
+socketIO.on('updateSessionStatus', (data) => { 
+       maClasse.changeCurrentSection(`section${data.sessionStatus}`);
+
+       if (data.sessionStatus != 'CreateSession') {
+              mail = data.teacher;
+              quizzName = data.quizzTitle;
+              maClasse.updateSessionStatus(data);
+       }
+});
+
+socketIO.on('anotherTeacherConnected', (data) => {
+       maClasse.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
+       maClasse.changeCurrentSection('sectionCreateSession');
+       buttonDisplayQuizzList = document.querySelector('#buttonDisplayQuizzList');
+       buttonDisplayQuizzList.classList.add('disabled');
+       buttonDisplayStudentGroup = document.querySelector('#dropdownButtonStudentGroup');
+       buttonDisplayStudentGroup.classList.add('disabled');
+       buttonCreateSession = document.querySelector('#submitCreateSession');
+       buttonCreateSession.classList.add('disabled');
+
 });
 
 //////////////////////////////////////////////////////////////////////////////
 
 document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
+       socketIO.emit('checkMail', mail);
+
        e.preventDefault();
-       console.log('sessions should be created');
-       let quizzName = document.querySelector('#quizzSelected').innerText;
-       let groupName = document.querySelector('#groupSelected').innerText;
+       quizzName = document.querySelector('#quizzSelected').innerText;
+       groupName = document.querySelector('#groupSelected').innerText;
+
+       console.log(this.mail)
 
        if (quizzName != "Selectionner un quizz" && groupName != "Selectionner un groupe" && quizzName != null && groupName != null) {
               socketIO.emit('createSession', { quizzName: quizzName, groupName: groupName, mail: this.mail });
@@ -120,12 +126,9 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 });
 
 document.querySelector('#startSession').addEventListener('click', () => {
-       fetchData.fetchQuestionsAndAnswers('Quizz de teste 1', 'crahe.arthur@gmail.com').then(value => {
-              console.log(value);
+       fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               socketIO.emit('startSession', value);
-
        });
-
 });
 
 document.querySelector('#nextQuestion').addEventListener('click', (e) => {

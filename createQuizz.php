@@ -13,7 +13,7 @@
 
 <body>
 
-<div class="container">
+       <div class="container">
               <nav class="navbar navbar-expand">
                      <div class="collapse navbar-collapse d-flex">
                             <div class="d-flex col-3 justify-content-start">
@@ -45,81 +45,84 @@
 
 
 
-       <div class="container text-center">
-              
+       <section class="container text-center" id="creatingQuizz">
               <div class="col-6 text-center offset-3">
-                     
-
                      <div id="title" class="mt-5">
-                            <div class="col">
-                                   <label for="quizzTitle">Titre du QCM</label>
-                                   <input type="text" class="form-control" id="quizzTitle" placeholder="">
-                            </div>
+                            <form id="quizzTitleForm">
+                                   <div class="col">
+                                          <label for="quizzTitle">Titre du QCM</label>
+                                          <input type="text" class="form-control mt-3" id="quizzTitle" placeholder="" autocapitalize="sentences" required autocomplete="off">
+                                   </div>
 
-                            <button id="confirmTitle" class="mt-5 btn btn-primary">Confirmer le titre</button>
-
+                                   <button id="confirmTitle" type="submit" class="mt-5 btn btn-primary">Confirmer le titre</button>
+                            </form>
                      </div>
 
                      <div id="questionAndAnswers">
-                            <div id="question">
-                                   <div class="col">
-                                          <label for="questionValue" id="questionNumber">Question n°1 :</label>
-                                          <input type="text" class="form-control" id="questionValue">
-                                   </div>
-                            </div>
-
-                            <div id="answers" class="mt-5 d-flex flex-column">
-                                   <label for="answer1">Réponse 1 : </label>
-                                   <input class="form-control" type="text" name="" id="answer1">
-
-                                   <label for="answer2" class="mt-4">Réponse 2 : </label>
-                                   <input type="text" name="" class="form-control" id="answer2">
-
-                                   <label for="answer3" class="mt-4">Réponse 3 : </label>
-                                   <input type="text" name="" class="form-control" id="answer3">
-
-                                   <label for="answer4" class="mt-4">Réponse 4 : </label>
-                                   <input type="text" name="" class="form-control" id="answer4">
-
-                                   <h3 class="mt-5">Cochez la ou les bonnes réponses : </h3>
-
-                                   <div class="form-check text-start">
-                                          <label class="form-check-label" for="flexCheckDefault">Réponse n°1</label>
-                                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <form id="confirmQuestionAndAnswersForm">
+                                   <div id="question">
+                                          <div class="col">
+                                                 <label for="questionValue" id="questionNumber">Question n°1 :</label>
+                                                 <input type="text" class="form-control" id="questionValue" required autocomplete="off" autocapitalize="sentences">
+                                          </div>
                                    </div>
 
-                                   <div class="form-check text-start">
-                                          <label class="form-check-label" for="flexCheckDefault">Réponse n°2</label>
-                                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                   </div>
+                                   <div id="answers" class="mt-5 d-flex flex-column">
+                                          <label for="answer1">Réponse 1 : </label>
+                                          <input class="form-control" type="text" name="" id="answer1" required autocomplete="off" autocapitalize="sentences">
 
-                                   <div class="form-check text-start">
-                                          <label class="form-check-label" for="flexCheckDefault">Réponse n°3</label>
-                                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                   </div>
+                                          <label for="answer2" class="mt-4">Réponse 2 : </label>
+                                          <input type="text" name="" class="form-control" id="answer2" required autocomplete="off" autocapitalize="on">
 
-                                   <div class="form-check text-start">
-                                          <label class="form-check-label" for="flexCheckDefault">Réponse n°4</label>
-                                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                   </div>
+                                          <label for="answer3" class="mt-4">Réponse 3 : </label>
+                                          <input type="text" name="" class="form-control" id="answer3" autocomplete="off" autocapitalize="sentences">
 
-                            </div>
-                            <div class="d-flex flex-column">
-                                   <button id="confirmQuestionAndAnswers" class=" btn btn-primary mt-5">Confirmer cette question et ses réponses</button>
-                                   <button id="confirmQuizz" class="btn btn-success mt-5">Confirmer la création du quizz</button>
-                            </div>
+                                          <label for="answer4" class="mt-4">Réponse 4 : </label>
+                                          <input type="text" name="" class="form-control" id="answer4" autocomplete="off" autocapitalize="sentences">
+
+                                          <h3 class="mt-5">Cochez la ou les bonnes réponses : </h3>
+
+                                          <div class="form-check text-start">
+                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°1</label>
+                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                          </div>
+
+                                          <div class="form-check text-start">
+                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°2</label>
+                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                          </div>
+
+                                          <div class="form-check text-start">
+                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°3</label>
+                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                          </div>
+
+                                          <div class="form-check text-start">
+                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°4</label>
+                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                          </div>
+
+                                   </div>
+                                   <div class="d-flex flex-column mb-5">
+                                          <button id="confirmQuestionAndAnswers" type="submit" class=" btn btn-primary mt-5">Confirmer cette question et ses réponses</button>
+                                   </div>
+                            </form>
                      </div>
 
-
-
+                     <button id="confirmQuizz" class="btn btn-success mt-5">Confirmer la création du quizz</button>
 
               </div>
+       </section>
+
+       <section class="container text-center" id="confirmQuizz">
+              <div class="col-6 text-center offset-3" id="dataConfirmQuizz">
+              </div>
+       </section>
 
 
-       </div>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+       <script src="src/scripts/classes/teacher.js"></script>
        <script src="src/scripts/createQCM.js"></script>
-
 </body>
 
 </html>

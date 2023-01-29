@@ -97,14 +97,16 @@ class teacher {
               return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188
        }
 
-       updateSessionInformations(data) {
+       updateSessionStatus(data) {
+              console.log('test')
               if (this.getCurrentSection().id == "sectionCreateSession") {
                      document.querySelector('#sessionInfo').style.display = "none";
-                     return
+                     return;
               }
+              console.log('updateSessionStatus');
               document.querySelector('#sessionInfo').style.display = "block";
               let status;
-              if (data.sessionStatus == "notConnected")
+              if (data.sessionStatus == "CreateSession")
                      status = "Pas connecté";
               else if (data.sessionStatus == "SessionStatus")
                      status = "Session créée, en attente de démarrage";
@@ -187,7 +189,7 @@ class teacher {
               secondAnswer.innerText = `2. ${answers[1]}`;
               secondDiv.appendChild(secondAnswer);
 
-              if (answers.length > 2) {
+              if (answers.length > 2 && answers[2] != "") {
                      let thirdDiv = document.createElement('div');
                      thirdDiv.classList = 'list-group d-flex flex-row justify-content-evenly align-items-center';
                      firstDiv.appendChild(thirdDiv);
@@ -196,7 +198,7 @@ class teacher {
                      thirdAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
                      thirdAnswer.innerText = `3. ${answers[2]}`;
                      thirdDiv.appendChild(thirdAnswer);
-                     if(answers.length == 4){
+                     if(answers.length == 4 && answers[3] != ""){
                             let fourthAnswer = document.createElement('p');
                             fourthAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
                             fourthAnswer.innerText = `4. ${answers[3]}`;
@@ -206,4 +208,56 @@ class teacher {
 
 
        }
+
+       /* methods for createQuizz.php */
+
+       createAndAppendConfirmQuizzTitle(title, selector) {
+              let confirmDataDiv = document.querySelector(selector);
+              let confirmTitle = document.createElement('div');
+              confirmTitle.classList.add('mt-5');
+              confirmTitle.setAttribute('id', 'confirmTitle');
+              let col = document.createElement('div');
+              col.classList.add('col');
+              confirmTitle.appendChild(col);
+              let label = document.createElement('label');
+              label.setAttribute('for', 'confirmQuizzTitle');
+              label.innerHTML = 'Titre du QCM';
+              col.appendChild(label);
+       
+              let div = document.createElement('div');
+              div.classList.add('d-flex', 'flex-row', 'align-items-center');
+              col.appendChild(div);
+              let input = document.createElement('input');
+              input.classList = 'form-control me-3';
+              input.setAttribute('id', 'confirmQuizzTitle');
+              input.setAttribute('type', 'text');
+              input.setAttribute('value', title);
+              input.setAttribute('disabled', 'disabled');
+              div.appendChild(input);
+              let i = document.createElement('i');
+              i.classList = 'bi bi-pen';
+              i.setAttribute('id', 'editOrConfirmTitle');
+              i.style = "font-size: 2rem;";
+              div.appendChild(i);
+              confirmDataDiv.appendChild(confirmTitle);
+       
+       
+              let editOrConfirmTitle = document.querySelector('#editOrConfirmTitle');
+       
+              editOrConfirmTitle.addEventListener('click', (e) => {
+                     console.log(input.hasAttribute('disabled'));
+                     if (input.hasAttribute('disabled')) {
+                            input.removeAttribute('disabled');
+                            editOrConfirmTitle.classList = 'bi-check';
+                            editOrConfirmTitle.style = "font-size: 2rem;";
+       
+                     } else {
+                            editOrConfirmTitle.classList = 'bi-pen';
+                            editOrConfirmTitle.style = "font-size: 2rem;";
+                            input.setAttribute('disabled', 'disabled');
+                     }
+       
+              });
+       }
+
 }
