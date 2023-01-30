@@ -1,5 +1,3 @@
-const { url } = require('inspector');
-
 const express = require('express'),
        app = express(),
        http = require('http'),
@@ -14,6 +12,7 @@ let sessionStatus = "CreateSession";
 let numberOfConnectedStudents = 0;
 let numberOfRegisteredStudents = 0;
 let listOfStudents = [];
+let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberCurrentQuestion = 0;
 
@@ -29,7 +28,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 
 io.on('connection', function (client) {
        console.log(client.handshake.headers.origin);
-       if (client.handshake.headers.origin.includes('http://10.191.179.176')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -84,39 +83,42 @@ io.on('connection', function (client) {
                                    if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if it's the last question
                                           client.emit('endOfQuizz');
                                    } else {
+                                          console.log(quizzQuestionsAndAnswers);
                                           currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
                                           client.emit('nextQuestion', getCurrentQuestionAndAnswers());
                                    }
                             });
-
                      }
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
-              console.log('bjdibnhjiobnhjio');
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
+              console.log('is student');
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
               client.on('studentVerificated', (msg) => {
-                     listOfStudents.forEach(element => {
-                            if (element.mail == msg) {
-                                   client.emit('doublons');
-                                   return;
-                            }
-                     });
+                     if (listOfMails.includes(msg)) {
+                            client.emit('doublons');
+                     }
+                     else {
+                            client.emit('studentRegistered');
+                            console.log("student registered");
+                            client.join('student');
+                            io.to('teacher').emit('studentRegisteredChanged', {
+                                   mail: msg,
+                                   numberOfRegisteredStudents: ++numberOfRegisteredStudents,
+                                   status: "registered",
+                            });
 
-                     client.emit('studentRegistered');
+                            let tempsNewStudent = { mail: msg, status: "registered" };
+                            listOfStudents.push(tempsNewStudent);
+                            listOfMails.push(msg)
 
-                     client.join('student');
-                     io.to('teacher').emit('studentRegisteredChanged', {
-                            mail: msg,
-                            numberOfRegisteredStudents: ++numberOfRegisteredStudents,
-                            status: "registered",
-                     });
-
-                     let tempsNewStudent = { mail: msg, status: "registered" };
-                     listOfStudents.push(tempsNewStudent);
+                            client.on('coucouArthurJeSuisArrive', (data) =>{
+                                   console.log(data.txt);
+                            });
+                     }
               });
 
               client.on('disconnect', (client) => {
@@ -156,7 +158,6 @@ function getCurrentQuestionAndAnswers() {
               currentQuestionNumber: numberCurrentQuestion,
               numberOfQuestions: quizzQuestionsAndAnswers[1].length
        };
-       console.log(json);
        return json;
 }
 

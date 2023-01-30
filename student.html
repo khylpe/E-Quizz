@@ -11,27 +11,30 @@
 
 <body>
 
-    <h1>Accueil</h1>
-    <div id="identification"></div>
+    <h1 class="d-flex justify-content-center">E-QUIZZ</h1>
 
     <form>
-        <input type="email" id="mailAddress" autocomplete="off" />
+        <input type="email" id="mailAddress" autocomplete="off" required />
+
         <button id="btnSend">Envoyer</button>
+        <p id="student"></p>
+        <p id="teacherNotConnect"></p>
     </form>
-    <p id="student"></p>
-    <p id="teacherNotConnect"></p>
 
-
-    <div>
-        <button id="btnA">A</button>
-        <button id="btnb">B</button>
-        <button id="btnc">C</button>
-        <button id="btnd">D</button>
-        <button id="btnCor">CORRIGER</button>
-        <button id="btnVal">Valider</button>
-        <br>
-        <button id="btnHome">Home</button>
+    <div id="maDiv">
+    <div id="answers">
+        <button id="btnA" type="button" class="btn btn-outline-primary">A</button>
+        <button id="btnB" type="button" class="btn btn-outline-primary">B</button>
+        <button id="btnC" type="button" class="btn btn-outline-primary">C</button>
+        <button id="btnD" type="button" class="btn btn-outline-primary">D</button>
     </div>
+
+        <button id="btnCor" type="button" class="btn btn-danger">CORRIGER</button>
+        <button id="btnVal" type="button" class="btn btn-success">Valider</button>
+        <br>
+        <button id="btnHome" type="button" class="btn btn-info">HOME</button>
+    </div>
+
 
 
     <script src="/socket.io/socket.io.js"></script>
