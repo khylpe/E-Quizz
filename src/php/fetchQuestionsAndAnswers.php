@@ -20,11 +20,11 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                         `good answer4` 
                                                         FROM `quizz` 
                                                         WHERE `title` = :quizzTitle
-                                                        AND `author` = :mail");
+                                                        AND `author` = :uid");
 
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
-                     ':mail' => $data['author']
+                     ':uid' => $_SESSION['uid']
               ));
 
               $result = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);

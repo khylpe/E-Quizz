@@ -29,8 +29,9 @@ if (!isset($_POST['mail']) || !isset($_POST['password']) || empty($_POST['mail']
        }
 
        if ($resul) {
-              $_SESSION['mail'] = $mail;
+              $_SESSION['mail'] = $resul['mail'];
               $_SESSION['sessionStatus'] = 'connected';
+              $_SESSION['uid'] = $resul['id'];
               header('location:../../teacher.php');
               die();
        } else {

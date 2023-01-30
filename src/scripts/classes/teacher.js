@@ -12,12 +12,13 @@ class teacher {
                      return;
               }
 
-              let tempMessage = document.querySelector(selector);
-              tempMessage.innerHTML = message;
-              tempMessage.classList = 'text-center container ' + type;
-              tempMessage.style.display = "block";
+              let tempMessagee = document.querySelector(selector);
+              console.log(message);
+              tempMessagee.innerHTML = message;
+              tempMessagee.classList = 'text-center container ' + type;
+              tempMessagee.style.display = "block";
               setTimeout(() => {
-                     tempMessage.style.display = "none";
+                     tempMessagee.style.display = "none";
               }, 18000);
        }
 

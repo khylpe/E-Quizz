@@ -3,9 +3,11 @@ let questionsAndAnswers = [];
 let mail = document.querySelector('#mail').innerHTML;
 
 const maClasse = new teacher(mail);
+let fetchData = new FetchDataFromDB(mail);
 
 document.querySelector('section#creatingQuizz #questionAndAnswers').style.display = "none";
 document.querySelector('section#confirmQuizz').style.display = "none";
+document.querySelector('#checkQuizz').style.display = "none";
 
 document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
        e.preventDefault();
@@ -16,7 +18,7 @@ document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
 
 document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submit', (e) => {
        e.preventDefault();
-       document.querySelector('#confirmQuizz').style.display = "block";
+       document.querySelector('#checkQuizz').style.display = "inline-block";
 
        let questionAndAnswers = { question: "", answers: [], correctAnswers: [] };
 
@@ -41,13 +43,17 @@ document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submi
        document.querySelector('#answer4').value = "";
 
        document.querySelectorAll('input[type="checkbox"]').forEach(element => {
-              element.checked = false
+              element.checked = false;
        });
 
        document.querySelector('#questionNumber').innerHTML = `Question n°${questionsAndAnswers.length + 1} :`;
+
+       maClasse.tempMessage("success", "Question ajoutée avec succès", "#tempMessage");
 });
 
-document.querySelector('#confirmQuizz').addEventListener('click', async (e) => {
+document.querySelector('#checkQuizz').addEventListener('click', (e) => {
+       document.querySelector('#confirmQuizzButton').style.display = "inline-block";
+
        document.querySelector('section#creatingQuizz').style.display = "none";
        document.querySelector('section#confirmQuizz').style.display = "block";
        maClasse.createAndAppendConfirmQuizzTitle(quizzTitle, "section#confirmQuizz #dataConfirmQuizz");
@@ -62,7 +68,6 @@ document.querySelector('#confirmQuizz').addEventListener('click', async (e) => {
        questionsAndAnswers.forEach((element, index) => { // element = {question: "questionValue", answers: [], correctAnswers: []}
               createAccordionItemForQuestionAndAnswers(index + 1, element.question, element.answers, element.correctAnswers, "#accordionConfirmQuizz");
        });
-
 
        /* add the event listener to the buttons to modify the answers */
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
@@ -89,30 +94,51 @@ document.querySelector('#confirmQuizz').addEventListener('click', async (e) => {
               })
        });
        /* end of the event listener to the buttons to modify the answers */
-
-       return await fetch('/src/php/createQuizz.php', {
-              method: 'POST',
-              body: JSON.stringify({ mail: mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
-       })
-              .then(result => result.json())
-              .then(array => {
-                     if (array[0] == "success") {
-                            if (array[1].length > 0) {
-                                   return Array('success', array[1]);
-                            }
-                            else {
-                                   return Array('error', 'Vous devez créer un quizz avant de pouvoir créer une session');
-                            }
-                     } else {
-                            return Array('error', 'Une erreur est survenue lors de la récupération de la liste des quizz : ' + array[1]);
-                     }
-              })
-              .catch(err => {
-                     return Array('error', err);
-              });
 });
 
+document.querySelector('#confirmQuizzButton').addEventListener('click', async (e) => {
+       let finalQuestionsAndAnswers = [];
 
+       let allQuestionsAndAnswers = document.querySelectorAll('.questions');
+       allQuestionsAndAnswers.forEach((currentQuestion, index) => {
+
+              let allQuestionsAndAnswersID = currentQuestion.getAttribute('id'); // ex: questions1 which is the id of the div containing the question and the answers
+
+              let allPossibleAnswersForThisQuestion = document.querySelectorAll('#' + allQuestionsAndAnswersID + ' input[type="text"].answer');
+              let allCorrectAnswersForThisQuestion = document.querySelectorAll('#' + allQuestionsAndAnswersID + " input[type='checkbox']");
+
+              let questAndAns = { question: document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value, answers: [], correctAnswers: [] };
+
+              allPossibleAnswersForThisQuestion.forEach((element, index) => {
+                     questAndAns.answers.push(element.value);
+              });
+
+              allCorrectAnswersForThisQuestion.forEach((element, indexx) => {
+                     if (element.checked) {
+                            let tmp = indexx + 1;
+                            let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + tmp).value;
+                            questAndAns.correctAnswers.push(valueOfTheCorrectAnswer);
+                     }
+              });
+
+              finalQuestionsAndAnswers.push(questAndAns);
+       });
+
+       fetchData.createQuizz(mail, quizzTitle, finalQuestionsAndAnswers)
+              .then((response) => {
+                     console.log("response : " + response)
+                     if (response[0] == "success") {
+                            maClasse.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
+                            document.querySelector('#confirmQuizzButton').style.display = "none";
+                            /*document.querySelector('#returnToQuizzList').style.display = "inline-block";*/
+                     } else {
+                            maClasse.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
+                     }
+})
+              .catch((error) => {
+                     maClasse.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
+              });
+});
 
 function createAccordionItemForQuestionAndAnswers(questionNumber, question, answers, correctAnswers, selector) {
 
@@ -201,6 +227,7 @@ function createAccordionItemForQuestionAndAnswers(questionNumber, question, answ
               checkBox.setAttribute("value", "");
               checkBox.setAttribute("id", "checkBoxCorrectAnswer" + i);
               checkBox.setAttribute("disabled", "disabled");
+
               if (correctAnswers.includes(answers[i - 1])) {
                      checkBox.checked = true;
               } else {

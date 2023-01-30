@@ -40,7 +40,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li class="mt-1"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
-                            </div>
+                            </div> 
                             <h1 class="navbar-nav col-6 justify-content-center">
                                    E-Quizz
                             </h1>
@@ -148,15 +148,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      <div class="card text-center list-group">
                             <h5 class="card-header list-group-item list-group-item-primary border border-primary-subtle" id="question">Quelle est la capitale de la France ?</h5>
                             <div class="card-body" id="possibleAnswers">
-                                   <!-- <div class="d-flex flex-column">
-                                          <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
-                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">1. Element</p>
-                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">2. Element</p>
-                                          </div>
-                                          <div class="list-group d-flex flex-row justify-content-evenly align-items-center">
-                                                 <p class="list-group-item border rounded-end rounded-start border-primary-subtle">3. Element</p>
-                                          </div>
-                                   </div> -->
                             </div>
 
                      </div>

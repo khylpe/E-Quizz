@@ -43,7 +43,8 @@
        </div>
        <hr class="container">
 
-
+       <div id="tempMessage" role="alert">
+       </div>
 
        <section class="container text-center" id="creatingQuizz">
               <div class="col-6 text-center offset-3">
@@ -109,7 +110,7 @@
                             </form>
                      </div>
 
-                     <button id="confirmQuizz" class="btn btn-success mt-5">Confirmer la création du quizz</button>
+                     <button id="checkQuizz" class="btn btn-success mt-2">Vérifier</button>
 
               </div>
        </section>
@@ -117,10 +118,13 @@
        <section class="container text-center" id="confirmQuizz">
               <div class="col-6 text-center offset-3" id="dataConfirmQuizz">
               </div>
+              <div class="col-6 text-center offset-3">
+                     <button id="confirmQuizzButton" class="btn btn-success mt-5">Confirmer</button>
+              </div>
        </section>
 
-
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+       <script src="src/scripts/classes/FetchDataFromDB.js"></script>
        <script src="src/scripts/classes/teacher.js"></script>
        <script src="src/scripts/createQCM.js"></script>
 </body>

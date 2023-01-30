@@ -44,7 +44,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                    :goodanswer4)");
 
                      $insertQuizz->bindParam(':title', $title);
-                     $insertQuizz->bindParam(':author', $mail);
+                     $insertQuizz->bindParam(':author', $_SESSION['uid']);
                      $insertQuizz->bindParam(':question', $question);
                      $insertQuizz->bindParam(':answer1', $answers[0]);
                      $insertQuizz->bindParam(':answer2', $answers[1]);
@@ -57,8 +57,9 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      $insertQuizz->execute();
               }
 
-              $response = array('success');
+              $response = array('success', 'le Quizz a été créé');
               echo json_encode($response);
+              
        } catch (Exception $e) {
               $response = array('error', $e);
               echo json_encode($response);

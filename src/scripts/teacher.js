@@ -14,7 +14,7 @@ let fetchData = new FetchDataFromDB(mail);
 let quizzName;
 let groupName;
 
-socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        socketIO.emit('checkMail', mail);
@@ -126,6 +126,7 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 });
 
 document.querySelector('#startSession').addEventListener('click', () => {
+       console.log(quizzName);
        fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               socketIO.emit('startSession', value);
        });

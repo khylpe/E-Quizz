@@ -1,4 +1,5 @@
 <?php
+
 require('connectToDB.php');
 $mail = file_get_contents('php://input');
 
@@ -8,8 +9,8 @@ if($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || emp
        die();
 }else{
        try {
-       $fetchQuizzList = $db->prepare("SELECT DISTINCT title FROM quizz WHERE author = :mail");
-       $fetchQuizzList->execute(array(':mail' => $mail));
+       $fetchQuizzList = $db->prepare("SELECT DISTINCT title FROM quizz WHERE author = :uid");
+       $fetchQuizzList->execute(array(':uid' => $_SESSION['uid']));
 
        $result = $fetchQuizzList->fetchAll(PDO::FETCH_COLUMN, 0);
        $response = array('success', $result);

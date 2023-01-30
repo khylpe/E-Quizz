@@ -67,4 +67,22 @@ class FetchDataFromDB {
                             return Array('error', err);
                      });
        }
+
+       async createQuizz(mail, quizzTitle, questionsAndAnswers){
+              /*console.log(mail);
+              console.log(quizzTitle);
+              console.log(questionsAndAnswers);*/
+              return await fetch('/src/php/createQuizz.php', {
+                     method: 'POST',
+                     body: JSON.stringify({ mail: mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            console.log("array : " + array);
+                            return Array(array[0], array[1]);
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
+       }
 }
