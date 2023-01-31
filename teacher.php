@@ -37,7 +37,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li>
                                                         <a href="createQuizz.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
                                                  </li>
-                                                 <li class="mt-1"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
+                                                 <li class="mt-1" id="logout"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
                             </div> 

@@ -13,7 +13,6 @@ class teacher {
               }
 
               let tempMessagee = document.querySelector(selector);
-              console.log(message);
               tempMessagee.innerHTML = message;
               tempMessagee.classList = 'text-center container ' + type;
               tempMessagee.style.display = "block";
@@ -24,7 +23,7 @@ class teacher {
 
        displayQuizzList(data, selector) { /* [0] = error or success, [1] = quizzListTitles[] || error message */
               if (data[0] == "error") {
-                     this.tempMessage('error', data[1]);
+                     this.tempMessage('error', data[1], '#tempMessage');
                      return false;
               } else if (data[0] == "success" && data[1].length > 0) {
                      let quizzList = document.querySelector(selector);
@@ -55,7 +54,7 @@ class teacher {
 
        displayStudentGroups(data, selector) { /* [0] = error or success, [1] = studentGroups[] || error message */
               if (data[0] == "error") {
-                     this.tempMessage('error', data[1]);
+                     this.tempMessage('error', data[1], '#tempMessage');
                      return false;
               }
               else if (data[0] == "success" && data[1].length > 0) {
@@ -159,18 +158,12 @@ class teacher {
 
        displayQuestion(question, answers, questionNumber, numberOfQuestions, selectorForQuestion, selectorForAnswers) {
               document.querySelector(selectorForAnswers).innerHTML = "";
-              /*document.querySelector('#questionNumber').innerHTML = `Question ${questionNumber} sur ${numberOfQuestions}`;
-              document.querySelector('#question').innerHTML = question;
-              document.querySelector('#answer1').innerHTML = answers[0];
-              document.querySelector('#answer2').innerHTML = answers[1];
-              document.querySelector('#answer3').innerHTML = answers[2];
-              document.querySelector('#answer4').innerHTML = answers[3];*/
-              console.log('question : ' + question);
-              console.log('answers : ' + answers);
-              console.log('questionNumber : ' + questionNumber);
-              console.log('numberOfQuestions : ' + numberOfQuestions);
 
-              document.querySelector(selectorForQuestion).innerHTML = question;
+              if(!question.includes("?") && !question.includes(" ?")){
+                     document.querySelector(selectorForQuestion).innerHTML = question + ` ? (${questionNumber}/${numberOfQuestions})`;
+              }else{
+                     document.querySelector(selectorForQuestion).innerHTML = question + ` (${questionNumber}/${numberOfQuestions})`;
+              }
 
               let firstDiv = document.createElement('div');
               firstDiv.classList = "d-flex flex-column";
@@ -182,12 +175,12 @@ class teacher {
 
               let firstAnswer = document.createElement('p');
               firstAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-              firstAnswer.innerText = `1. ${answers[0]}`;
+              firstAnswer.innerText = `A. ${answers[0]}`;
               secondDiv.appendChild(firstAnswer);
 
               let secondAnswer = document.createElement('p');
               secondAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-              secondAnswer.innerText = `2. ${answers[1]}`;
+              secondAnswer.innerText = `B. ${answers[1]}`;
               secondDiv.appendChild(secondAnswer);
 
               if (answers.length > 2 && answers[2] != "") {
@@ -197,17 +190,15 @@ class teacher {
 
                      let thirdAnswer = document.createElement('p');
                      thirdAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-                     thirdAnswer.innerText = `3. ${answers[2]}`;
+                     thirdAnswer.innerText = `C. ${answers[2]}`;
                      thirdDiv.appendChild(thirdAnswer);
-                     if(answers.length == 4 && answers[3] != ""){
+                     if (answers.length == 4 && answers[3] != "") {
                             let fourthAnswer = document.createElement('p');
                             fourthAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-                            fourthAnswer.innerText = `4. ${answers[3]}`;
-                     thirdDiv.appendChild(fourthAnswer);
+                            fourthAnswer.innerText = `D. ${answers[3]}`;
+                            thirdDiv.appendChild(fourthAnswer);
                      }
               }
-
-
        }
 
        /* methods for createQuizz.php */
@@ -224,7 +215,7 @@ class teacher {
               label.setAttribute('for', 'confirmQuizzTitle');
               label.innerHTML = 'Titre du QCM';
               col.appendChild(label);
-       
+
               let div = document.createElement('div');
               div.classList.add('d-flex', 'flex-row', 'align-items-center');
               col.appendChild(div);
@@ -241,24 +232,23 @@ class teacher {
               i.style = "font-size: 2rem;";
               div.appendChild(i);
               confirmDataDiv.appendChild(confirmTitle);
-       
-       
+
+
               let editOrConfirmTitle = document.querySelector('#editOrConfirmTitle');
-       
+
               editOrConfirmTitle.addEventListener('click', (e) => {
                      console.log(input.hasAttribute('disabled'));
                      if (input.hasAttribute('disabled')) {
                             input.removeAttribute('disabled');
                             editOrConfirmTitle.classList = 'bi-check';
                             editOrConfirmTitle.style = "font-size: 2rem;";
-       
+
                      } else {
                             editOrConfirmTitle.classList = 'bi-pen';
                             editOrConfirmTitle.style = "font-size: 2rem;";
                             input.setAttribute('disabled', 'disabled');
                      }
-       
+
               });
        }
-
 }
