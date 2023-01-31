@@ -28,13 +28,13 @@ app.get('/', (dataFromClient, serverResponse) => {
 
 io.on('connection', function (client) {
        console.log(client.handshake.headers.origin);
-       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://10.191.179.176')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
-                     if (teacher != null && mail != teacher) {
+                     if (!checkMail(mail)) {
                             client.emit('anotherTeacherConnected');
-                            client.removeAllListeners();
+                            //client.removeAllListeners();
                      } else {
                             client.join("teacher");
                             client.emit('teacherConnected');
@@ -55,8 +55,11 @@ io.on('connection', function (client) {
 
                             /* events from teacher */
                             client.on('resetSession', () => {
+                                   console.log('resetSession');
                                    resetSession();
                                    client.emit('updateSessionStatus', getSessionStatus());
+                                   io.to('teacher').emit('teacherNotConnectedAnymore');
+
                             });
 
                             client.on('createSession', (data) => {
@@ -91,7 +94,7 @@ io.on('connection', function (client) {
                      }
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('8100')) { // client is a student
               console.log('is student');
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
@@ -103,7 +106,6 @@ io.on('connection', function (client) {
                      }
                      else {
                             client.emit('studentRegistered');
-                            console.log("student registered");
                             client.join('student');
                             io.to('teacher').emit('studentRegisteredChanged', {
                                    mail: msg,
@@ -131,6 +133,14 @@ io.on('connection', function (client) {
               return;
        }
 });
+
+function checkMail(mail) {
+       if (teacher != null && mail != teacher) { // another teacher is already connected
+              return false;
+       } else { // no teacher connected, allow connection
+              return true;
+       }
+}
 
 function getSessionStatus() {
        let json = {

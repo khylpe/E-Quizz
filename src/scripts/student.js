@@ -1,4 +1,4 @@
-const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
+const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
 
 let monForm = document.querySelector('form');
 let allReadyConnect = document.querySelector('#student');
