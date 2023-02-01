@@ -28,7 +28,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 
 io.on('connection', function (client) {
        console.log(client.handshake.headers.origin);
-       if (client.handshake.headers.origin.includes('http://10.191.179.176')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://192.168.1.35:8100')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
