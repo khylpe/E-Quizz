@@ -120,7 +120,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    <div class="card text-center">
                                           <h5 class="card-header">Nombre d'étudiants
                                                  connectés</h5>
-                                          <p class="card-body display-1" id="connectedStudents">0</p>
+                                          <p class="card-body display-1" id="numberOfConnectedStudents">0</p>
                                    </div>
                             </div>
                             <div class="col-6">

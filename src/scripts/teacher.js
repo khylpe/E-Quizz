@@ -1,6 +1,6 @@
 /* Description: This file contains the javascript code for the teacher page */
 document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants enregistrés`;
-document.querySelector('#studentList').style.minHeight = document.querySelector('#connectedStudents').offsetHeight + "px";
+document.querySelector('#studentList').style.minHeight = document.querySelector('#numberOfConnectedStudents').offsetHeight + "px";
 document.querySelector('#sectionSessionStatus').style.display = "none";
 document.querySelector('#tempMessage').style.display = "none";
 document.querySelector('#sessionInfo').style.display = "none";
@@ -14,7 +14,7 @@ let fetchData = new FetchDataFromDB(mail);
 let quizzName;
 let groupName;
 
-socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
 
 
 socketIO.on('connect', () => {
@@ -78,8 +78,8 @@ socketIO.on('connect', () => {
                      maClasse.changeCurrentSection('sectionSessionStatus');
               });
 
-              socketIO.on('numberOfConnectedStudentChanged', (data) => {
-                     document.querySelector('#connectedStudents').innerHTML = data;
+              socketIO.on('numberOfConnectedStudentChanged', (number) => {
+                     maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
               });
 
               socketIO.on('studentRegisteredChanged', (data) => {
@@ -93,6 +93,7 @@ socketIO.on('connect', () => {
               socketIO.on('sessionStarted', (data) => {
                      maClasse.changeCurrentSection('sectionDisplayQuestions');
                      maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
+                     console.log('sending getNextQuestion signal');
                      socketIO.emit('getNextQuestion');
               });
 
@@ -118,6 +119,20 @@ socketIO.on('connect', () => {
                             maClasse.updateSessionStatus(data);
                      }
               });
+
+              socketIO.on('studentAnswers', (data) => {
+                     console.log(data);
+              });
+
+              socketIO.on('updateStudentList', (data) => {
+                     console.log('tfiyguhjik');
+                     let studentList = data.listOfStudents;
+                     studentList.forEach((student) => {
+                            maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
+                     });
+
+                     maClasse.updateNumberOfConnectedStudents(data.numberOfConnectedStudents, '#numberOfConnectedStudents');
+              });
        });
 });
 
@@ -126,6 +141,7 @@ document.querySelector('#logout').addEventListener('click', () => {
        console.log('logout');
        socketIO.emit('resetSession');
 });
+
 document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        e.preventDefault();
        socketIO.emit('checkMail', mail);
@@ -145,12 +161,17 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 document.querySelector('#startSession').addEventListener('click', () => {
        console.log(quizzName);
        fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
+       let i = 1;
+       while(i==1){
               socketIO.emit('startSession', value);
+              console.log(value);
+              i++;
+       }
        });
 });
 
 document.querySelector('#nextQuestion').addEventListener('click', (e) => {
        e.preventDefault();
        socketIO.emit('getNextQuestion');
-
+       socketIO.emit('getStudentAnswers');
 })

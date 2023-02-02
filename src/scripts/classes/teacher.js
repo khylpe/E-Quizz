@@ -129,12 +129,26 @@ class teacher {
               document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés (${numberOfRegisteredStudents})`;
 
               if (status == "not registered anymore") {
-                     document.querySelector(`#${studentName}`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+                     if (!document.querySelector(`[value="${studentName}"]`)) {
+                            let ul = document.getElementById("studentList");
+                            let li = document.createElement("li");
+                            li.setAttribute("value", `${studentName}`);
+
+                            li.classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+                            let div = document.createElement("div");
+                            div.classList = "ms-2";
+                            div.setAttribute("id", "studentName");
+                            div.appendChild(document.createTextNode(studentName));
+                            li.appendChild(div);
+                            ul.appendChild(li);
+                     } else {
+                            document.querySelector(`[value="${studentName}"]`).classList = "list-group-item list-group-item-action list-group-item-warning d-flex justify-content-center align-items-start";
+                     }
               }
-              else if (!document.getElementById(`${studentName}`)) {
+              else if (!document.querySelector(`[value="${studentName}"]`)) {
                      let ul = document.getElementById("studentList");
                      let li = document.createElement("li");
-                     li.setAttribute("id", `${studentName}`);
+                     li.setAttribute("value", `${studentName}`);
 
                      if (status == "registered") {
                             li.classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
@@ -152,16 +166,20 @@ class teacher {
                      ul.appendChild(li);
               }
               else if (status == "registered") {
-                     document.querySelector(`#${studentName}`).classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
+                     document.querySelector(`[value="${studentName}"]`).classList = "list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start";
               }
+       }
+
+       updateNumberOfConnectedStudents(numberOfConnectedStudents, selector) {
+              document.querySelector(selector).innerHTML = numberOfConnectedStudents;
        }
 
        displayQuestion(question, answers, questionNumber, numberOfQuestions, selectorForQuestion, selectorForAnswers) {
               document.querySelector(selectorForAnswers).innerHTML = "";
 
-              if(!question.includes("?") && !question.includes(" ?")){
+              if (!question.includes("?") && !question.includes(" ?")) {
                      document.querySelector(selectorForQuestion).innerHTML = question + ` ? (${questionNumber}/${numberOfQuestions})`;
-              }else{
+              } else {
                      document.querySelector(selectorForQuestion).innerHTML = question + ` (${questionNumber}/${numberOfQuestions})`;
               }
 
