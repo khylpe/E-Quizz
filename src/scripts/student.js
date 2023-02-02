@@ -1,108 +1,94 @@
-const socket = io("http://192.168.1.35:8100", { transports: ["websocket"] });
+const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
 
-let monForm = document.querySelector('form');
-let allReadyConnect = document.querySelector('#student');
-let home = document.querySelector('#btnHome');
-let maDiv = document.querySelector('#maDiv');
-let buttonCorrect = document.querySelector('#btnCor');
-maDiv.hidden = true;
+let formulaireMail = document.querySelector('#formulaireMail');
+let divMessageErreur = document.querySelector('#messageErreur');
+let divButtons = document.querySelector('#divButtons');
+divButtons.hidden = true;
+let btnReturnHome = document.querySelector('#btnHome');
+let btnModify = document.querySelector('#btnModify');
+let btnAnswers = document.querySelectorAll('#btnAnswers button');
+let inputs = document.querySelectorAll('#btnAnswers input[type="checkbox"]');
+let submitToTeacher = document.querySelector('#btnValidate');
+let corriger = document.querySelector('#btnModify');
 
-
-monForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let monInput = document.querySelector('#mailAddress');
-    socket.emit('studentVerificated', monInput.value);
-    monInput.value = "";
-
-    // for (let i = 0; i < document.querySelectorAll('#answers button').length; i++) {
-    //     console.log(document.querySelectorAll('#answers button')[i]);
-    //     document.querySelectorAll('#answers button')[i].addEventListener('click', demo);
-    // }
-});
-
-socket.on('connect', () => {
-    socket.on('studentRegistered', () => {
-        allReadyConnect.innerHTML = "";
-        monForm.hidden = true;
-        maDiv.hidden = false;
-        buttonCorrect.hidden = true;
-    });
-    socket.on('doublons', () => {
-        allReadyConnect.innerHTML = "Vous êtes déjà enregistré";
-    });
-});
-
-socket.on('teacherNotConnected', () => {
-    let connectionTeacher = document.querySelector('#teacherNotConnect');
-    connectionTeacher.innerHTML = "teacher as not connected";
-});
-
-socket.on('sessionCreated', (createSession) => {
-    console.log(createSession);
-});
-
-let tab = [];
-
-// solution 1 :
-for (let i = 0; i < document.querySelectorAll('#answers button').length; i++) {
-
-    document.querySelectorAll('#answers button')[i].addEventListener('click', (ElementDuDOM) => {
-
+for (let i = 0; i < btnAnswers.length; i++) { // changement couleur une fois cliqué + ckeck / uncheck checkbox
+    inputs[i].checked = false;
+    btnAnswers[i].addEventListener('click', (ElementDuDOM) => {
         if ((ElementDuDOM.target.classList).contains('btn-primary')) {
-            console.log(ElementDuDOM.target.classList = "btn btn-outline-primary");
             ElementDuDOM.target.classList = "btn btn-outline-primary";
-            let maVariable = document.querySelectorAll('#answers button')[i];
-            console.log(ElementDuDOM.target.innerHTML);
-            tab.splice(ElementDuDOM.target.innerHTML, 1);
-            // tab.remove('maVariable');
-            console.log("Mon tableau: " + tab)
-
-
-
-
+            inputs[i].checked = false;
         } else {
             ElementDuDOM.target.classList = "btn btn-primary";
-            tab.push(ElementDuDOM.target.innerHTML);
+            inputs[i].checked = true;
         }
     })
 }
 
-// solution 2 :
-// document.querySelectorAll('#answers button').forEach((element) => {
-//     element.addEventListener('click', (aa) => {
-//         if ((aa.target.classList).contains('btn-primary')) {
-//             aa.target.classList = "btn btn-outline-primary";
-//             // remove from tab
-//         } else {
-//             aa.target.classList = "btn btn-primary";
-//             tab.push(aa.target.innerHTML);
-//         }
-//     })
-// })
-
-// solution 3 :
-// function demo(elementClique) {
-//     console.log(elementClique);
-//     if ((elementClique.target.classList).contains('btn-primary')) {
-//         elementClique.target.classList = "btn btn-outline-primary";
-//         // remove from tab
-//     } else {
-//         elementClique.target.classList = "btn btn-primary";
-//         tab.push(elementClique.target.innerHTML);
-//         console.log(tab);
-//     }
-// }
-
-
-let submitToTurtur = document.querySelector('#btnVal');  //Validate QCM
-submitToTurtur.addEventListener('click', () => {
-    console.log(tab);
-    socket.emit('coucouArthurJeSuisArrive', {
-        reponse: tab
+socket.on('connect', () => {
+    socket.on('studentRegistered', () => {
+        divMessageErreur.innerHTML = "";
+        formulaireMail.hidden = true;
+        divButtons.hidden = false;
+        btnModify.hidden = true;
     });
 
-    // buttonCorrect.hidden = false;
-    // submitToTurtur.hidden = true;
+    socket.on('doublons', () => {
+        divMessageErreur.innerHTML = "Vous êtes déjà enregistré";
+    });
+
+    socket.on('teacherNotConnected', () => {
+        divMessageErreur.innerHTML = "teacher as not connected";
+    });
+
+    socket.on('sessionCreated', (createSession) => {
+        console.log(createSession);
+    });
+
+    socket.on('getAnswers', () => {
+        socket.emit('studentAnswers', {
+            answers: getAnswers()
+        })
+    });
 });
 
-// });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+formulaireMail.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let inputMail = document.querySelector('#mailAddress');
+    socket.emit('studentVerificated', inputMail.value);
+    inputMail.value = "";
+});
+
+submitToTeacher.addEventListener('click', () => { //bouton valider QCM
+    submitToTeacher.hidden = true;
+    btnModify.hidden = false;
+    btnAnswers.forEach((element) => {
+        element.classList += " disabled";
+    });
+});
+
+corriger.addEventListener('click', () => { //bouton corriger QCM
+    submitToTeacher.hidden = false;
+    btnModify.hidden = true;
+    btnAnswers.forEach((element) => {
+        element.classList.remove("disabled");
+    });
+})
+
+btnReturnHome.addEventListener('click', () => {
+    formulaireMail.hidden = false;
+    divButtons.hidden = true;
+    socket.emit('studentDisconnect', () => {
+    })
+})
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+function getAnswers() {
+    let arrayAnswers = [];
+    for (let a = 0; a < inputs.length; a++) {
+        arrayAnswers.push(inputs[a].checked);
+    }
+    return arrayAnswers;
+}

@@ -16,6 +16,8 @@ let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberCurrentQuestion = 0;
 
+let te = 0;
+
 let currentQuestionAndAnswers;
 
 // Enable access to the src folder :
@@ -28,13 +30,13 @@ app.get('/', (dataFromClient, serverResponse) => {
 
 io.on('connection', function (client) {
        console.log(client.handshake.headers.origin);
-       if (client.handshake.headers.origin.includes('http://192.168.1.35:8100')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
                      if (!checkMail(mail)) {
                             client.emit('anotherTeacherConnected');
-                            //client.removeAllListeners();
+                            client.removeAllListeners();
                      } else {
                             client.join("teacher");
                             client.emit('teacherConnected');
@@ -43,6 +45,8 @@ io.on('connection', function (client) {
                             if (sessionStatus == "CreateSession") {
                             }
                             else if (sessionStatus == "SessionStatus") {
+                                   client.emit('updateStudentList', getStudentsInformations())
+
                                    // send the number of connected students to the teacher
                                    // send the number of registered students to the teacher
                                    // send the list of students to the teacher
@@ -82,15 +86,22 @@ io.on('connection', function (client) {
                                    client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
                             });
 
-                            client.on('getNextQuestion', (data) => {
+                            client.on('getNextQuestion', () => { 
+                                   console.log("zzzzzzzzzzzz");
+                                   // console.log(quizzQuestionsAndAnswers[1][0][0])
+                                
                                    if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if it's the last question
                                           client.emit('endOfQuizz');
                                    } else {
-                                          console.log(quizzQuestionsAndAnswers);
-                                          currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
+                                          currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion+ 0.5]; // go to next question
+                                          console.log(currentQuestionAndAnswers);
                                           client.emit('nextQuestion', getCurrentQuestionAndAnswers());
                                    }
                             });
+
+                            client.on('getStudentsAnswers', () => {
+                                   io.to('student').emit('getAnswers');
+                            })
                      }
               });
        }
@@ -100,29 +111,61 @@ io.on('connection', function (client) {
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
-              client.on('studentVerificated', (msg) => {
-                     if (listOfMails.includes(msg)) {
+              client.on('studentVerificated', (studentMail) => {
+                     if (listOfMails.includes(studentMail)) {
                             client.emit('doublons');
                      }
                      else {
                             client.emit('studentRegistered');
+                            client.mail = studentMail;
                             client.join('student');
+
                             io.to('teacher').emit('studentRegisteredChanged', {
-                                   mail: msg,
+                                   mail: studentMail,
                                    numberOfRegisteredStudents: ++numberOfRegisteredStudents,
                                    status: "registered",
                             });
 
-                            let tempsNewStudent = { mail: msg, status: "registered" };
+                            let tempsNewStudent = { mail: studentMail, status: "registered" };
                             listOfStudents.push(tempsNewStudent);
-                            listOfMails.push(msg)
+                            listOfMails.push(studentMail)
 
-                            client.on('coucouArthurJeSuisArrive', (data) =>{
-                                   console.log(data.txt);
+                            client.on('studentAnswers', (data) => {
+                                   io.to('teacher').emit('studentAnswers', {
+                                          mail: client.mail,
+                                          answers: data.answers
+                                   })
                             });
+
+                            client.on('disconnecting', () => {
+                                   io.to('teacher').emit('studentRegisteredChanged', {
+                                          mail: client.mail,
+                                          numberOfRegisteredStudents: --numberOfRegisteredStudents,
+                                          status: "not registered anymore",
+                                   });
+                                   listOfMails.splice(client.mail, 1);
+                                   listOfStudents.forEach(student => {
+                                          if (student.mail === client.mail) {
+                                                 student.status = "not registered anymore";
+                                          }
+                                   })
+                            })
                      }
               });
 
+              client.on('studentDisconnect', (student) => {
+                     io.to('teacher').emit('studentRegisteredChanged', {
+                            mail: client.mail,
+                            numberOfRegisteredStudents: --numberOfRegisteredStudents,
+                            status: "not registered anymore",
+                     });
+                     listOfMails.splice(client.mail, 1);
+                     listOfStudents.forEach(student => {
+                            if (student.mail === client.mail) {
+                                   student.status = "not registered anymore";
+                            }
+                     })
+              });
               client.on('disconnect', (client) => {
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });

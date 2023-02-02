@@ -13,29 +13,28 @@
 
     <h1 class="d-flex justify-content-center">E-QUIZZ</h1>
 
-    <form>
+    <form id="formulaireMail" class="justify-content-center">
         <input type="email" id="mailAddress" autocomplete="off" required />
 
         <button id="btnSend">Envoyer</button>
-        <p id="student"></p>
-        <p id="teacherNotConnect"></p>
+        <p id="messageErreur"></p>
     </form>
 
-    <div id="maDiv">
-        <div id="answers">
-            <button id="btnA" type="button" class="btn btn-outline-primary">A</button>
-            <button id="btnB" type="button" class="btn btn-outline-primary">B</button>
-            <button id="btnC" type="button" class="btn btn-outline-primary">C</button>
-            <button id="btnD" type="button" class="btn btn-outline-primary">D</button>
+    <div id="divButtons" class="flex-column">
+        <div id="btnAnswers" class="d-flex justify-content-center align-items-center flex-column">
+            <button id="btnA" type="button" class="btn btn-outline-primary p-4">A</button>
+            <input type="checkbox" id="stateBtnA" hidden>
+            <button id="btnB" type="button" class="btn btn-outline-primary p-4">B</button>
+            <input type="checkbox" id="stateBtnB" hidden>
+            <button id="btnC" type="button" class="btn btn-outline-primary p-4">C</button>
+            <input type="checkbox" id="stateBtnC" hidden>
+            <button id="btnD" type="button" class="btn btn-outline-primary p-4">D</button>
+            <input type="checkbox" id="stateBtnD" hidden>
         </div>
-        <button id="btnCor" type="button" class="btn btn-danger">CORRIGER</button>
-        <button id="btnVal" type="button" class="btn btn-success">Valider</button>
-        <br>
+        <button id="btnModify" type="button" class="btn btn-danger">CORRIGER</button>
+        <button id="btnValidate" type="button" class="btn btn-success">Valider</button>
         <button id="btnHome" type="button" class="btn btn-info">HOME</button>
-
     </div>
-
-
 
 
     <script src="/socket.io/socket.io.js"></script>
