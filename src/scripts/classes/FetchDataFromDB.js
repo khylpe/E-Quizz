@@ -3,8 +3,8 @@ class FetchDataFromDB {
               this.mail = mail;
        }
 
-       fetchQuizzList() {
-                     return fetch('/src/php/fetchQuizzList.php', {
+       async fetchQuizzList() {
+                     return await fetch('/src/php/fetchQuizzList.php', {
                             method: 'POST',
                             body: new String(this.mail)
                      })
@@ -26,8 +26,8 @@ class FetchDataFromDB {
                             });
        }
 
-       fetchStudentGroups() {
-              return fetch('/src/php/fetchGroupsList.php')
+       async fetchStudentGroups() {
+              return await fetch('/src/php/fetchGroupsList.php')
                      .then(result => result.json())
                      .then(array => {
                             if (array[0] == "success") {
@@ -47,8 +47,8 @@ class FetchDataFromDB {
 
        }
 
-       fetchQuestionsAndAnswers(quizzName, author) {
-              return fetch('/src/php/fetchQuestionsAndAnswers.php', {
+       async fetchQuestionsAndAnswers(quizzName, author) {
+              return await fetch('/src/php/fetchQuestionsAndAnswers.php', {
                      method: 'POST',
                      body: JSON.stringify({
                             quizzName: quizzName,
@@ -69,16 +69,12 @@ class FetchDataFromDB {
        }
 
        async createQuizz(mail, quizzTitle, questionsAndAnswers){
-              /*console.log(mail);
-              console.log(quizzTitle);
-              console.log(questionsAndAnswers);*/
               return await fetch('/src/php/createQuizz.php', {
                      method: 'POST',
                      body: JSON.stringify({ mail: mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
               })
                      .then(result => result.json())
                      .then(array => {
-                            console.log("array : " + array);
                             return Array(array[0], array[1]);
                      })
                      .catch(err => {

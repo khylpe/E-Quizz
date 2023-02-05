@@ -6,7 +6,6 @@ document.querySelector('#tempMessage').style.display = "none";
 document.querySelector('#sessionInfo').style.display = "none";
 document.querySelector('#sectionDisplayQuestions').style.display = "none";
 
-
 mail = document.querySelector('#mail').innerText; // attention
 let maClasse = new teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
@@ -14,8 +13,7 @@ let fetchData = new FetchDataFromDB(mail);
 let quizzName;
 let groupName;
 
-socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
-
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkMail event returns anotherTeacherConnected event, all events are being removed */
@@ -41,8 +39,8 @@ socketIO.on('connect', () => {
               });
        });
 
-       socketIO.on('teacherConnected', (data) => {
-              fetchData.fetchQuizzList()
+       socketIO.on('teacherConnected', async (data) => {
+              await fetchData.fetchQuizzList()
                      .then(value => {
                             let liListe = maClasse.displayQuizzList(value, '#quizzList');
                             if (liListe) {
@@ -54,7 +52,7 @@ socketIO.on('connect', () => {
                                    });
                             };
                      });
-              fetchData.fetchStudentGroups()
+              await fetchData.fetchStudentGroups()
                      .then(value => {
                             let liList = maClasse.displayStudentGroups(value, '#groupsList');
                             if (liList) {
@@ -93,8 +91,6 @@ socketIO.on('connect', () => {
               socketIO.on('sessionStarted', (data) => {
                      maClasse.changeCurrentSection('sectionDisplayQuestions');
                      maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
-                     console.log('sending getNextQuestion signal');
-                     socketIO.emit('getNextQuestion');
               });
 
               socketIO.on('nextQuestion', (data) => {
@@ -121,11 +117,9 @@ socketIO.on('connect', () => {
               });
 
               socketIO.on('studentAnswers', (data) => {
-                     console.log(data);
               });
 
               socketIO.on('updateStudentList', (data) => {
-                     console.log('tfiyguhjik');
                      let studentList = data.listOfStudents;
                      studentList.forEach((student) => {
                             maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
@@ -138,7 +132,6 @@ socketIO.on('connect', () => {
 
 //////////////////////////////////////////////////////////////////////////////
 document.querySelector('#logout').addEventListener('click', () => {
-       console.log('logout');
        socketIO.emit('resetSession');
 });
 
@@ -158,16 +151,13 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        }
 });
 
-document.querySelector('#startSession').addEventListener('click', () => {
-       console.log(quizzName);
-       fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
-       let i = 1;
-       while(i==1){
+document.querySelector('#startSession').addEventListener('click', async () => {
+       let i = 0;
+       await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               socketIO.emit('startSession', value);
-              console.log(value);
-              i++;
-       }
+              console.log(++i);
        });
+       socketIO.emit('getNextQuestion');
 });
 
 document.querySelector('#nextQuestion').addEventListener('click', (e) => {

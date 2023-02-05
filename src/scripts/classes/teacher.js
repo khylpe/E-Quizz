@@ -98,12 +98,10 @@ class teacher {
        }
 
        updateSessionStatus(data) {
-              console.log('test')
               if (this.getCurrentSection().id == "sectionCreateSession") {
                      document.querySelector('#sessionInfo').style.display = "none";
                      return;
               }
-              console.log('updateSessionStatus');
               document.querySelector('#sessionInfo').style.display = "block";
               let status;
               if (data.sessionStatus == "CreateSession")
@@ -255,7 +253,6 @@ class teacher {
               let editOrConfirmTitle = document.querySelector('#editOrConfirmTitle');
 
               editOrConfirmTitle.addEventListener('click', (e) => {
-                     console.log(input.hasAttribute('disabled'));
                      if (input.hasAttribute('disabled')) {
                             input.removeAttribute('disabled');
                             editOrConfirmTitle.classList = 'bi-check';
