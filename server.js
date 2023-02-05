@@ -29,81 +29,79 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', function (client) {
-       console.log(client.handshake.headers.origin);
-       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://10.191.179.176')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
                      if (!checkMail(mail)) {
                             client.emit('anotherTeacherConnected');
                             client.removeAllListeners();
-                     } else {
-                            client.join("teacher");
-                            client.emit('teacherConnected');
-                            client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
-
-                            if (sessionStatus == "CreateSession") {
-                            }
-                            else if (sessionStatus == "SessionStatus") {
-                                   client.emit('updateStudentList', getStudentsInformations())
-
-                                   // send the number of connected students to the teacher
-                                   // send the number of registered students to the teacher
-                                   // send the list of students to the teacher
-                            }
-                            else if (sessionStatus == "DisplayQuestions") {
-                                   client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                            }
-                            else if (sessionStatus == "DisplayResults") {
-                            }
-
-                            /* events from teacher */
-                            client.on('resetSession', () => {
-                                   console.log('resetSession');
-                                   resetSession();
-                                   client.emit('updateSessionStatus', getSessionStatus());
-                                   io.to('teacher').emit('teacherNotConnectedAnymore');
-
-                            });
-
-                            client.on('createSession', (data) => {
-                                   client.emit('sessionCreated', data);
-                                   io.to('student').emit('sessionCreated', data);
-
-                                   //we get the quizz data from the teacher (title, teacher, group name)
-                                   quizzTitle = data.quizzName;
-                                   teacher = data.mail;
-                                   groupName = data.groupName;
-                                   sessionStatus = "SessionStatus";
-
-                                   client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
-                            });
-
-                            client.on('startSession', (quizzData) => {
-                                   quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
-                                   sessionStatus = "DisplayQuestions";
-                                   client.emit('sessionStarted');
-                                   client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
-                            });
-
-                            client.on('getNextQuestion', () => { 
-                                   console.log("zzzzzzzzzzzz");
-                                   // console.log(quizzQuestionsAndAnswers[1][0][0])
-                                
-                                   if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if it's the last question
-                                          client.emit('endOfQuizz');
-                                   } else {
-                                          currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion+ 0.5]; // go to next question
-                                          console.log(currentQuestionAndAnswers);
-                                          client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                                   }
-                            });
-
-                            client.on('getStudentsAnswers', () => {
-                                   io.to('student').emit('getAnswers');
-                            })
+                            return;
                      }
               });
+              console.log('is teacher');
+              client.join("teacher");
+              client.emit('teacherConnected');
+              client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+
+              if (sessionStatus == "CreateSession") {
+              }
+              else if (sessionStatus == "SessionStatus") {
+                     client.emit('updateStudentList', getStudentsInformations())
+
+                     // send the number of connected students to the teacher
+                     // send the number of registered students to the teacher
+                     // send the list of students to the teacher
+              }
+              else if (sessionStatus == "DisplayQuestions") {
+                     client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+              }
+              else if (sessionStatus == "DisplayResults") {
+              }
+
+              /* events from teacher */
+              client.on('resetSession', () => {
+                     resetSession();
+                     client.emit('updateSessionStatus', getSessionStatus());
+                     io.to('teacher').emit('teacherNotConnectedAnymore');
+
+              });
+
+              client.on('createSession', (data) => {
+                     client.emit('sessionCreated', data);
+                     io.to('student').emit('sessionCreated', data);
+
+                     //we get the quizz data from the teacher (title, teacher, group name)
+                     quizzTitle = data.quizzName;
+                     teacher = data.mail;
+                     groupName = data.groupName;
+                     sessionStatus = "SessionStatus";
+
+                     client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     console.log(client.rooms);
+              });
+
+              client.on('startSession', (quizzData) => {
+                     quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
+                     sessionStatus = "DisplayQuestions";
+                     client.emit('sessionStarted');
+                     client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+              });
+
+              client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
+                     console.log('getNextQuestion');
+                     if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if it's the last question
+                            client.emit('endOfQuizz');
+                     } else {
+                            console.log("currentquestionadnanswers : " + currentQuestionAndAnswers)
+                            currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
+                            client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+                     }
+              });
+
+              client.on('getStudentsAnswers', () => {
+                     io.to('student').emit('getAnswers');
+              })
        }
        else if (client.handshake.headers.origin.includes('8100')) { // client is a student
               console.log('is student');
