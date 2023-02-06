@@ -4,26 +4,26 @@ class FetchDataFromDB {
        }
 
        async fetchQuizzList() {
-                     return await fetch('/src/php/fetchQuizzList.php', {
-                            method: 'POST',
-                            body: new String(this.mail)
-                     })
-                            .then(result => result.json())
-                            .then(array => {
-                                   if (array[0] == "success") {
-                                          if (array[1].length > 0) {
-                                                 return Array('success', array[1]);
-                                          }
-                                          else {
-                                                 return Array('error', 'Vous devez créer un quizz avant de pouvoir créer une session');
-                                          }
-                                   } else {
-                                          return Array('error', 'Une erreur est survenue lors de la récupération de la liste des quizz : ' + array[1]);
+              return await fetch('/src/php/fetchQuizzList.php', {
+                     method: 'POST',
+                     body: new String(this.mail)
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            if (array[0] == "success") {
+                                   if (array[1].length > 0) {
+                                          return Array('success', array[1]);
                                    }
-                            })
-                            .catch(err => {
-                                   return Array('error', err);
-                            });
+                                   else {
+                                          return Array('error', 'Vous devez créer un quizz avant de pouvoir créer une session');
+                                   }
+                            } else {
+                                   return Array('error', 'Une erreur est survenue lors de la récupération de la liste des quizz : ' + array[1]);
+                            }
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
        }
 
        async fetchStudentGroups() {
@@ -68,10 +68,30 @@ class FetchDataFromDB {
                      });
        }
 
-       async createQuizz(mail, quizzTitle, questionsAndAnswers){
+       async createQuizz(mail, quizzTitle, questionsAndAnswers) {
               return await fetch('/src/php/createQuizz.php', {
                      method: 'POST',
                      body: JSON.stringify({ mail: mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return Array(array[0], array[1]);
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
+       }
+
+       async insertResult(mail, quizzTitle, teacher, score, date) {
+              return await fetch('/src/php/insertResult.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            mail: mail,
+                            quizzTitle: quizzTitle,
+                            teacher: teacher,
+                            score: score,
+                            date: date
+                     })
               })
                      .then(result => result.json())
                      .then(array => {

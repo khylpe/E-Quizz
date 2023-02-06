@@ -29,26 +29,23 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
 
               $result = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
               $arrayOfQuestionsAndAnswers = array();
-
               foreach ($result as $key => $value) {
-                     $i = 0;
-                     $j = 0;
-                     $tab = array('', array(), array());
+                     $i = 0;  
+                     $tab = array(['',array([]),array([])]);
                      foreach ($value as $key2 => $value2) {
-                            if ($key2 == "question") {
-                                   $tab[0] = $value2;
+                            if($key2 == "question"){
+                                   $tab[0] = $value2;                                   
                             }
-                            if ($key2 == "answer1" || $key2 == "answer2" || $key2 == "answer3" || $key2 == "answer4") {
+                            if($key2 == "answer1" || $key2 == "answer2" || $key2 == "answer3" || $key2 == "answer4"){
                                    $tab[1][$i++] = $value2;
                             }
-                            if ($key2 == "good answer1" || $key2 == "good answer2" || $key2 == "good answer3" || $key2 == "good answer4") {
-                                          $tab[2][$j++] = $value2;
+                            if($key2 == "good answer1" || $key2 == "good answer2" || $key2 == "good answer3" || $key2 == "good answer4"){
+                                   $tab[2][$i++] = $value2;
                             }
                      }
-                     array_push($arrayOfQuestionsAndAnswers, $tab);
+                     array_push($arrayOfQuestionsAndAnswers, $tab);                     
               }
               $response = array('success', $arrayOfQuestionsAndAnswers);
-              // print_r(json_encode($response));
               echo json_encode($response);
        } catch (Exception $e) {
               $response = array('error', $e);
