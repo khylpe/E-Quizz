@@ -15,10 +15,10 @@ for (let i = 0; i < btnAnswers.length; i++) { // changement couleur une fois cli
     inputs[i].checked = false;
     btnAnswers[i].addEventListener('click', (ElementDuDOM) => {
         if ((ElementDuDOM.target.classList).contains('btn-primary')) {
-            ElementDuDOM.target.classList = "btn btn-outline-primary";
+            ElementDuDOM.target.classList = "btn btn-outline-primary p-4";
             inputs[i].checked = false;
         } else {
-            ElementDuDOM.target.classList = "btn btn-primary";
+            ElementDuDOM.target.classList = "btn btn-primary p-4";
             inputs[i].checked = true;
         }
     })
@@ -48,6 +48,10 @@ socket.on('connect', () => {
         socket.emit('studentAnswers', {
             answers: getAnswers()
         })
+        btnAnswers.forEach((button) => {
+            button.classList = "btn btn-outline-primary p-4";
+            inputs.checked = false;
+        });
     });
 });
 
@@ -66,6 +70,7 @@ submitToTeacher.addEventListener('click', () => { //bouton valider QCM
     btnAnswers.forEach((element) => {
         element.classList += " disabled";
     });
+    socket.emit('questionAnswered');
 });
 
 corriger.addEventListener('click', () => { //bouton corriger QCM
@@ -91,4 +96,5 @@ function getAnswers() {
         arrayAnswers.push(inputs[a].checked);
     }
     return arrayAnswers;
+     console.log(arrayAnswers);
 }

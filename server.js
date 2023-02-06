@@ -29,7 +29,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', function (client) {
-       if (client.handshake.headers.origin.includes('http://10.191.179.176')) { // client is a teacher
+       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -78,7 +78,6 @@ io.on('connection', function (client) {
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
-                     console.log(client.rooms);
               });
 
               client.on('startSession', (quizzData) => {
@@ -89,17 +88,15 @@ io.on('connection', function (client) {
               });
 
               client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
-                     console.log('getNextQuestion');
                      if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if it's the last question
                             client.emit('endOfQuizz');
                      } else {
-                            console.log("currentquestionadnanswers : " + currentQuestionAndAnswers)
                             currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
                             client.emit('nextQuestion', getCurrentQuestionAndAnswers());
                      }
               });
 
-              client.on('getStudentsAnswers', () => {
+              client.on('getStudentAnswers', () => {
                      io.to('student').emit('getAnswers');
               })
        }
@@ -126,13 +123,65 @@ io.on('connection', function (client) {
 
                             let tempsNewStudent = { mail: studentMail, status: "registered" };
                             listOfStudents.push(tempsNewStudent);
-                            listOfMails.push(studentMail)
+                            listOfMails.push(studentMail);
 
                             client.on('studentAnswers', (data) => {
+                                   // let monBool = new Boolean(false);
+                                   // for (let i = 0; i < 4; i++) {
+
+                                   //        if (data.answers[i] === true) {
+
+                                   //               quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][2].forEach(element => {
+                                   //                      if (element == quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1][i]) {
+                                   //                             monBool = true;
+                                   //                      }
+                                   //               });
+                                   //        }
+                                   // }
+
+                                   console.log(data);
+                                   console.log(quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber -2][2]) 
+                                   quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber][1].forEach(correctAnswers =>{
+                                          console.log(correctAnswers)
+                                         
+                                   }) // toutes réponses possible
+
+                                   // .forEach(correctAnswer =>{
+                                   //        data.answers.forEach((element, index) =>{
+                                   //               if(correctAnswer == element){
+       
+                                   //               }
+                                   //        })
+                                   //        console.log(arr.findIndex(correctAnswer));                                          
+                                   //        if(getCurrentQuestionAndAnswers().currentAnswers)
+                                   //        if(correctAnswer != null){
+       
+                                   //        }
+       
+       
+                                   // if(currentAnswers == data.answers){
+                                   //      console.log("eleve a bien repondu");
+                                   // }
+                                   // else{
+                                   //      console.log("eleve a faux");
+                                   // }
+                                   // });
                                    io.to('teacher').emit('studentAnswers', {
                                           mail: client.mail,
-                                          answers: data.answers
+                                          answers: data.answers,
+                                          groupName: groupName,
+                                          quizzTitle: quizzTitle,
+                                          teacher: data.mail,
+                                          // checkAnswersStudent: checkAnswersStudent
+
                                    })
+                            });
+
+                            
+
+
+                            client.on('questionAnswered', () => {
+                                   io.to('teacher').emit('questionAnswered') // eleve click sur bouton "valider"
                             });
 
                             client.on('disconnecting', () => {
