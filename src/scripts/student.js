@@ -1,4 +1,4 @@
-const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
+const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formulaireMail');
 let divMessageErreur = document.querySelector('#messageErreur');
@@ -48,9 +48,9 @@ socket.on('connect', () => {
         socket.emit('studentAnswers', {
             answers: getAnswers()
         })
-        btnAnswers.forEach((button) => {
+        btnAnswers.forEach((button, index) => {
             button.classList = "btn btn-outline-primary p-4";
-            inputs.checked = false;
+            inputs[index].checked = false;
         });
     });
 });

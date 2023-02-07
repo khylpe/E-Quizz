@@ -7,7 +7,7 @@ const express = require('express'),
 
 let quizzTitle = null;
 let groupName = null;
-let teacher = null;
+let teacherMail = null;
 let sessionStatus = "CreateSession";
 let numberOfConnectedStudents = 0;
 let numberOfRegisteredStudents = 0;
@@ -15,9 +15,6 @@ let listOfStudents = [];
 let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberCurrentQuestion = 0;
-
-let te = 0;
-
 let currentQuestionAndAnswers;
 
 // Enable access to the src folder :
@@ -28,8 +25,8 @@ app.get('/', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/student.html');
 });
 
-io.on('connection', function (client) {
-       if (client.handshake.headers.origin.includes('http://10.69.88.55')) { // client is a teacher
+io.on('connection', async function (client) {
+       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -39,7 +36,6 @@ io.on('connection', function (client) {
                             return;
                      }
               });
-              console.log('is teacher');
               client.join("teacher");
               client.emit('teacherConnected');
               client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
@@ -48,7 +44,6 @@ io.on('connection', function (client) {
               }
               else if (sessionStatus == "SessionStatus") {
                      client.emit('updateStudentList', getStudentsInformations())
-
                      // send the number of connected students to the teacher
                      // send the number of registered students to the teacher
                      // send the list of students to the teacher
@@ -64,7 +59,6 @@ io.on('connection', function (client) {
                      resetSession();
                      client.emit('updateSessionStatus', getSessionStatus());
                      io.to('teacher').emit('teacherNotConnectedAnymore');
-
               });
 
               client.on('createSession', (data) => {
@@ -73,7 +67,7 @@ io.on('connection', function (client) {
 
                      //we get the quizz data from the teacher (title, teacher, group name)
                      quizzTitle = data.quizzName;
-                     teacher = data.mail;
+                     teacherMail = data.mail;
                      groupName = data.groupName;
                      sessionStatus = "SessionStatus";
 
@@ -100,8 +94,7 @@ io.on('connection', function (client) {
                      io.to('student').emit('getAnswers');
               })
        }
-       else if (client.handshake.headers.origin.includes('8100')) { // client is a student
-              console.log('is student');
+       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -111,109 +104,40 @@ io.on('connection', function (client) {
                             client.emit('doublons');
                      }
                      else {
-                            client.emit('studentRegistered');
-                            client.mail = studentMail;
                             client.join('student');
+                            client.mail = studentMail;
+                            client.emit('studentRegistered');
 
-                            io.to('teacher').emit('studentRegisteredChanged', {
-                                   mail: studentMail,
-                                   numberOfRegisteredStudents: ++numberOfRegisteredStudents,
-                                   status: "registered",
-                            });
+                            alterStudentList("add", studentMail);
+                            io.to('teacher').emit('updateStudentList', getStudentsInformations());
 
-                            let tempsNewStudent = { mail: studentMail, status: "registered" };
-                            listOfStudents.push(tempsNewStudent);
-                            listOfMails.push(studentMail);
-
-                            client.on('studentAnswers', (data) => {
-                                   // let monBool = new Boolean(false);
-                                   // for (let i = 0; i < 4; i++) {
-
-                                   //        if (data.answers[i] === true) {
-
-                                   //               quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][2].forEach(element => {
-                                   //                      if (element == quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1][i]) {
-                                   //                             monBool = true;
-                                   //                      }
-                                   //               });
-                                   //        }
-                                   // }
-
-                                   console.log(data);
-                                   console.log(quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber -2][2]) 
-                                   quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber][1].forEach(correctAnswers =>{
-                                          console.log(correctAnswers)
-                                         
-                                   }) // toutes réponses possible
-
-                                   // .forEach(correctAnswer =>{
-                                   //        data.answers.forEach((element, index) =>{
-                                   //               if(correctAnswer == element){
-       
-                                   //               }
-                                   //        })
-                                   //        console.log(arr.findIndex(correctAnswer));                                          
-                                   //        if(getCurrentQuestionAndAnswers().currentAnswers)
-                                   //        if(correctAnswer != null){
-       
-                                   //        }
-       
-       
-                                   // if(currentAnswers == data.answers){
-                                   //      console.log("eleve a bien repondu");
-                                   // }
-                                   // else{
-                                   //      console.log("eleve a faux");
-                                   // }
-                                   // });
+                            client.on('studentAnswers', (data) => { // rename later
                                    io.to('teacher').emit('studentAnswers', {
                                           mail: client.mail,
                                           answers: data.answers,
                                           groupName: groupName,
                                           quizzTitle: quizzTitle,
-                                          teacher: data.mail,
-                                          // checkAnswersStudent: checkAnswersStudent
-
+                                          teacherMail: data.mail,
+                                          isCorrectAnswer: checkAnswers(data.answers,
+                                                 quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1], // list of possible answers
+                                                 quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][2] // list of good answers
+                                          )
                                    })
                             });
 
-                            
-
-
-                            client.on('questionAnswered', () => {
-                                   io.to('teacher').emit('questionAnswered') // eleve click sur bouton "valider"
-                            });
-
-                            client.on('disconnecting', () => {
-                                   io.to('teacher').emit('studentRegisteredChanged', {
-                                          mail: client.mail,
-                                          numberOfRegisteredStudents: --numberOfRegisteredStudents,
-                                          status: "not registered anymore",
-                                   });
-                                   listOfMails.splice(client.mail, 1);
-                                   listOfStudents.forEach(student => {
-                                          if (student.mail === client.mail) {
-                                                 student.status = "not registered anymore";
-                                          }
-                                   })
+                            client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
+                                   alterStudentList("remove", client.mail);
+                                   io.to('teacher').emit('updateStudentList', getStudentsInformations());
                             })
                      }
               });
 
-              client.on('studentDisconnect', (student) => {
-                     io.to('teacher').emit('studentRegisteredChanged', {
-                            mail: client.mail,
-                            numberOfRegisteredStudents: --numberOfRegisteredStudents,
-                            status: "not registered anymore",
-                     });
-                     listOfMails.splice(client.mail, 1);
-                     listOfStudents.forEach(student => {
-                            if (student.mail === client.mail) {
-                                   student.status = "not registered anymore";
-                            }
-                     })
+              client.on('studentDisconnect', (student) => { // Remove student from the list when he disconnects & update teacher's list
+                     alterStudentList("remove", student.mail);
+                     io.to('teacher').emit('updateStudentList', getStudentsInformations());
               });
-              client.on('disconnect', (client) => {
+
+              client.on('disconnect', () => { // Update the number of connected students when a student disconnects
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });
        } else { // unknown user
@@ -225,11 +149,7 @@ io.on('connection', function (client) {
 });
 
 function checkMail(mail) {
-       if (teacher != null && mail != teacher) { // another teacher is already connected
-              return false;
-       } else { // no teacher connected, allow connection
-              return true;
-       }
+       return teacherMail == null || mail == teacherMail;
 }
 
 function getSessionStatus() {
@@ -237,7 +157,7 @@ function getSessionStatus() {
               sessionStatus: sessionStatus,
               quizzTitle: quizzTitle,
               groupName: groupName,
-              teacher: teacher,
+              teacher: teacherMail,
        };
        return json;
 }
@@ -264,13 +184,44 @@ function getCurrentQuestionAndAnswers() {
 function resetSession() {
        quizzTitle = null;
        groupName = null;
-       teacher = null;
+       teacherMail = null;
        sessionStatus = "CreateSession";
        numberOfConnectedStudents = 0;
        numberOfRegisteredStudents = 0;
        listOfStudents = [];
        quizzQuestionsAndAnswers = null;
        numberCurrentQuestion = 0;
+       return;
+}
+
+function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
+       for (let i = 0; i < possibleAnswers.length; i++) {
+              if (studentAnswers[i] == true && !correctAnswers.includes(possibleAnswers[i])) {
+                     return false;
+              }
+              if (studentAnswers[i] == false && correctAnswers.includes(possibleAnswers[i])) {
+                     return false;
+              }
+       }
+       return true;
+}
+
+function alterStudentList(action, mail) {
+       if (action == "add") {
+              numberOfRegisteredStudents++;
+              let tempsNewStudent = { mail: mail, status: "registered" };
+              listOfStudents.push(tempsNewStudent);
+              listOfMails.push(mail);
+
+       } else if (action == "remove") {
+              numberOfRegisteredStudents--;
+              listOfMails.splice(mail, 1);
+              listOfStudents.forEach(student => {
+                     if (student.mail === mail) {
+                            student.status = "not registered anymore";
+                     }
+              });
+       }
        return;
 }
 
