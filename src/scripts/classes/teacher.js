@@ -249,7 +249,6 @@ class teacher {
               div.appendChild(i);
               confirmDataDiv.appendChild(confirmTitle);
 
-
               let editOrConfirmTitle = document.querySelector('#editOrConfirmTitle');
 
               editOrConfirmTitle.addEventListener('click', (e) => {
@@ -263,7 +262,6 @@ class teacher {
                             editOrConfirmTitle.style = "font-size: 2rem;";
                             input.setAttribute('disabled', 'disabled');
                      }
-
               });
        }
 }

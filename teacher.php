@@ -127,11 +127,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    <div class="card text-center">
                                           <h5 class="card-header" id="studentListTitle"></h5>
                                           <ul class="text-center list-group" id="studentList">
-                                                 <li class="list-group-item list-group-item-action list-group-item-success d-flex justify-content-center align-items-start">
-                                                        <div class="ms-2">Arthur
-                                                        </div>
-                                                        <span class="badge bg-primary rounded-pill position-absolute">14</span>
-                                                 </li>
                                           </ul>
                                    </div>
                             </div>

@@ -13,7 +13,7 @@ let fetchData = new FetchDataFromDB(mail);
 let quizzName;
 let groupName;
 
-socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkMail event returns anotherTeacherConnected event, all events are being removed */
@@ -64,75 +64,64 @@ socketIO.on('connect', () => {
                                    });
                             }
                      });
-
-              socketIO.on('sessionStatusChanged', (data) => {
-                     maClasse.changeCurrentSection(`section${data}`);
-              });
-
-              socketIO.on('sessionCreated', (data) => {
-                     maClasse.tempMessage('success',
-                            `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
-                            '#tempMessage');
-                     maClasse.changeCurrentSection('sectionSessionStatus');
-              });
-
-              socketIO.on('numberOfConnectedStudentChanged', (number) => {
-                     maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
-              });
-
-              socketIO.on('studentRegisteredChanged', (data) => {
-                     let studentMail = data.mail;
-                     let status = data.status;
-                     let numberOfRegisteredStudents = data.numberOfRegisteredStudents;
-
-                     maClasse.updateStudentList(studentMail, status, numberOfRegisteredStudents);
-              });
-
-              socketIO.on('sessionStarted', (data) => {
-                     maClasse.changeCurrentSection('sectionDisplayQuestions');
-                     maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
-              });
-
-              socketIO.on('nextQuestion', (data) => {
-                     let question, answers, questionNumber, numberOfQuestions;
-                     if (data) {
-                            question = data.currentQuestion;
-                            answers = data.currentAnswers;
-                            questionNumber = data.currentQuestionNumber;
-                            numberOfQuestions = data.numberOfQuestions;
-                            maClasse.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
-                     }
-              });
-
-              socketIO.on('updateSessionStatus', (data) => {
-                     /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
-
-                     maClasse.changeCurrentSection(`section${data.sessionStatus}`);
-
-                     if (data.sessionStatus != 'CreateSession') {
-                            mail = data.teacher;
-                            quizzName = data.quizzTitle;
-                            maClasse.updateSessionStatus(data);
-                     }
-              });
-
-              socketIO.on('studentAnswers', (data) => {
-
-                     console.log(data);
-              });
-
-              socketIO.on('updateStudentList', (data) => {
-                     let studentList = data.listOfStudents;
-                     studentList.forEach((student) => {
-                            maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
-                     });
-
-                     maClasse.updateNumberOfConnectedStudents(data.numberOfConnectedStudents, '#numberOfConnectedStudents');
-              });
        });
 });
 
+socketIO.on('sessionStatusChanged', (data) => {
+       maClasse.changeCurrentSection(`section${data}`);
+});
+
+socketIO.on('sessionCreated', (data) => {
+       maClasse.tempMessage('success',
+              `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
+              '#tempMessage');
+       maClasse.changeCurrentSection('sectionSessionStatus');
+});
+
+socketIO.on('numberOfConnectedStudentChanged', (number) => {
+       maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
+});
+
+socketIO.on('sessionStarted', (data) => {
+       maClasse.changeCurrentSection('sectionDisplayQuestions');
+       maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
+});
+
+socketIO.on('nextQuestion', (data) => {
+       let question, answers, questionNumber, numberOfQuestions;
+       if (data) {
+              question = data.currentQuestion;
+              answers = data.currentAnswers;
+              questionNumber = data.currentQuestionNumber;
+              numberOfQuestions = data.numberOfQuestions;
+              maClasse.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
+       }
+});
+
+socketIO.on('studentAnswers', (data) => {
+});
+
+socketIO.on('updateStudentList', (data) => {
+       data.listOfStudents.forEach((student) => {
+              maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
+       });
+
+       maClasse.updateNumberOfConnectedStudents(data.numberOfConnectedStudents, '#numberOfConnectedStudents');
+});
+
+socketIO.on('updateSessionStatus', (data) => {
+       /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
+       console.log('updatin');
+       maClasse.changeCurrentSection(`section${data.sessionStatus}`);
+       if (data.sessionStatus != 'CreateSession') {
+              mail = data.teacher;
+              quizzName = data.quizzTitle;
+              maClasse.updateSessionStatus(data);
+       }
+});
+
 //////////////////////////////////////////////////////////////////////////////
+
 document.querySelector('#logout').addEventListener('click', () => {
        socketIO.emit('resetSession');
 });
@@ -156,7 +145,7 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 document.querySelector('#startSession').addEventListener('click', async () => {
        await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               socketIO.emit('startSession', value);
-                     console.log(value);
+              console.log(value);
        });
        socketIO.emit('getNextQuestion');
 });
