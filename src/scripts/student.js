@@ -1,4 +1,4 @@
-const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
+const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formulaireMail');
 let divMessageErreur = document.querySelector('#messageErreur');
@@ -81,11 +81,17 @@ corriger.addEventListener('click', () => { //bouton corriger QCM
     });
 })
 
-btnReturnHome.addEventListener('click', () => {
-    formulaireMail.hidden = false;
-    divButtons.hidden = true;
+btnReturnHome.addEventListener('click', () => { //bouton Home QCM
     socket.emit('studentDisconnect', () => {
     })
+    formulaireMail.hidden = false;
+    divButtons.hidden = true;
+    btnAnswers.forEach((element, index) =>{
+        element.classList ="btn btn-outline-primary p-4";
+        inputs[index].checked = false;
+        console.log("boutton" + element)
+        console.log("inputs" + inputs[index])
+    });
 })
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

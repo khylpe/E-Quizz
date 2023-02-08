@@ -26,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.69.88.32') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -94,7 +94,7 @@ io.on('connection', async function (client) {
                      io.to('student').emit('getAnswers');
               })
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
