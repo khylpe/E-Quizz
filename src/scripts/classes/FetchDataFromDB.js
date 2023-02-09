@@ -82,20 +82,22 @@ class FetchDataFromDB {
                      });
        }
 
-       async insertResult(mail, quizzTitle, teacher, score, date) {
+       async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion) {
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            mail: mail,
+                            teacherMail: teacherMail,
+                            studentMail: studentMail,
+                            groupName: groupName,
                             quizzTitle: quizzTitle,
-                            teacher: teacher,
-                            score: score,
-                            date: date
+                            questionNumber: questionNumber,
+                            studentAnswers: studentAnswers,
+                            resultQuestion: resultQuestion
                      })
               })
                      .then(result => result.json())
                      .then(array => {
-                            return Array(array[0], array[1]);
+                            return Array(array[0]);
                      })
                      .catch(err => {
                             return Array('error', err);

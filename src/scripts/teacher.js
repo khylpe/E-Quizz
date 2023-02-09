@@ -13,7 +13,7 @@ let fetchData = new FetchDataFromDB(mail);
 let quizzName;
 let groupName;
 
-socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkMail event returns anotherTeacherConnected event, all events are being removed */
@@ -98,7 +98,9 @@ socketIO.on('nextQuestion', (data) => {
        }
 });
 
-socketIO.on('studentAnswers', (data) => {
+socketIO.on('studentAnswerResult', (data) => {
+       console.log(data);
+       fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion)
 });
 
 socketIO.on('updateStudentList', (data) => {
@@ -153,5 +155,5 @@ document.querySelector('#startSession').addEventListener('click', async () => {
 document.querySelector('#nextQuestion').addEventListener('click', (e) => {
        e.preventDefault();
        socketIO.emit('getNextQuestion');
-       socketIO.emit('getStudentAnswers');
+       socketIO.emit('getStudentAnswer');
 })

@@ -17,7 +17,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                         `good answer1`,
                                                         `good answer2`,
                                                         `good answer3`,
-                                                        `good answer4` 
+                                                        `good answer4`,
+                                                        `question number`
                                                         FROM `quizz` 
                                                         WHERE `title` = :quizzTitle
                                                         AND `author` = :uid");
@@ -33,7 +34,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
               foreach ($result as $key => $value) {
                      $i = 0;
                      $j = 0;
-                     $tab = array('', array(), array());
+                     $tab = array('', array(), array(),);
                      foreach ($value as $key2 => $value2) {
                             if ($key2 == "question") {
                                    $tab[0] = $value2;
@@ -43,6 +44,9 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                             }
                             if ($key2 == "good answer1" || $key2 == "good answer2" || $key2 == "good answer3" || $key2 == "good answer4") {
                                           $tab[2][$j++] = $value2;
+                            }
+                            if($key2 == "question number"){
+                                   $tab[3] = $value2;
                             }
                      }
                      array_push($arrayOfQuestionsAndAnswers, $tab);

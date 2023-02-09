@@ -3,49 +3,54 @@ require('connectToDB.php');
 $entityBody = file_get_contents('php://input');
 $data = json_decode($entityBody, true);
 
-if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || empty($_SESSION['mail']) || $_SESSION['mail'] != $data['author']) {
+if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || empty($_SESSION['mail']) || $_SESSION['mail'] != $data['teacherMail']) {
        $response = array('error', 'session error');
        echo json_encode($response);
        die();
 } else {
        try {
-              $fetchQuizzList = $db->prepare("SELECT    question,
-                                                        answer1, 
-                                                        answer2,
-                                                        answer3,
-                                                        answer4,
-                                                        `good answer1`,
-                                                        `good answer2`,
-                                                        `good answer3`,
-                                                        `good answer4` 
-                                                        FROM `quizz` 
-                                                        WHERE `title` = :quizzTitle
-                                                        AND `author` = :uid");
+              $fetchQuizzList = $db->prepare("INSERT INTO results (
+                     `quizz title`,
+                     `date`,
+                     `teacher`,
+                     `student group`,
+                     `student mail`,
+                     `question number`,
+                     `asnwer submitted 1`,
+                     `answer submitted 2`,
+                     `answer submitted 3`,
+                     `answer submitted 4`,
+                     `question result`)
 
-              $fetchQuizzList->execute(array(
-                     ':quizzTitle' => $data['quizzName'],
-                     ':uid' => $_SESSION['uid']
-              ));
+                     VALUES (
+                            :quizzTitle,
+                            :dateSubmit,
+                            :teacher,
+                            :studentGroup,
+                            :studentMail,
+                            :questionNumber,
+                            :answerSubmitted1,
+                            :answerSubmitted2,
+                            :answerSubmitted3,
+                            :answerSubmitted4,
+                            :questionResult
+                            )");
 
-              $result = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
-              $arrayOfQuestionsAndAnswers = array();
-              foreach ($result as $key => $value) {
-                     $i = 0;  
-                     $tab = array(['',array([]),array([])]);
-                     foreach ($value as $key2 => $value2) {
-                            if($key2 == "question"){
-                                   $tab[0] = $value2;                                   
-                            }
-                            if($key2 == "answer1" || $key2 == "answer2" || $key2 == "answer3" || $key2 == "answer4"){
-                                   $tab[1][$i++] = $value2;
-                            }
-                            if($key2 == "good answer1" || $key2 == "good answer2" || $key2 == "good answer3" || $key2 == "good answer4"){
-                                   $tab[2][$i++] = $value2;
-                            }
-                     }
-                     array_push($arrayOfQuestionsAndAnswers, $tab);                     
-              }
-              $response = array('success', $arrayOfQuestionsAndAnswers);
+              $fetchQuizzList->bindParam(':quizzTitle', $data['quizzTitle']);
+              $fetchQuizzList->bindParam(':dateSubmit', date('Y-m-d'));
+              $fetchQuizzList->bindParam(':teacher', $_SESSION['uid']);
+              $fetchQuizzList->bindParam(':studentGroup', $data['groupName']);
+              $fetchQuizzList->bindParam(':studentMail', $data['studentMail']);
+              $fetchQuizzList->bindParam(':questionNumber', $data['questionNumber']);
+              $fetchQuizzList->bindParam(':answerSubmitted1', $data['studentAnswers'][0]);
+              $fetchQuizzList->bindParam(':answerSubmitted2', $data['studentAnswers'][1]);
+              $fetchQuizzList->bindParam(':answerSubmitted3', $data['studentAnswers'][2]);
+              $fetchQuizzList->bindParam(':answerSubmitted4', $data['studentAnswers'][3]);
+              $fetchQuizzList->bindParam(':questionResult', $data['resultQuestion']);
+              
+              $fetchQuizzList->execute();
+              
+              $response = array('success');
               echo json_encode($response);
        } catch (Exception $e) {
               $response = array('error', $e);

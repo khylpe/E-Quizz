@@ -12,6 +12,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
        die();
 } else {
        try {
+              $questionNumber = 1;
               foreach ($questionsAndAnswers as $questionAndAnswers) {
                      $question = $questionAndAnswers['question'];
                      $answers = $questionAndAnswers['answers'];
@@ -28,7 +29,9 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                             `good answer1`,
                             `good answer2`,
                             `good answer3`,
-                            `good answer4`)
+                            `good answer4`,
+                            `question number`
+                            )
                             
                             VALUES (
                                    :title, 
@@ -41,7 +44,9 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                    :goodanswer1,
                                    :goodanswer2,
                                    :goodanswer3,
-                                   :goodanswer4)");
+                                   :goodanswer4,
+                                   :questionNumber
+                                   )");
 
                      $insertQuizz->bindParam(':title', $title);
                      $insertQuizz->bindParam(':author', $_SESSION['uid']);
@@ -54,7 +59,10 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      $insertQuizz->bindParam(':goodanswer2', $goodAnswers[1]);
                      $insertQuizz->bindParam(':goodanswer3', $goodAnswers[2]);
                      $insertQuizz->bindParam(':goodanswer4', $goodAnswers[3]);
+                     $insertQuizz->bindParam(':questionNumber', $questionNumber);
                      $insertQuizz->execute();
+
+                     $questionNumber++;
               }
 
               $response = array('success', 'le Quizz a été créé');
