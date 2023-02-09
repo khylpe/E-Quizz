@@ -10,18 +10,17 @@
 </head>
 
 <body>
-
     <h1 class="d-flex justify-content-center">E-QUIZZ</h1>
 
-    <form id="formulaireMail" class="justify-content-center">
-        <input type="email" id="mailAddress" autocomplete="off" required />
+    <form id="formulaireMail" class="container text-center col-sm-2 col-form-label">
+        <input type="email" id="mailAddress" class="form-control align-bottom" autocomplete="off" autofocus required />
+        <button id="btnSend" class="btn btn-primary">Envoyer</button>
 
-        <button id="btnSend">Envoyer</button>
-        <p id="messageErreur"></p>
+        <p id="messageErreur" class="alert"></p>
     </form>
 
-    <div id="divButtons" class="flex-column">
-        <div id="btnAnswers" class="d-flex align-content-end flex-wrap">
+    <div id="divButtons" class="container text-center align-bottom">
+        <div id="btnAnswers" class="container text-center row align-items-start">
             <button id="btnA" type="button" class="btn btn-outline-primary p-4">A</button>
             <input type="checkbox" id="stateBtnA" hidden>
             <button id="btnB" type="button" class="btn btn-outline-primary p-4">B</button>

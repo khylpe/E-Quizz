@@ -26,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.69.88.32') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.69.88.55') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -90,8 +90,9 @@ io.on('connection', async function (client) {
                      }
               });
 
-              client.on('getStudentAnswers', () => {
-                     io.to('student').emit('getAnswers');
+              client.on('getStudentAnswer', () => {
+                     console.log('teacher emitted get answer');
+                     io.to('student').emit('getStudentAnswer');
               })
        }
        else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
@@ -111,18 +112,19 @@ io.on('connection', async function (client) {
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
 
-                            client.on('studentAnswers', (data) => { // rename later
-                                   io.to('teacher').emit('studentAnswers', {
-                                          mail: client.mail,
-                                          answers: data.answers,
+                            client.on('sendStudentAnswer', (data) => { // rename later                                   
+                                   io.to('teacher').emit('studentAnswerResult', {
+                                          teacherMail: data.mail,
+                                          studentMail: client.mail,
                                           groupName: groupName,
                                           quizzTitle: quizzTitle,
-                                          teacherMail: data.mail,
-                                          isCorrectAnswer: checkAnswers(data.answers,
+                                          questionNumber: quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][3],
+                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1]),
+                                          resultQuestion: checkAnswers(data.answers,
                                                  quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1], // list of possible answers
                                                  quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][2] // list of good answers
                                           )
-                                   })
+                                   });
                             });
 
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
@@ -175,7 +177,7 @@ function getCurrentQuestionAndAnswers() {
        let json = {
               currentQuestion: currentQuestionAndAnswers[0],
               currentAnswers: currentQuestionAndAnswers[1],
-              currentQuestionNumber: numberCurrentQuestion,
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][numberCurrentQuestion - 1][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length
        };
        return json;
@@ -223,6 +225,22 @@ function alterStudentList(action, mail) {
               });
        }
        return;
+}
+
+function getAnswersAsString(answersStudent, answersPossibility) {
+       let tab = [];
+       answersStudent.forEach((answers, index) => {
+              if (answers === true) {
+                     tab.push(answersPossibility[index]);
+              }
+       })
+       for(let i=0; i<4;i++){
+              if(tab[i]==undefined){ // si tableau pas rempli, remplace index vide par null
+                     tab[i]=null;
+              }
+       }
+       console.log(tab);
+       return tab;
 }
 
 server.listen(8100);

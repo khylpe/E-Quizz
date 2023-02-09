@@ -11,6 +11,7 @@ let inputs = document.querySelectorAll('#btnAnswers input[type="checkbox"]');
 let submitToTeacher = document.querySelector('#btnValidate');
 let corriger = document.querySelector('#btnModify');
 
+//front
 for (let i = 0; i < btnAnswers.length; i++) { // changement couleur une fois cliqué + ckeck / uncheck checkbox
     inputs[i].checked = false;
     btnAnswers[i].addEventListener('click', (ElementDuDOM) => {
@@ -30,6 +31,7 @@ socket.on('connect', () => {
         formulaireMail.hidden = true;
         divButtons.hidden = false;
         btnModify.hidden = true;
+        submitToTeacher.hidden = false;
     });
 
     socket.on('doublons', () => {
@@ -44,10 +46,10 @@ socket.on('connect', () => {
         console.log(createSession);
     });
 
-    socket.on('getAnswers', () => {
-        socket.emit('studentAnswers', {
+    socket.on('getStudentAnswer', () => {
+        socket.emit('sendStudentAnswer', {
             answers: getAnswers()
-        })
+        });
         btnAnswers.forEach((button, index) => {
             button.classList = "btn btn-outline-primary p-4";
             inputs[index].checked = false;
@@ -86,8 +88,8 @@ btnReturnHome.addEventListener('click', () => { //bouton Home QCM
     })
     formulaireMail.hidden = false;
     divButtons.hidden = true;
-    btnAnswers.forEach((element, index) =>{
-        element.classList ="btn btn-outline-primary p-4";
+    btnAnswers.forEach((element, index) => {
+        element.classList = "btn btn-outline-primary p-4";
         inputs[index].checked = false;
         console.log("boutton" + element)
         console.log("inputs" + inputs[index])
@@ -102,5 +104,5 @@ function getAnswers() {
         arrayAnswers.push(inputs[a].checked);
     }
     return arrayAnswers;
-     console.log(arrayAnswers);
+    console.log(arrayAnswers);
 }
