@@ -20,4 +20,3 @@ if($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || emp
        echo json_encode($response);
 }
 }
-

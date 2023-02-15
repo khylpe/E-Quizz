@@ -83,6 +83,7 @@ class FetchDataFromDB {
        }
 
        async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion) {
+              console.log(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion)
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
                      body: JSON.stringify({
@@ -102,5 +103,78 @@ class FetchDataFromDB {
                      .catch(err => {
                             return Array('error', err);
                      });
+       }
+
+       async fetchQuizzResults(questionsAndAnswers, teacherMail, quizzTitle, studentGroup, date) {
+              return await fetch('/src/php/fetchQuizzResults.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            listOfQuestionsAndAnswers : questionsAndAnswers,
+                            teacherMail: teacherMail,
+                            quizzName: quizzTitle,
+                            studentGroup: studentGroup,
+                            date: date
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return array;
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
+       }
+
+       async fetchQuizzListFromResults(teacherMail) {
+              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
+                     return Array('error', 'mail error');
+              }
+              return await fetch('/src/php/fetchQuizzListFromResults.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            teacherMail: teacherMail
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return array;
+                     })
+       }
+
+       async fetchGroupListFromResults(teacherMail, quizzName) {
+              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
+                     return Array('error', 'mail error');
+              }
+              return await fetch('/src/php/fetchGroupListFromResults.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            teacherMail: teacherMail,
+                            quizzName : quizzName
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return array;
+                     })
+       }
+
+       async fetchDatesOfQuizzFromResults(teacherMail, quizzName, studentGroup) {
+              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
+                     return Array('error', 'mail error');
+              }
+              return await fetch('/src/php/fetchDatesOfQuizzFromResults.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            teacherMail: teacherMail,
+                            quizzName : quizzName,
+                            studentGroup : studentGroup
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return array;
+                     })
+
+
        }
 }

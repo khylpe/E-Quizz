@@ -54,10 +54,7 @@ INSERT INTO `quizz` (`id`, `title`, `author`, `question`, `answer1`, `answer2`, 
 	(124, 'QCM DE DEMO', 1, 'Qui était le président de la France de 1995 à 2007 ?', 'Georges Pompidou', 'Jacques Chirac ', 'François Hollande', 'François Mitterand', 'Jacques Chirac ', NULL, NULL, NULL, 5),
 	(125, 'QCM DE DEMO', 1, 'Quels événements se sont produis après les attaques du 11 septembre 2001 à New York', 'Fin de la politique isolationniste pour les USA', ' les Américains lancent une offensive en Afghanistan (lutte anti-terroriste)', 'Les USA deviennent "les gendarmes du monde"', 'Mort d\'Oussama Ben Laden sur le sol Américain, après 4 années de chasse à l\'homme', ' les Américains lancent une offensive en Afghanistan (lutte anti-terroriste)', 'Les USA deviennent "les gendarmes du monde"', NULL, NULL, 6),
 	(126, 'QCM DE DEMO', 1, 'Quel est le "bug de l\'an 2000"', 'Un bug concernant les formats des dates informatiques', 'Un bug concernant le World Wide Web', '', '', 'Un bug concernant les formats des dates informatiques', NULL, NULL, NULL, 7),
-	(127, 'QCM DE DEMO', 1, 'Quelle bataille mena à la chute de Napoléon Bonaparte', 'Bataille de Verdun', 'Bataille de Stalingrad', 'Bataille de la somme', 'Bataille de waterloo', 'Bataille de waterloo', NULL, NULL, NULL, 8),
-	(128, 'test new db', 1, 'q1', 'r11', 'r12', 'r13', 'r14', 'r12', NULL, NULL, NULL, NULL),
-	(129, 'fdfd', 1, 'df', 'df', 'fdhgjk', 'lmùù', 'ihj', 'fdhgjk', NULL, NULL, NULL, 1),
-	(130, 'r', 1, 'rrr', 'rr', 'r', 'rr', 'r', 'r', 'r', NULL, NULL, 1);
+	(127, 'QCM DE DEMO', 1, 'Quelle bataille mena à la chute de Napoléon Bonaparte', 'Bataille de Verdun', 'Bataille de Stalingrad', 'Bataille de la somme', 'Bataille de waterloo', 'Bataille de waterloo', NULL, NULL, NULL, 8);
 
 -- Listage de la structure de table equizz. results
 CREATE TABLE IF NOT EXISTS `results` (

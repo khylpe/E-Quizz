@@ -5,15 +5,17 @@ document.querySelector('#sectionSessionStatus').style.display = "none";
 document.querySelector('#tempMessage').style.display = "none";
 document.querySelector('#sessionInfo').style.display = "none";
 document.querySelector('#sectionDisplayQuestions').style.display = "none";
+document.querySelector('#seeResult').style.display = "none";
 
 mail = document.querySelector('#mail').innerText; // attention
-let maClasse = new teacher(mail);
+let maClasse = new Teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
 
 let quizzName;
 let groupName;
+let questionsAndAnswers;
 
-socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkMail event returns anotherTeacherConnected event, all events are being removed */
@@ -41,27 +43,43 @@ socketIO.on('connect', () => {
 
        socketIO.on('teacherConnected', async (data) => {
               await fetchData.fetchQuizzList()
-                     .then(value => {
-                            let liListe = maClasse.displayQuizzList(value, '#quizzList');
-                            if (liListe) {
-                                   liListe.forEach((nameInList) => {
-                                          nameInList.addEventListener('click', () => {
-                                                 document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
-                                                 document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
+                     .then(value => {  /* [0] = error or success, [1] = quizzListTitles[] || error message */
+                            if (value[0] == "error") {
+                                   maClasse.tempMessage('error', value[1], '#tempMessage');
+                                   return false;
+                            } else if (value[0] == "success" && value[1].length > 0) {
+                                   let liListe = maClasse.displayQuizzList(value, '#quizzList');
+                                   if (liListe) {
+                                          liListe.forEach((nameInList) => {
+                                                 nameInList.addEventListener('click', () => {
+                                                        document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
+                                                        document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
+                                                 });
                                           });
-                                   });
-                            };
+                                   }
+                            } else {
+                                   maClasse.tempMessage('error', "Il n'y a pas de quizz enregistré", '#tempMessage');
+                                   return false;
+                            }
+
                      });
               await fetchData.fetchStudentGroups()
                      .then(value => {
-                            let liList = maClasse.displayStudentGroups(value, '#groupsList');
-                            if (liList) {
-                                   liList.forEach((groupInList) => {
-                                          groupInList.addEventListener('click', () => {
-                                                 document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
-                                                 document.querySelector('#submitCreateSession').classList.remove('disabled');
+                            if (value[0] == "error") {
+                                   maClasse.tempMessage('error', value[1], '#tempMessage');
+                            }
+                            else if (value[0] == "success" && value[1].length > 0) {
+                                   let liList = maClasse.displayStudentGroups(value, '#groupsList');
+                                   if (liList) {
+                                          liList.forEach((groupInList) => {
+                                                 groupInList.addEventListener('click', () => {
+                                                        document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
+                                                        document.querySelector('#submitCreateSession').classList.remove('disabled');
+                                                 });
                                           });
-                                   });
+                                   }
+                            } else {
+                                   maClasse.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
                             }
                      });
        });
@@ -99,7 +117,7 @@ socketIO.on('nextQuestion', (data) => {
 });
 
 socketIO.on('studentAnswerResult', (data) => {
-       console.log(data);
+       console.log(data.teacherMail);
        fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion)
 });
 
@@ -113,13 +131,26 @@ socketIO.on('updateStudentList', (data) => {
 
 socketIO.on('updateSessionStatus', (data) => {
        /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
-       console.log('updatin');
        maClasse.changeCurrentSection(`section${data.sessionStatus}`);
        if (data.sessionStatus != 'CreateSession') {
               mail = data.teacher;
               quizzName = data.quizzTitle;
+              groupName = data.groupName
               maClasse.updateSessionStatus(data);
+       } else {
+              document.querySelector('#sessionInfo').style.display = "none";
        }
+
+       if (data.sessionStatus == 'DisplayResults') {
+              questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
+              seeResults();
+
+       }
+});
+
+socketIO.on('last question', () => {
+       document.querySelector('#seeResult').style.display = "inline-block";
+       document.querySelector('#nextQuestion').style.display = "none";
 });
 
 //////////////////////////////////////////////////////////////////////////////
@@ -146,8 +177,8 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 
 document.querySelector('#startSession').addEventListener('click', async () => {
        await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
+              questionsAndAnswers = value[1];
               socketIO.emit('startSession', value);
-              console.log(value);
        });
        socketIO.emit('getNextQuestion');
 });
@@ -156,4 +187,19 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
        e.preventDefault();
        socketIO.emit('getNextQuestion');
        socketIO.emit('getStudentAnswer');
-})
+});
+
+document.querySelector('#seeResult').addEventListener('click', (e) => {
+       e.preventDefault();
+       socketIO.emit('seeResults');
+       seeResults();
+});
+
+function seeResults() {
+              let daate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+       
+       fetchData.fetchQuizzResults(questionsAndAnswers, mail, quizzName, groupName, daate).then(value => {
+              maClasse.displayResults(value[1], value[2], '#idk')
+       });
+
+}

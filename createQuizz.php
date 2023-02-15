@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php session_start(); 
+if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connected' || !isset($_SESSION['mail'])) {
+       header('location:index.php');
+       die();
+}
+?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
@@ -28,6 +33,9 @@
                                                  </li>
                                                  <li>
                                                         <a href="teacher.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
+                                                 </li>
+                                                 <li>
+                                                        <a href="seeQuizzResults.php"><button class="btn border border-info w-100 text-info">Résultats des Quizz</button></a>
                                                  </li>
                                                  <li class="mt-1" id="logout"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>

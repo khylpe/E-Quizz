@@ -52,7 +52,6 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      array_push($arrayOfQuestionsAndAnswers, $tab);
               }
               $response = array('success', $arrayOfQuestionsAndAnswers);
-              // print_r(json_encode($response));
               echo json_encode($response);
        } catch (Exception $e) {
               $response = array('error', $e);

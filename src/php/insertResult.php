@@ -3,12 +3,15 @@ require('connectToDB.php');
 $entityBody = file_get_contents('php://input');
 $data = json_decode($entityBody, true);
 
+
+
 if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || empty($_SESSION['mail']) || $_SESSION['mail'] != $data['teacherMail']) {
        $response = array('error', 'session error');
        echo json_encode($response);
        die();
 } else {
        try {
+              $todayDate = date('Y-m-d');
               $fetchQuizzList = $db->prepare("INSERT INTO results (
                      `quizz title`,
                      `date`,
@@ -16,7 +19,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      `student group`,
                      `student mail`,
                      `question number`,
-                     `asnwer submitted 1`,
+                     `answer submitted 1`,
                      `answer submitted 2`,
                      `answer submitted 3`,
                      `answer submitted 4`,
@@ -37,7 +40,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                             )");
 
               $fetchQuizzList->bindParam(':quizzTitle', $data['quizzTitle']);
-              $fetchQuizzList->bindParam(':dateSubmit', date('Y-m-d'));
+              $fetchQuizzList->bindParam(':dateSubmit', $todayDate);
               $fetchQuizzList->bindParam(':teacher', $_SESSION['uid']);
               $fetchQuizzList->bindParam(':studentGroup', $data['groupName']);
               $fetchQuizzList->bindParam(':studentMail', $data['studentMail']);
@@ -46,6 +49,10 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
               $fetchQuizzList->bindParam(':answerSubmitted2', $data['studentAnswers'][1]);
               $fetchQuizzList->bindParam(':answerSubmitted3', $data['studentAnswers'][2]);
               $fetchQuizzList->bindParam(':answerSubmitted4', $data['studentAnswers'][3]);
+              if($data['resultQuestion'] == "true")
+                     $data['resultQuestion'] = 1;
+              else
+                     $data['resultQuestion'] = 0;
               $fetchQuizzList->bindParam(':questionResult', $data['resultQuestion']);
               
               $fetchQuizzList->execute();
