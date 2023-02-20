@@ -76,24 +76,48 @@ io.on('connection', async function (client) {
 
               client.on('startSession', (quizzData) => {
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
+
+                     if (quizzQuestionsAndAnswers[1].length == 0) { // if there is no question
+                            client.emit('tempMessage', {
+                                   status: "error",
+                                   message: "There is no question in this quizz"
+                            });
+                            return;
+                     }
+                     else if (getNumberOfRegisteredStudent() == 0) { // if there is no student registered
+                            client.emit('tempMessage', {
+                                   status: "error",
+                                   message: "There is no student registered"
+                            });
+                            return;
+                     }
+
                      sessionStatus = "DisplayQuestions";
                      client.emit('sessionStarted');
                      client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
 
               client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
-                     if(numberCurrentQuestion+1 == quizzQuestionsAndAnswers[1].length) { // will notice the teacher that he is displaying the last question
-                            currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
-                            client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                            client.emit('last question');
-                     }
+                     if (getNumberOfRegisteredStudent() != 0) {
+                            if (numberCurrentQuestion + 1 == quizzQuestionsAndAnswers[1].length) { // will notice the teacher that he is displaying the last question
+                                   currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
+                                   client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+                                   client.emit('last question');
+                            }
 
-                     
-                     else if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if there is no more question
-                            client.emit('endOfQuizz');
-                     } else {
-                            currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
-                            client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+
+                            else if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if there is no more question
+                                   client.emit('endOfQuizz');
+                            } else {
+                                   currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
+                                   client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+                            }
+                     }
+                     else{
+                            client.emit('tempMessage', {
+                                   status: "error",
+                                   message: "There is no student registered"
+                            });
                      }
               });
 
@@ -180,7 +204,7 @@ function getSessionStatus() {
 function getStudentsInformations() {
        let json = {
               numberOfConnectedStudents: numberOfConnectedStudents,
-              numberOfRegisteredStudents: numberOfRegisteredStudents,
+              numberOfRegisteredStudents: getNumberOfRegisteredStudent(),
               listOfStudents: listOfStudents
        };
        return json;
@@ -247,13 +271,24 @@ function getAnswersAsString(answersStudent, answersPossibility) {
                      tab.push(answersPossibility[index]);
               }
        })
-       for(let i=0; i<4;i++){
-              if(tab[i]==undefined){ // si tableau pas rempli, remplace index vide par null
-                     tab[i]=null;
+       for (let i = 0; i < 4; i++) {
+              if (tab[i] == undefined) { // si tableau pas rempli, remplace index vide par null
+                     tab[i] = null;
               }
        }
        console.log(tab);
        return tab;
+}
+
+function getNumberOfRegisteredStudent() {
+       let numberOfRegisteredStudents = 0;
+       listOfStudents.forEach(student => {
+              if (student.status == "registered") {
+                     numberOfRegisteredStudents++;
+              }
+       });
+       console.log(numberOfRegisteredStudents)
+       return numberOfRegisteredStudents;
 }
 
 server.listen(8100);
