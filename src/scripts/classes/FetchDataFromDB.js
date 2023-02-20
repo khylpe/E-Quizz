@@ -83,7 +83,6 @@ class FetchDataFromDB {
        }
 
        async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion) {
-              console.log(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion)
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
                      body: JSON.stringify({

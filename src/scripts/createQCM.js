@@ -2,12 +2,14 @@ let quizzTitle;
 let questionsAndAnswers = [];
 let mail = document.querySelector('#mail').innerHTML;
 
-const maClasse = new teacher(mail);
+const maClasse = new Teacher(mail);
 let fetchData = new FetchDataFromDB(mail);
 
 document.querySelector('section#creatingQuizz #questionAndAnswers').style.display = "none";
 document.querySelector('section#confirmQuizz').style.display = "none";
 document.querySelector('#checkQuizz').style.display = "none";
+
+maClasse.setCurrentSection('creatingQuizz');
 
 document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
        e.preventDefault();
@@ -18,6 +20,11 @@ document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
 
 document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submit', (e) => {
        e.preventDefault();
+
+       if (document.querySelectorAll('#answers input[type="checkbox"]:checked').length == 0) {
+              maClasse.tempMessage("error", "Veuillez sélectionner au moins une bonne réponse", "#tempMessage");
+              return;
+       }
        document.querySelector('#checkQuizz').style.display = "inline-block";
 
        let questionAndAnswers = { question: "", answers: [], correctAnswers: [] };
@@ -47,15 +54,13 @@ document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submi
        });
 
        document.querySelector('#questionNumber').innerHTML = `Question n°${questionsAndAnswers.length + 1} :`;
-
        maClasse.tempMessage("success", "Question ajoutée avec succès", "#tempMessage");
 });
 
 document.querySelector('#checkQuizz').addEventListener('click', (e) => {
        document.querySelector('#confirmQuizzButton').style.display = "inline-block";
 
-       document.querySelector('section#creatingQuizz').style.display = "none";
-       document.querySelector('section#confirmQuizz').style.display = "block";
+       maClasse.setCurrentSection('confirmQuizz');
        maClasse.createAndAppendConfirmQuizzTitle(quizzTitle, "section#confirmQuizz #dataConfirmQuizz");
 
        //create the accordion for the questions and answers
@@ -66,41 +71,16 @@ document.querySelector('#checkQuizz').addEventListener('click', (e) => {
 
        // append the questions and answers to the accordion
        questionsAndAnswers.forEach((element, index) => { // element = {question: "questionValue", answers: [], correctAnswers: []}
-              createAccordionItemForQuestionAndAnswers(index + 1, element.question, element.answers, element.correctAnswers, "#accordionConfirmQuizz");
+              maClasse.createAccordionItemForQuestionAndAnswers(index + 1, element.question, element.answers, element.correctAnswers, "#accordionConfirmQuizz");
        });
-
-       /* add the event listener to the buttons to modify the answers */
-       let allQuestionsAndAnswers = document.querySelectorAll('.questions');
-       allQuestionsAndAnswers.forEach((currentQuestion) => {
-              let allQuestionsAndAnswersID = currentQuestion.getAttribute('id'); // ex: questions1 which is the id of the div containing the question and the answers
-              let buttonsModifyAnswer = document.querySelectorAll('#' + allQuestionsAndAnswersID + ' i') // ex: buttonsModifyAnswer = [i, i, i, i] which are the buttons to modify the answers of the current question
-              buttonsModifyAnswer.forEach((button, index) => {
-                     button.addEventListener('click', () => {
-                            let answerInput = document.querySelector('#' + allQuestionsAndAnswersID + " #confirmAnswer" + index); // ex: confirmAnswer1 which is the input containing the answer, related to the button clicked
-                            let checkBoxInput = document.querySelector('#' + allQuestionsAndAnswersID + " #checkBoxCorrectAnswer" + index); // ex: checkBoxCorrectAnswer1 which is the checkbox to check if the answer is correct, related to the button clicked
-
-                            if (answerInput.hasAttribute('disabled')) {
-                                   answerInput.removeAttribute('disabled');
-                                   button.classList = 'bi-check';
-                                   button.style = "font-size: 2rem;";
-                                   checkBoxInput.removeAttribute('disabled');
-                            } else {
-                                   button.classList = 'bi-pen';
-                                   button.style = "font-size: 2rem;";
-                                   answerInput.setAttribute('disabled', 'disabled');
-                                   checkBoxInput.setAttribute('disabled', 'disabled');
-                            }
-                     });
-              })
-       });
-       /* end of the event listener to the buttons to modify the answers */
 });
 
 document.querySelector('#confirmQuizzButton').addEventListener('click', async (e) => {
+       quizzTitle = document.querySelector('#confirmQuizz #confirmQuizzTitle').value;
        let finalQuestionsAndAnswers = [];
 
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
-       allQuestionsAndAnswers.forEach((currentQuestion, index) => {
+       allQuestionsAndAnswers.forEach((currentQuestion) => {
 
               let allQuestionsAndAnswersID = currentQuestion.getAttribute('id'); // ex: questions1 which is the id of the div containing the question and the answers
 
@@ -109,14 +89,14 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
 
               let questAndAns = { question: document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value, answers: [], correctAnswers: [] };
 
-              allPossibleAnswersForThisQuestion.forEach((element, index) => {
+              allPossibleAnswersForThisQuestion.forEach((element) => {
                      questAndAns.answers.push(element.value);
               });
 
-              allCorrectAnswersForThisQuestion.forEach((element, indexx) => {
+              allCorrectAnswersForThisQuestion.forEach((element, indexOfCorrectAnswer) => {
                      if (element.checked) {
-                            let tmp = indexx + 1;
-                            let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + tmp).value;
+                            let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
+                            let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
                             questAndAns.correctAnswers.push(valueOfTheCorrectAnswer);
                      }
               });
@@ -126,139 +106,14 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
 
        fetchData.createQuizz(mail, quizzTitle, finalQuestionsAndAnswers)
               .then((response) => {
-                     console.log("response : " + response)
                      if (response[0] == "success") {
                             maClasse.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
-                            document.querySelector('#confirmQuizzButton').style.display = "none";
-                            /*document.querySelector('#returnToQuizzList').style.display = "inline-block";*/
+                            maClasse.setCurrentSection("quizzCreated");                            
                      } else {
                             maClasse.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
                      }
-})
+              })
               .catch((error) => {
                      maClasse.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
               });
 });
-
-function createAccordionItemForQuestionAndAnswers(questionNumber, question, answers, correctAnswers, selector) {
-
-       let accordionItem = document.createElement("div");
-       accordionItem.classList.add("accordion-item", "questions");
-       accordionItem.setAttribute("id", "question" + questionNumber);
-
-       let h2 = document.createElement("h2");
-       h2.classList.add("accordion-header");
-       h2.setAttribute("id", "heading" + questionNumber);
-
-       let button = document.createElement("button");
-       button.classList.add("accordion-button", "collapsed");
-       button.setAttribute("type", "button");
-       button.setAttribute("data-bs-toggle", "collapse");
-       button.setAttribute("data-bs-target", "#collapse" + questionNumber);
-       button.setAttribute("aria-expanded", "false");
-       button.setAttribute("aria-controls", "collapseOne");
-       button.innerHTML = "Question n°" + questionNumber;
-
-       h2.appendChild(button);
-
-       let collapseOne = document.createElement("div");
-       collapseOne.setAttribute("id", "collapse" + questionNumber);
-       collapseOne.classList.add("accordion-collapse", "collapse");
-       collapseOne.setAttribute("aria-labelledby", "heading" + questionNumber);
-
-       let div = document.createElement("div");
-       div.classList.add("accordion-body");
-
-       let questionDiv = document.createElement("div");
-       questionDiv.classList.add("mb-3");
-
-       let label = document.createElement("label");
-       label.classList.add("form-label");
-       label.setAttribute("for", "question" + questionNumber);
-       label.innerHTML = "Question";
-
-       let inputDiv = document.createElement("div");
-       inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
-
-       let input = document.createElement("input");
-       input.classList.add("form-control", "me-3");
-       input.setAttribute("id", "question" + questionNumber);
-       input.setAttribute("type", "text");
-       input.setAttribute("value", "");
-       input.setAttribute("disabled", "disabled");
-       input.value = question;
-
-       let iElem = document.createElement("i");
-       iElem.classList.add("bi", "bi-pen");
-       iElem.setAttribute("id", "editOrConfirmTitle" + questionNumber);
-       iElem.setAttribute("style", "font-size: 2rem;");
-
-       inputDiv.appendChild(input);
-       inputDiv.appendChild(iElem);
-
-       questionDiv.appendChild(label);
-       questionDiv.appendChild(inputDiv);
-
-       collapseOne.appendChild(div);
-       accordionItem.appendChild(h2);
-       accordionItem.appendChild(collapseOne);
-
-       div.appendChild(questionDiv);
-       for (let i = 1; i <= 4; i++) {
-              let questionDiv = document.createElement("div");
-              questionDiv.classList.add("mb-3");
-
-              let label = document.createElement("label");
-              label.classList.add("form-label");
-              label.setAttribute("for", "answer" + i);
-              label.innerHTML = "Réponse n°" + i;
-
-              let inputDiv = document.createElement("div");
-              inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
-
-              let checkBoxDiv = document.createElement("div");
-              checkBoxDiv.classList.add("form-check", "me-3");
-
-              inputDiv.appendChild(checkBoxDiv);
-
-              let checkBox = document.createElement("input");
-              checkBox.classList.add("form-check-input");
-              checkBox.setAttribute("type", "checkbox");
-              checkBox.setAttribute("value", "");
-              checkBox.setAttribute("id", "checkBoxCorrectAnswer" + i);
-              checkBox.setAttribute("disabled", "disabled");
-
-              if (correctAnswers.includes(answers[i - 1])) {
-                     checkBox.checked = true;
-              } else {
-                     checkBox.checked = false;
-              }
-              checkBoxDiv.appendChild(checkBox);
-
-              let input = document.createElement("input");
-              input.classList.add("form-control", "me-3", 'answer');
-              input.setAttribute("id", "confirmAnswer" + i);
-              input.setAttribute("type", "text");
-              input.setAttribute("value", "");
-              input.setAttribute("disabled", "disabled");
-              input.value = answers[i - 1];
-
-              let iElem = document.createElement("i");
-              iElem.classList.add("bi", "bi-pen");
-              iElem.setAttribute("id", "editOrConfirmAnswer" + i);
-              iElem.setAttribute("style", "font-size: 2rem;");
-
-              inputDiv.appendChild(input);
-              inputDiv.appendChild(iElem);
-
-              questionDiv.appendChild(label);
-              questionDiv.appendChild(inputDiv);
-
-              div.appendChild(questionDiv);
-       }
-
-       collapseOne.appendChild(div);
-       accordionItem.appendChild(h2);
-       accordionItem.appendChild(collapseOne);
-       document.querySelector(selector).appendChild(accordionItem);
-}

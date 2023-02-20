@@ -12,16 +12,22 @@ class Teacher {
                      return;
               }
 
-              let tempMessagee = document.querySelector(selector);
-              tempMessagee.innerHTML = message;
-              tempMessagee.classList = 'text-center container ' + type;
-              tempMessagee.style.display = "block";
+              let tempMessageDiv = document.querySelector(selector);
+              tempMessageDiv.innerHTML = message;
+              tempMessageDiv.classList = 'text-center container ' + type;
+              tempMessageDiv.style.display = "block";
               setTimeout(() => {
-                     tempMessagee.style.display = "none";
+                     tempMessageDiv.style.display = "none";
               }, 18000);
        }
 
        displayQuizzList(data, selector) { /* [0] = error or success, [1] = quizzListTitles[] || error message */
+
+              /* Error or success is verified before the call of this method.
+                     We do not check here because if case of an error,
+                     we want to display a temporary message,
+                     that requires a selector (can't set a selector in the back-end) */
+
               let quizzList = document.querySelector(selector);
               quizzList.innerHTML = "";
               data[1].forEach((quizzName) => {
@@ -37,7 +43,7 @@ class Teacher {
                      quizzList.appendChild(hr);
               });
 
-              // Remove the last divider // https://stackoverflow.com/a/5684878/19601188
+              /* Remove the last divider | https://stackoverflow.com/a/5684878/19601188 */
               var nodes = quizzList.querySelectorAll('.quizzNameDivider');
               var last = nodes[nodes.length - 1];
               quizzList.removeChild(last);
@@ -68,7 +74,7 @@ class Teacher {
               return document.querySelectorAll('#groupInList')
        }
 
-       changeCurrentSection(sectionToDisplay) {
+       setCurrentSection(sectionToDisplay) {
               document.querySelectorAll('section').forEach((section) => {
                      section.style.display = "none";
               });
@@ -79,7 +85,7 @@ class Teacher {
               return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188
        }
 
-       updateSessionStatus(data) {
+       setSessionStatus(data) {
               if (this.getCurrentSection().id == "sectionCreateSession") {
                      document.querySelector('#sessionInfo').style.display = "none";
                      return;
@@ -202,7 +208,6 @@ class Teacher {
        displayResults(questions, listOfStudentsWithTheirAnswers, selector) {
               document.querySelector(selector).innerHTML = "";
               let numberOfQuestions = questions.length;
-              console.log(questions);
               questions.forEach((question, index) => {
                      let questionDiv = document.createElement('div');
                      questionDiv.classList = 'accordion-item border border-primary-subtle questions';
@@ -274,9 +279,6 @@ class Teacher {
                      let card3Body = document.createElement('p');
                      card3Body.classList = 'card-body display-1';
 
-
-                     /////////////////////
-
                      let row2 = document.createElement('div');
                      row2.classList = 'row mt-5';
                      questionStats.appendChild(row2);
@@ -296,8 +298,6 @@ class Teacher {
 
                      let card4Body = document.createElement('p');
                      card4Body.classList = 'card-body display-1';
-
-                     // 
 
                      let col6v4 = document.createElement('div');
                      col6v4.classList = 'col-6';
@@ -382,7 +382,6 @@ class Teacher {
                      card5Body.innerHTML = numberCorrestAnswers / numberOfAnswers * 100 + '%';
                      card5.appendChild(card5Body);
 
-
                      document.querySelector(selector).appendChild(questionDiv);
               })
        }
@@ -433,6 +432,155 @@ class Teacher {
                             input.setAttribute('disabled', 'disabled');
                      }
               });
+       }
+
+       createAccordionItemForQuestionAndAnswers(questionNumber, question, answers, correctAnswers, selector) {
+
+              let accordionItem = document.createElement("div");
+              accordionItem.classList.add("accordion-item", "questions");
+              accordionItem.setAttribute("id", "question" + questionNumber);
+       
+              let h2 = document.createElement("h2");
+              h2.classList.add("accordion-header");
+              h2.setAttribute("id", "heading" + questionNumber);
+       
+              let button = document.createElement("button");
+              button.classList.add("accordion-button", "collapsed");
+              button.setAttribute("type", "button");
+              button.setAttribute("data-bs-toggle", "collapse");
+              button.setAttribute("data-bs-target", "#collapse" + questionNumber);
+              button.setAttribute("aria-expanded", "false");
+              button.setAttribute("aria-controls", "collapseOne");
+              button.innerHTML = "Question n°" + questionNumber;
+       
+              h2.appendChild(button);
+       
+              let collapseOne = document.createElement("div");
+              collapseOne.setAttribute("id", "collapse" + questionNumber);
+              collapseOne.classList.add("accordion-collapse", "collapse");
+              collapseOne.setAttribute("aria-labelledby", "heading" + questionNumber);
+       
+              let div = document.createElement("div");
+              div.classList.add("accordion-body");
+       
+              let questionDiv = document.createElement("div");
+              questionDiv.classList.add("mb-3");
+       
+              let label = document.createElement("label");
+              label.classList.add("form-label");
+              label.setAttribute("for", "question" + questionNumber);
+              label.innerHTML = "Question";
+       
+              let inputDiv = document.createElement("div");
+              inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
+       
+              let input = document.createElement("input");
+              input.classList.add("form-control", "me-3");
+              input.setAttribute("id", "question" + questionNumber);
+              input.setAttribute("type", "text");
+              input.setAttribute("value", "");
+              input.setAttribute("disabled", "disabled");
+              input.value = question;
+       
+              let iElem = document.createElement("i");
+              iElem.classList.add("bi", "bi-pen");
+              iElem.setAttribute("id", "editOrConfirmQuestion" + questionNumber);
+              iElem.setAttribute("style", "font-size: 2rem;");
+       
+              iElem.addEventListener('click', (e) => {
+                     if (input.hasAttribute('disabled')) {
+                            input.removeAttribute('disabled');
+                            iElem.classList = 'bi-check';
+                            iElem.style = "font-size: 2rem;";
+                     } else {
+                            input.setAttribute('disabled', 'disabled');
+                            iElem.classList = 'bi-pen';
+                            iElem.style = "font-size: 2rem;";
+                     }
+              });
+       
+              inputDiv.appendChild(input);
+              inputDiv.appendChild(iElem);
+       
+              questionDiv.appendChild(label);
+              questionDiv.appendChild(inputDiv);
+       
+              collapseOne.appendChild(div);
+              accordionItem.appendChild(h2);
+              accordionItem.appendChild(collapseOne);
+       
+              div.appendChild(questionDiv);
+              for (let i = 1; i <= 4; i++) {
+                     let questionDiv = document.createElement("div");
+                     questionDiv.classList.add("mb-3");
+       
+                     let label = document.createElement("label");
+                     label.classList.add("form-label");
+                     label.setAttribute("for", "answer" + i);
+                     label.innerHTML = "Réponse n°" + i;
+       
+                     let inputDiv = document.createElement("div");
+                     inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
+       
+                     let checkBoxDiv = document.createElement("div");
+                     checkBoxDiv.classList.add("form-check", "me-3");
+       
+                     inputDiv.appendChild(checkBoxDiv);
+       
+                     let checkBox = document.createElement("input");
+                     checkBox.classList.add("form-check-input");
+                     checkBox.setAttribute("type", "checkbox");
+                     checkBox.setAttribute("value", "");
+                     checkBox.setAttribute("id", "checkBoxCorrectAnswer" + i);
+                     checkBox.setAttribute("disabled", "disabled");
+       
+                     if (correctAnswers.includes(answers[i - 1])) {
+                            checkBox.checked = true;
+                     } else {
+                            checkBox.checked = false;
+                     }
+                     checkBoxDiv.appendChild(checkBox);
+       
+                     let input = document.createElement("input");
+                     input.classList.add("form-control", "me-3", 'answer');
+                     input.setAttribute("id", "confirmAnswer" + i);
+                     input.setAttribute("type", "text");
+                     input.setAttribute("value", "");
+                     input.setAttribute("disabled", "disabled");
+                     input.value = answers[i - 1];
+       
+                     let iElem = document.createElement("i");
+                     iElem.classList.add("bi", "bi-pen");
+                     iElem.setAttribute("id", "editOrConfirmAnswer" + i);
+                     iElem.setAttribute("style", "font-size: 2rem;");
+       
+                     inputDiv.appendChild(input);
+                     inputDiv.appendChild(iElem);
+       
+                     iElem.addEventListener('click', (e) => {
+                            if (input.hasAttribute('disabled')) {
+                                   input.removeAttribute('disabled');
+                                   iElem.classList = 'bi-check';
+                                   iElem.style = "font-size: 2rem;";
+                                   checkBox.removeAttribute('disabled');
+                            } else {
+                                   input.setAttribute('disabled', 'disabled');
+                                   iElem.classList = 'bi-pen';
+                                   iElem.style = "font-size: 2rem;";
+                                   checkBox.setAttribute('disabled', 'disabled');
+                            }
+                     });
+       
+                     questionDiv.appendChild(label);
+                     questionDiv.appendChild(inputDiv);
+       
+                     div.appendChild(questionDiv);
+              }
+       
+              collapseOne.appendChild(div);
+              accordionItem.appendChild(h2);
+              accordionItem.appendChild(collapseOne);
+              document.querySelector(selector).appendChild(accordionItem);
        }
 
        /* methods for seeQuizzResults.php */

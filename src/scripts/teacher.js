@@ -23,7 +23,7 @@ socketIO.on('connect', () => {
 
        socketIO.on('anotherTeacherConnected', (data) => {
               maClasse.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
-              maClasse.changeCurrentSection('sectionCreateSession');
+              maClasse.setCurrentSection('sectionCreateSession');
 
               /* disable buttons */
               buttonDisplayQuizzList = document.querySelector('#buttonDisplayQuizzList');
@@ -86,14 +86,14 @@ socketIO.on('connect', () => {
 });
 
 socketIO.on('sessionStatusChanged', (data) => {
-       maClasse.changeCurrentSection(`section${data}`);
+       maClasse.setCurrentSection(`section${data}`);
 });
 
 socketIO.on('sessionCreated', (data) => {
        maClasse.tempMessage('success',
               `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
               '#tempMessage');
-       maClasse.changeCurrentSection('sectionSessionStatus');
+       maClasse.setCurrentSection('sectionSessionStatus');
 });
 
 socketIO.on('numberOfConnectedStudentChanged', (number) => {
@@ -101,7 +101,7 @@ socketIO.on('numberOfConnectedStudentChanged', (number) => {
 });
 
 socketIO.on('sessionStarted', (data) => {
-       maClasse.changeCurrentSection('sectionDisplayQuestions');
+       maClasse.setCurrentSection('sectionDisplayQuestions');
        maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
 });
 
@@ -117,7 +117,6 @@ socketIO.on('nextQuestion', (data) => {
 });
 
 socketIO.on('studentAnswerResult', (data) => {
-       console.log(data.teacherMail);
        fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion)
 });
 
@@ -131,12 +130,12 @@ socketIO.on('updateStudentList', (data) => {
 
 socketIO.on('updateSessionStatus', (data) => {
        /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
-       maClasse.changeCurrentSection(`section${data.sessionStatus}`);
+       maClasse.setCurrentSection(`section${data.sessionStatus}`);
        if (data.sessionStatus != 'CreateSession') {
               mail = data.teacher;
               quizzName = data.quizzTitle;
               groupName = data.groupName
-              maClasse.updateSessionStatus(data);
+              maClasse.setSessionStatus(data);
        } else {
               document.querySelector('#sessionInfo').style.display = "none";
        }
@@ -144,7 +143,6 @@ socketIO.on('updateSessionStatus', (data) => {
        if (data.sessionStatus == 'DisplayResults') {
               questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
               seeResults();
-
        }
 });
 
@@ -196,10 +194,10 @@ document.querySelector('#seeResult').addEventListener('click', (e) => {
 });
 
 function seeResults() {
-              let daate = new Date().toISOString().slice(0, 10).replace('T', ' ');
-       
-       fetchData.fetchQuizzResults(questionsAndAnswers, mail, quizzName, groupName, daate).then(value => {
-              maClasse.displayResults(value[1], value[2], '#idk')
+       let todayDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+
+       fetchData.fetchQuizzResults(questionsAndAnswers, mail, quizzName, groupName, todayDate).then(value => {
+              maClasse.displayResults(value[1], value[2], '#accordionForResults')
        });
 
 }

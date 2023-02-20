@@ -1,4 +1,4 @@
-<?php session_start(); 
+<?php session_start();
 if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connected' || !isset($_SESSION['mail'])) {
        header('location:index.php');
        die();
@@ -14,6 +14,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <title>EQuizz - Création de QCM</title>
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+       <link rel="stylesheet" href="src/styles/createQuizz.css">
 </head>
 
 <body>
@@ -77,39 +78,28 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
                                    <div id="answers" class="mt-5 d-flex flex-column">
                                           <label for="answer1">Réponse 1 : </label>
-                                          <input class="form-control" type="text" name="" id="answer1" required autocomplete="off" autocapitalize="sentences">
-
+                                          <div class="d-flex flex-row align-items-center">
+                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
+                                                 <input class="form-control" type="text" name="" id="answer1" required autocomplete="off" autocapitalize="sentences">
+                                          </div>
                                           <label for="answer2" class="mt-4">Réponse 2 : </label>
-                                          <input type="text" name="" class="form-control" id="answer2" required autocomplete="off" autocapitalize="on">
+
+                                          <div class="d-flex flex-row align-items-center">
+                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
+                                                 <input type="text" name="" class="form-control" id="answer2" required autocomplete="off" autocapitalize="on">
+                                          </div>
 
                                           <label for="answer3" class="mt-4">Réponse 3 : </label>
-                                          <input type="text" name="" class="form-control" id="answer3" autocomplete="off" autocapitalize="sentences">
+                                          <div class="d-flex flex-row align-items-center">
+                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
+                                                 <input type="text" name="" class="form-control" id="answer3" autocomplete="off" autocapitalize="sentences">
+                                          </div>
 
                                           <label for="answer4" class="mt-4">Réponse 4 : </label>
-                                          <input type="text" name="" class="form-control" id="answer4" autocomplete="off" autocapitalize="sentences">
-
-                                          <h3 class="mt-5">Cochez la ou les bonnes réponses : </h3>
-
-                                          <div class="form-check text-start">
-                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°1</label>
-                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                          <div class="d-flex flex-row align-items-center">
+                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
+                                                 <input type="text" name="" class="form-control" id="answer4" autocomplete="off" autocapitalize="sentences">
                                           </div>
-
-                                          <div class="form-check text-start">
-                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°2</label>
-                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                          </div>
-
-                                          <div class="form-check text-start">
-                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°3</label>
-                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                          </div>
-
-                                          <div class="form-check text-start">
-                                                 <label class="form-check-label" for="flexCheckDefault">Réponse n°4</label>
-                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                          </div>
-
                                    </div>
                                    <div class="d-flex flex-column mb-5">
                                           <button id="confirmQuestionAndAnswers" type="submit" class=" btn btn-primary mt-5">Confirmer cette question et ses réponses</button>
@@ -127,6 +117,13 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
               <div class="col-6 text-center offset-3">
                      <button id="confirmQuizzButton" class="btn btn-success mt-5">Confirmer</button>
+              </div>
+       </section>
+
+       <section class="container text-center" id="quizzCreated">
+              <div class="col-6 text-center offset-3">
+                     <h1 class="mt-5">Votre QCM a bien été créé !</h1>
+                     <a href="teacher.php"><button class="btn btn-primary mt-5">Démarer une session</button></a>
               </div>
        </section>
 

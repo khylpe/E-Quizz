@@ -56,12 +56,11 @@ db.fetchQuizzListFromResults(mail).then(array => {
                                                         }
                                                  } else {
                                                         maClasse.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
-
                                                  }
                                           });
                             });
                      });
-              };
+              }
        } else {
               maClasse.tempMessage('error', "Vous n'avez jamais fait de Quizz", '#tempMessage');
        }
@@ -73,17 +72,14 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
        document.querySelector('#sectionSelectQuizz').style.display = "none";
 
        db.fetchQuestionsAndAnswers(document.querySelector('#quizzSelected').innerHTML, mail)
-              .then(value => {
-                     if (value[0] == "error") {
-                            maClasse.tempMessage('error', value[1], '#tempMessage');
+              .then(questionsReturned => {
+                     if (questionsReturned[0] == "error") {
+                            maClasse.tempMessage('error', questionsReturned[1], '#tempMessage');
                      }
-                     else if (value[0] == "success" && value[1].length > 0) {
-                            let daate = new Date().toISOString().slice(0, 10).replace('T', ' ');
-                            console.log(typeof daate);
-                            db.fetchQuizzResults(value[1], mail, document.querySelector('#quizzSelected').innerHTML, document.querySelector('#groupSelected').innerHTML, daate)
-                                   .then(value2 => {
-                                          console.log('truc : ' + value2[2])
-                                          maClasse.displayResults(value[1], value2[2], '#idk')
+                     else if (questionsReturned[0] == "success" && questionsReturned[1].length > 0) {
+                            db.fetchQuizzResults(questionsReturned[1], mail, document.querySelector('#quizzSelected').innerHTML, document.querySelector('#groupSelected').innerHTML, document.querySelector('#dateSelected').innerHTML)
+                                   .then(quizzResultsReturned => {
+                                          maClasse.displayResults(questionsReturned[1], quizzResultsReturned[2], '#accordionResult')
                                    });
                      }
                      else {
