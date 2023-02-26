@@ -82,7 +82,7 @@ class FetchDataFromDB {
                      });
        }
 
-       async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion) {
+       async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion, time) {
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
                      body: JSON.stringify({
@@ -92,7 +92,8 @@ class FetchDataFromDB {
                             quizzTitle: quizzTitle,
                             questionNumber: questionNumber,
                             studentAnswers: studentAnswers,
-                            resultQuestion: resultQuestion
+                            resultQuestion: resultQuestion,
+                            time: time
                      })
               })
                      .then(result => result.json())

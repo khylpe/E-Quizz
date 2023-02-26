@@ -54,21 +54,38 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <div id="tempMessage" role="alert">
        </div>
-       <div class="accordion-item container text-center mt-5" id="sessionInfo">
-              <div class="col-lg-6 offset-lg-3">
-                     <div class="card accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                   <h5 class="card-header w-100 text-center">
-                                          Informations de la session </h5>
-                            </button>
-                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                   <div class="accordion-body">
-                                          <ui class="list-group">
-                                                 <li class="list-group-item list-group-item-info" id="sessionStatusInfo"></li>
-                                                 <li class="list-group-item list-group-item-info" id="teacherInfo"></li>
-                                                 <li class="list-group-item list-group-item-info" id="quizzInfo"></li>
-                                                 <li class="list-group-item list-group-item-info" id="groupInfo"></li>
-                                          </ui>
+       <div class="d-flex flex-row justify-content-evenly" id="infosAndNumberAnswers">
+              <div class="accordion-item text-center mt-5" id="sessionInfo">
+                     <div class="">
+                            <div class="card accordion-header" id="headingOne">
+                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                          <h5 class="card-header w-100 text-center">
+                                                 Informations de la session</h5>
+                                   </button>
+                                   <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                          <div class="accordion-body" id="bodySessionInformations">
+                                                 <ui class="list-group">
+                                                        <li class="list-group-item list-group-item-info" id="sessionStatusInfo"></li>
+                                                        <li class="list-group-item list-group-item-info" id="teacherInfo"></li>
+                                                        <li class="list-group-item list-group-item-info" id="quizzInfo"></li>
+                                                        <li class="list-group-item list-group-item-info" id="groupInfo"></li>
+                                                 </ui>
+                                          </div>
+                                   </div>
+                            </div>
+                     </div>
+              </div>
+              <div class="accordion-item text-center mt-5" id="numberOfAnswer">
+                     <div class="">
+                            <div class="card accordion-header" id="headingTwo">
+                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                          <h5 class="card-header w-100 text-center">
+                                                 Nombre de réponses soumises</h5>
+                                   </button>
+                                   <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                          <div class="accordion-body" id="bodyNumberOfAnswerSent">
+                                          <p class="card-body display-1" id="numberOfAnswerSent">0</p>
+                                          </div>
                                    </div>
                             </div>
                      </div>
@@ -116,6 +133,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </div>
        </section>
+       
        <section id="sectionSessionStatus">
               <div class="container mt-5" id="sessionStatus">
                      <div class="row">

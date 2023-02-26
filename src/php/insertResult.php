@@ -12,6 +12,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
 } else {
        try {
               $todayDate = date('Y-m-d');
+              $dateTime = $todayDate . ' ' . $data['time'];
+
               $fetchQuizzList = $db->prepare("INSERT INTO results (
                      `quizz title`,
                      `date`,
@@ -40,7 +42,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                             )");
 
               $fetchQuizzList->bindParam(':quizzTitle', $data['quizzTitle']);
-              $fetchQuizzList->bindParam(':dateSubmit', $todayDate);
+              $fetchQuizzList->bindParam(':dateSubmit', $dateTime);
               $fetchQuizzList->bindParam(':teacher', $_SESSION['uid']);
               $fetchQuizzList->bindParam(':studentGroup', $data['groupName']);
               $fetchQuizzList->bindParam(':studentMail', $data['studentMail']);

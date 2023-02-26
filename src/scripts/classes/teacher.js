@@ -74,11 +74,11 @@ class Teacher {
               return document.querySelectorAll('#groupInList')
        }
 
-       setCurrentSection(sectionToDisplay) {
+       setCurrentSection(elementToDisplay) {
               document.querySelectorAll('section').forEach((section) => {
                      section.style.display = "none";
               });
-              document.querySelector(`#${sectionToDisplay}`).style.display = "block";
+              document.querySelector(`${elementToDisplay}`).style.display = "block";
        }
 
        getCurrentSection() {

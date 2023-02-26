@@ -3,7 +3,8 @@ document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants en
 document.querySelector('#studentList').style.minHeight = document.querySelector('#numberOfConnectedStudents').offsetHeight + "px";
 document.querySelector('#sectionSessionStatus').style.display = "none";
 document.querySelector('#tempMessage').style.display = "none";
-document.querySelector('#sessionInfo').style.display = "none";
+document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+document.querySelector('#infosAndNumberAnswers').style.display = "none";
 document.querySelector('#sectionDisplayQuestions').style.display = "none";
 document.querySelector('#seeResult').style.display = "none";
 
@@ -13,6 +14,7 @@ let fetchData = new FetchDataFromDB(mail);
 
 let quizzName;
 let groupName;
+let quizzTime;
 let questionsAndAnswers;
 
 socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
@@ -23,7 +25,7 @@ socketIO.on('connect', () => {
 
        socketIO.on('anotherTeacherConnected', (data) => {
               maClasse.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
-              maClasse.setCurrentSection('sectionCreateSession');
+              maClasse.setCurrentSection('#sectionCreateSession');
 
               /* disable buttons */
               buttonDisplayQuizzList = document.querySelector('#buttonDisplayQuizzList');
@@ -86,26 +88,29 @@ socketIO.on('connect', () => {
 });
 
 socketIO.on('sessionStatusChanged', (data) => {
-       maClasse.setCurrentSection(`section${data}`);
+       maClasse.setCurrentSection(`#section${data}`);
 });
 
 socketIO.on('sessionCreated', (data) => {
        maClasse.tempMessage('success',
               `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
               '#tempMessage');
-       maClasse.setCurrentSection('sectionSessionStatus');
+       maClasse.setCurrentSection('#sectionSessionStatus');
 });
 
 socketIO.on('numberOfConnectedStudentChanged', (number) => {
        maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
 });
 
-socketIO.on('sessionStarted', (data) => {
-       maClasse.setCurrentSection('sectionDisplayQuestions');
+socketIO.on('sessionStarted', (time) => {
+       maClasse.setCurrentSection('#sectionDisplayQuestions');
        maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
+       quizzTime = time;
 });
 
 socketIO.on('nextQuestion', (data) => {
+       document.querySelector('#numberOfAnswerSent').innerHTML = 0;
+
        let question, answers, questionNumber, numberOfQuestions;
        if (data) {
               question = data.currentQuestion;
@@ -116,8 +121,12 @@ socketIO.on('nextQuestion', (data) => {
        }
 });
 
+socketIO.on('numberOfAnswersChanged', (numberOfAnswer) => {
+       document.querySelector('#numberOfAnswerSent').innerHTML = numberOfAnswer;
+});
+
 socketIO.on('studentAnswerResult', (data) => {
-       fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion)
+       fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion, quizzTime);
 });
 
 socketIO.on('updateStudentList', (data) => {
@@ -130,17 +139,32 @@ socketIO.on('updateStudentList', (data) => {
 
 socketIO.on('updateSessionStatus', (data) => {
        /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
-       maClasse.setCurrentSection(`section${data.sessionStatus}`);
+       maClasse.setCurrentSection(`#section${data.sessionStatus}`);
+
        if (data.sessionStatus != 'CreateSession') {
               mail = data.teacher;
               quizzName = data.quizzTitle;
               groupName = data.groupName
               maClasse.setSessionStatus(data);
-       } else {
-              document.querySelector('#sessionInfo').style.display = "none";
+       }
+       if (data.sessionStatus == 'SessionStatus') {
+              console.log('slt')
+              document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "flex";
+
+              document.querySelector('#numberOfAnswer').style.display = "none";
        }
 
+       if (data.sessionStatus == 'DisplayQuestions') {
+              document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "flex";
+              document.querySelector('#numberOfAnswer').style.display = "block";
+       }
        if (data.sessionStatus == 'DisplayResults') {
+              document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "none";
+              document.querySelector('#numberOfAnswer').style.display = "block";
+
               questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
               seeResults();
        }
@@ -174,11 +198,13 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 });
 
 document.querySelector('#startSession').addEventListener('click', async () => {
+       
        await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               questionsAndAnswers = value[1];
               socketIO.emit('startSession', value);
        });
        socketIO.emit('getNextQuestion');
+
 });
 
 document.querySelector('#nextQuestion').addEventListener('click', (e) => {
@@ -194,10 +220,9 @@ document.querySelector('#seeResult').addEventListener('click', (e) => {
 });
 
 function seeResults() {
-       let todayDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
+       let todayDate = new Date().toISOString().slice(0, 10).replace('T', ' ') + ' ' + quizzTime;
 
        fetchData.fetchQuizzResults(questionsAndAnswers, mail, quizzName, groupName, todayDate).then(value => {
               maClasse.displayResults(value[1], value[2], '#accordionForResults')
        });
-
 }

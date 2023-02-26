@@ -9,7 +9,7 @@ document.querySelector('section#creatingQuizz #questionAndAnswers').style.displa
 document.querySelector('section#confirmQuizz').style.display = "none";
 document.querySelector('#checkQuizz').style.display = "none";
 
-maClasse.setCurrentSection('creatingQuizz');
+maClasse.setCurrentSection('#creatingQuizz');
 
 document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
        e.preventDefault();
@@ -60,7 +60,7 @@ document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submi
 document.querySelector('#checkQuizz').addEventListener('click', (e) => {
        document.querySelector('#confirmQuizzButton').style.display = "inline-block";
 
-       maClasse.setCurrentSection('confirmQuizz');
+       maClasse.setCurrentSection('#confirmQuizz');
        maClasse.createAndAppendConfirmQuizzTitle(quizzTitle, "section#confirmQuizz #dataConfirmQuizz");
 
        //create the accordion for the questions and answers
@@ -108,7 +108,7 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
               .then((response) => {
                      if (response[0] == "success") {
                             maClasse.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
-                            maClasse.setCurrentSection("quizzCreated");                            
+                            maClasse.setCurrentSection("#quizzCreated");                            
                      } else {
                             maClasse.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
                      }

@@ -95,6 +95,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                                       </ul>
                                                                </div>
                                                         </div>
+                                                        <input type="date" name="" id="">
                                                         <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
                                                  </form>
                                           </div>
