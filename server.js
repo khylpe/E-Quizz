@@ -33,7 +33,10 @@ io.on('connection', async function (client) {
                      if (!checkMail(mail)) {
                             client.emit('anotherTeacherConnected');
                             client.removeAllListeners();
+                            client.disconnect();
                             return;
+                     } else {
+                            teacherMail = mail;
                      }
               });
               client.join("teacher");
@@ -50,6 +53,7 @@ io.on('connection', async function (client) {
               }
               else if (sessionStatus == "DisplayQuestions") {
                      client.emit('nextQuestion', getCurrentQuestionAndAnswers());
+                     io.to('teacher').emit('numberOfAnswersChanged', getNumberOfAnswers());
               }
               else if (sessionStatus == "DisplayResults") {
               }
@@ -57,6 +61,7 @@ io.on('connection', async function (client) {
               /* events from teacher */
               client.on('resetSession', () => {
                      resetSession();
+                     io.disconnectSockets();
                      client.emit('updateSessionStatus', getSessionStatus());
                      io.to('teacher').emit('teacherNotConnectedAnymore');
               });
@@ -72,9 +77,12 @@ io.on('connection', async function (client) {
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     io.to('teacher').emit('updateStudentList', getStudentsInformations());
+
               });
 
               client.on('startSession', (quizzData) => {
+                     io.to('student').emit('sessionStarted');
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
 
                      if (quizzQuestionsAndAnswers[1].length == 0) { // if there is no question
@@ -93,19 +101,21 @@ io.on('connection', async function (client) {
                      }
 
                      sessionStatus = "DisplayQuestions";
-                     client.emit('sessionStarted');
+
+                     client.emit('sessionStarted', getSessionStatus().quizzTime);
                      client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
 
               client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
                      if (getNumberOfRegisteredStudent() != 0) {
+                            listOfStudents.forEach(student => {
+                                   student.answerValidated = false;
+                            });
                             if (numberCurrentQuestion + 1 == quizzQuestionsAndAnswers[1].length) { // will notice the teacher that he is displaying the last question
                                    currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
                                    client.emit('nextQuestion', getCurrentQuestionAndAnswers());
                                    client.emit('last question');
                             }
-
-
                             else if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if there is no more question
                                    client.emit('endOfQuizz');
                             } else {
@@ -113,7 +123,7 @@ io.on('connection', async function (client) {
                                    client.emit('nextQuestion', getCurrentQuestionAndAnswers());
                             }
                      }
-                     else{
+                     else {
                             client.emit('tempMessage', {
                                    status: "error",
                                    message: "There is no student registered"
@@ -136,19 +146,38 @@ io.on('connection', async function (client) {
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
-              client.on('studentVerificated', (studentMail) => {
+              client.on('studentTriesToRegister', (studentMail) => {
                      if (listOfMails.includes(studentMail)) {
                             client.emit('doublons');
                      }
                      else {
+                            console.log(getSessionStatus().sessionStatus);
                             client.join('student');
                             client.mail = studentMail;
-                            client.emit('studentRegistered');
+                            client.emit('studentRegistered', getSessionStatus().sessionStatus);
+
+                            if (getSessionStatus().sessionStatus == "DisplayQuestions") {
+                                   client.emit('sessionStarted');
+                            }
 
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
 
-                            client.on('sendStudentAnswer', (data) => { // rename later                                   
+                            client.on('buttonValidateClicked', (value) => {
+                                   listOfStudents.forEach(student => {
+                                          if (student.mail == client.mail) {
+                                                 if (value == true) {
+                                                        student.answerValidated = true;
+
+                                                 } else if (value == false) {
+                                                        student.answerValidated = false;
+                                                 }
+                                          }
+                                   });
+                                   io.to('teacher').emit('numberOfAnswersChanged', getNumberOfAnswers());
+                            });
+
+                            client.on('sendStudentAnswer', (data) => {
                                    io.to('teacher').emit('studentAnswerResult', {
                                           teacherMail: teacherMail,
                                           studentMail: client.mail,
@@ -196,7 +225,8 @@ function getSessionStatus() {
               quizzTitle: quizzTitle,
               groupName: groupName,
               teacher: teacherMail,
-              quizzQuestionsAndAnswers: quizzQuestionsAndAnswers
+              quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
+              quizzTime: getTime()
        };
        return json;
 }
@@ -218,6 +248,18 @@ function getCurrentQuestionAndAnswers() {
               numberOfQuestions: quizzQuestionsAndAnswers[1].length
        };
        return json;
+}
+
+function getNumberOfAnswers() {
+       let numberOfAnswers = 0;
+
+       listOfStudents.forEach(student => {
+              if (student.answerValidated == true) {
+                     numberOfAnswers++;
+              }
+       });
+
+       return numberOfAnswers;
 }
 
 function resetSession() {
@@ -289,6 +331,26 @@ function getNumberOfRegisteredStudent() {
        });
        console.log(numberOfRegisteredStudents)
        return numberOfRegisteredStudents;
+}
+
+function getTime() {
+       var now = new Date();
+
+       var hours = now.getHours();
+       var minutes = now.getMinutes();
+       var seconds = now.getSeconds();
+
+       if (hours < 10) {
+              hours = "0" + hours;
+       }
+       if (minutes < 10) {
+              minutes = "0" + minutes;
+       }
+       if (seconds < 10) {
+              seconds = "0" + seconds;
+       }
+
+       return hours + ":" + minutes + ":" + seconds;
 }
 
 server.listen(8100);
