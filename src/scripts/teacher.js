@@ -87,17 +87,6 @@ socketIO.on('connect', () => {
        });
 });
 
-socketIO.on('sessionStatusChanged', (data) => {
-       maClasse.setCurrentSection(`#section${data}`);
-});
-
-socketIO.on('sessionCreated', (data) => {
-       maClasse.tempMessage('success',
-              `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`,
-              '#tempMessage');
-       maClasse.setCurrentSection('#sectionSessionStatus');
-});
-
 socketIO.on('numberOfConnectedStudentChanged', (number) => {
        maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
 });
@@ -125,8 +114,8 @@ socketIO.on('numberOfAnswersChanged', (numberOfAnswer) => {
        document.querySelector('#numberOfAnswerSent').innerHTML = numberOfAnswer;
 });
 
-socketIO.on('studentAnswerResult', (data) => {
-       fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion, quizzTime);
+socketIO.on('studentAnswerResult', async (data) => {
+       await fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion, quizzTime);
 });
 
 socketIO.on('updateStudentList', (data) => {
@@ -148,7 +137,6 @@ socketIO.on('updateSessionStatus', (data) => {
               maClasse.setSessionStatus(data);
        }
        if (data.sessionStatus == 'SessionStatus') {
-              console.log('slt')
               document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "flex";
 
@@ -175,6 +163,10 @@ socketIO.on('last question', () => {
        document.querySelector('#nextQuestion').style.display = "none";
 });
 
+socketIO.on('message', (type, message) => {
+       maClasse.tempMessage(type, message, '#tempMessage');
+});
+
 //////////////////////////////////////////////////////////////////////////////
 
 document.querySelector('#logout').addEventListener('click', () => {
@@ -198,7 +190,7 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 });
 
 document.querySelector('#startSession').addEventListener('click', async () => {
-       
+
        await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
               questionsAndAnswers = value[1];
               socketIO.emit('startSession', value);
@@ -215,8 +207,8 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
        e.preventDefault();
+       socketIO.emit('getStudentAnswer');
        socketIO.emit('seeResults');
-       seeResults();
 });
 
 function seeResults() {
