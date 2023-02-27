@@ -10,11 +10,11 @@ let groupName = null;
 let teacherMail = null;
 let sessionStatus = "CreateSession";
 let numberOfConnectedStudents = 0;
-let numberOfRegisteredStudents = 0;
 let listOfStudents = [];
 let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberCurrentQuestion = 0;
+let numberOfRegisteredStudents = 0;
 let currentQuestionAndAnswers;
 
 // Enable access to the src folder :
@@ -41,7 +41,7 @@ io.on('connection', async function (client) {
               });
               client.join("teacher");
               client.emit('teacherConnected');
-              client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+              client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
               }
@@ -62,23 +62,19 @@ io.on('connection', async function (client) {
               client.on('resetSession', () => {
                      resetSession();
                      io.disconnectSockets();
-                     client.emit('updateSessionStatus', getSessionStatus());
+                     client.emit('updateSessionStatus', getSession());
                      io.to('teacher').emit('teacherNotConnectedAnymore');
               });
 
               client.on('createSession', (data) => {
-                     client.emit('sessionCreated', data);
-                     io.to('student').emit('sessionCreated', data);
-
                      //we get the quizz data from the teacher (title, teacher, group name)
                      quizzTitle = data.quizzName;
                      teacherMail = data.mail;
                      groupName = data.groupName;
                      sessionStatus = "SessionStatus";
 
-                     client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
-                     io.to('teacher').emit('updateStudentList', getStudentsInformations());
-
+                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.emit('message', `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`);
               });
 
               client.on('startSession', (quizzData) => {
@@ -102,8 +98,8 @@ io.on('connection', async function (client) {
 
                      sessionStatus = "DisplayQuestions";
 
-                     client.emit('sessionStarted', getSessionStatus().quizzTime);
-                     client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.emit('sessionStarted', getSession().quizzTime);
+                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
 
               client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
@@ -132,13 +128,12 @@ io.on('connection', async function (client) {
               });
 
               client.on('getStudentAnswer', () => {
-                     console.log('teacher emitted get answer');
                      io.to('student').emit('getStudentAnswer');
               });
 
               client.on('seeResults', () => {
                      sessionStatus = "DisplayResults";
-                     client.emit('updateSessionStatus', getSessionStatus()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
        else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
@@ -151,12 +146,11 @@ io.on('connection', async function (client) {
                             client.emit('doublons');
                      }
                      else {
-                            console.log(getSessionStatus().sessionStatus);
                             client.join('student');
                             client.mail = studentMail;
-                            client.emit('studentRegistered', getSessionStatus().sessionStatus);
+                            client.emit('studentRegistered', getSession().sessionStatus);
 
-                            if (getSessionStatus().sessionStatus == "DisplayQuestions") {
+                            if (getSession().sessionStatus == "DisplayQuestions") {
                                    client.emit('sessionStarted');
                             }
 
@@ -178,6 +172,7 @@ io.on('connection', async function (client) {
                             });
 
                             client.on('sendStudentAnswer', (data) => {
+                                   // console.log(quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 1][3]);
                                    io.to('teacher').emit('studentAnswerResult', {
                                           teacherMail: teacherMail,
                                           studentMail: client.mail,
@@ -219,8 +214,8 @@ function checkMail(mail) {
        return teacherMail == null || mail == teacherMail;
 }
 
-function getSessionStatus() {
-       let json = {
+function getSession() {
+       return {
               sessionStatus: sessionStatus,
               quizzTitle: quizzTitle,
               groupName: groupName,
@@ -228,26 +223,23 @@ function getSessionStatus() {
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
               quizzTime: getTime()
        };
-       return json;
 }
 
 function getStudentsInformations() {
-       let json = {
+       return {
               numberOfConnectedStudents: numberOfConnectedStudents,
               numberOfRegisteredStudents: getNumberOfRegisteredStudent(),
               listOfStudents: listOfStudents
        };
-       return json;
 }
 
 function getCurrentQuestionAndAnswers() {
-       let json = {
+       return {
               currentQuestion: currentQuestionAndAnswers[0],
               currentAnswers: currentQuestionAndAnswers[1],
               currentQuestionNumber: quizzQuestionsAndAnswers[1][numberCurrentQuestion - 1][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length
        };
-       return json;
 }
 
 function getNumberOfAnswers() {
@@ -318,7 +310,6 @@ function getAnswersAsString(answersStudent, answersPossibility) {
                      tab[i] = null;
               }
        }
-       console.log(tab);
        return tab;
 }
 
@@ -329,7 +320,6 @@ function getNumberOfRegisteredStudent() {
                      numberOfRegisteredStudents++;
               }
        });
-       console.log(numberOfRegisteredStudents)
        return numberOfRegisteredStudents;
 }
 
