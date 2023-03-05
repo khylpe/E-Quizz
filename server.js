@@ -16,6 +16,7 @@ let quizzQuestionsAndAnswers = null;
 let numberCurrentQuestion = 0;
 let numberOfRegisteredStudents = 0;
 let currentQuestionAndAnswers;
+let quizzTime;
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -71,6 +72,8 @@ io.on('connection', async function (client) {
                      quizzTitle = data.quizzName;
                      teacherMail = data.mail;
                      groupName = data.groupName;
+                     console.log(groupName)
+
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
@@ -78,6 +81,7 @@ io.on('connection', async function (client) {
               });
 
               client.on('startSession', (quizzData) => {
+                     quizzTime = getTime();
                      io.to('student').emit('sessionStarted');
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
 
@@ -221,7 +225,7 @@ function getSession() {
               groupName: groupName,
               teacher: teacherMail,
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
-              quizzTime: getTime()
+              quizzTime: quizzTime
        };
 }
 
@@ -325,6 +329,7 @@ function getNumberOfRegisteredStudent() {
 
 function getTime() {
        var now = new Date();
+       let todayDate = new Date().toISOString().slice(0, 10).replace('T', ' ');
 
        var hours = now.getHours();
        var minutes = now.getMinutes();
@@ -340,7 +345,7 @@ function getTime() {
               seconds = "0" + seconds;
        }
 
-       return hours + ":" + minutes + ":" + seconds;
+       return  todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
 }
 
 server.listen(8100);
