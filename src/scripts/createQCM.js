@@ -1,9 +1,8 @@
 let quizzTitle;
 let questionsAndAnswers = [];
-let mail = document.querySelector('#mail').innerHTML;
 
-const maClasse = new Teacher(mail);
-let fetchData = new FetchDataFromDB(mail);
+const maClasse = new Teacher();
+const fetchData = new DB(document.querySelector('#mail').innerHTML);
 
 document.querySelector('section#creatingQuizz #questionAndAnswers').style.display = "none";
 document.querySelector('section#confirmQuizz').style.display = "none";
@@ -76,7 +75,7 @@ document.querySelector('#checkQuizz').addEventListener('click', (e) => {
 });
 
 document.querySelector('#confirmQuizzButton').addEventListener('click', async (e) => {
-       quizzTitle = document.querySelector('#confirmQuizz #confirmQuizzTitle').value;
+       fetchData.setQuizzName(document.querySelector('#confirmQuizz #confirmQuizzTitle').value);
        let finalQuestionsAndAnswers = [];
 
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
@@ -104,7 +103,7 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
               finalQuestionsAndAnswers.push(questAndAns);
        });
 
-       fetchData.createQuizz(mail, quizzTitle, finalQuestionsAndAnswers)
+       fetchData.createQuizz(finalQuestionsAndAnswers)
               .then((response) => {
                      if (response[0] == "success") {
                             maClasse.tempMessage("success", "Quizz créé avec succès", "#tempMessage");

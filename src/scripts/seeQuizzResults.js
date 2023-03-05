@@ -1,10 +1,10 @@
 let mail = document.querySelector('#mail').innerHTML;
-const db = new FetchDataFromDB(mail);
+const db = new DB(mail);
 const maClasse = new Teacher();
 
 document.querySelector('#sectionDisplayResults').style.display = "none";
 
-db.fetchQuizzListFromResults(mail).then(array => {
+db.fetchQuizzListFromResults().then(array => {
        if (array[0] == "error") {
               maClasse.tempMessage('error', array[1], '#tempMessage');
        } else if (array[0] == "success" && array[1].length > 0) {
@@ -14,8 +14,9 @@ db.fetchQuizzListFromResults(mail).then(array => {
                             nameInList.addEventListener('click', () => {
                                    document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
                                    document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
+                                   db.setQuizzName(nameInList.innerHTML);
 
-                                   db.fetchGroupListFromResults(mail, document.querySelector('#quizzSelected').innerHTML)
+                                   db.fetchGroupListFromResults()
                                           .then(value => {
                                                  if (value[0] == "error") {
                                                         maClasse.tempMessage('error', value[1], '#tempMessage');
@@ -26,7 +27,8 @@ db.fetchQuizzListFromResults(mail).then(array => {
                                                                liList.forEach((groupInList) => {
                                                                       groupInList.addEventListener('click', () => {
                                                                              document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
-                                                                             db.fetchDatesOfQuizzFromResults(mail, document.querySelector('#quizzSelected').innerHTML, document.querySelector('#groupSelected').innerHTML)
+                                                                             db.setGroupName(groupInList.innerHTML);
+                                                                             db.fetchDatesOfQuizzFromResults()
                                                                                     .then(value => {
                                                                                            if (value[0] == "error") {
                                                                                                   maClasse.tempMessage('error', value[1], '#tempMessage');
@@ -71,13 +73,17 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
        document.querySelector('#sectionDisplayResults').style.display = "block";
        document.querySelector('#sectionSelectQuizz').style.display = "none";
 
-       db.fetchQuestionsAndAnswers(document.querySelector('#quizzSelected').innerHTML, mail)
+       db.setQuizzName(document.querySelector('#quizzSelected').innerHTML);
+       db.setGroupName(document.querySelector('#groupSelected').innerHTML);
+       db.setQuizzTime(document.querySelector('#dateSelected').innerHTML);
+
+       db.fetchQuestionsAndAnswers()
               .then(questionsReturned => {
                      if (questionsReturned[0] == "error") {
                             maClasse.tempMessage('error', questionsReturned[1], '#tempMessage');
                      }
                      else if (questionsReturned[0] == "success" && questionsReturned[1].length > 0) {
-                            db.fetchQuizzResults(questionsReturned[1], mail, document.querySelector('#quizzSelected').innerHTML, document.querySelector('#groupSelected').innerHTML, document.querySelector('#dateSelected').innerHTML)
+                            db.fetchQuizzResults(questionsReturned[1])
                                    .then(quizzResultsReturned => {
                                           maClasse.displayResults(questionsReturned[1], quizzResultsReturned[2], '#accordionResult')
                                    });

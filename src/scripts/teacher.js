@@ -9,23 +9,23 @@ document.querySelector('#sectionDisplayQuestions').style.display = "none";
 document.querySelector('#seeResult').style.display = "none";
 
 mail = document.querySelector('#mail').innerText; // attention
-let maClasse = new Teacher(mail);
-let fetchData = new FetchDataFromDB(mail);
 
-let quizzName;
-let groupName;
-let quizzTime;
-let questionsAndAnswers;
+let teacherClass = new Teacher();
+let fetchData = new DB(mail);
 
 socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+
+let quizzName;
+let questionsAndAnswers;
+
 
 socketIO.on('connect', () => {
        /* if checkMail event returns anotherTeacherConnected event, all events are being removed */
        socketIO.emit('checkMail', mail);
 
        socketIO.on('anotherTeacherConnected', (data) => {
-              maClasse.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
-              maClasse.setCurrentSection('#sectionCreateSession');
+              teacherClass.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
+              teacherClass.setCurrentSection('#sectionCreateSession');
 
               /* disable buttons */
               buttonDisplayQuizzList = document.querySelector('#buttonDisplayQuizzList');
@@ -36,21 +36,24 @@ socketIO.on('connect', () => {
               buttonCreateSession.classList.add('disabled');
 
               socketIO.on('teacherNotConnectedAnymore', (data) => {
-                     maClasse.tempMessage('success', `Vous pouvez desormais vous connecter`, '#tempMessage');
+                     teacherClass.tempMessage('success', `Vous pouvez desormais vous connecter`, '#tempMessage');
                      buttonDisplayQuizzList.classList.remove('disabled');
                      buttonDisplayStudentGroup.classList.remove('disabled');
                      buttonCreateSession.classList.remove('disabled');
               });
        });
 
-       socketIO.on('teacherConnected', async (data) => {
+       socketIO.on('teacherConnected', async () => { /* event triggered when the teacher is connected. Sent by the server */
               await fetchData.fetchQuizzList()
-                     .then(value => {  /* [0] = error or success, [1] = quizzListTitles[] || error message */
-                            if (value[0] == "error") {
-                                   maClasse.tempMessage('error', value[1], '#tempMessage');
-                                   return false;
-                            } else if (value[0] == "success" && value[1].length > 0) {
-                                   let liListe = maClasse.displayQuizzList(value, '#quizzList');
+                     .then(value => {     /*     [0] = error || success,
+                                                 [1] = quizzListTitles[] || error message
+                                          */
+
+                            if (value[0] != "success") {
+                                   teacherClass.tempMessage('error', value[1], '#tempMessage'); /* display error message */
+                                   return ;
+                            } else if (value[1].length > 0) { /* check if there is at least one quizz */
+                                   let liListe = teacherClass.displayQuizzList(value, '#quizzList');
                                    if (liListe) {
                                           liListe.forEach((nameInList) => {
                                                  nameInList.addEventListener('click', () => {
@@ -60,18 +63,18 @@ socketIO.on('connect', () => {
                                           });
                                    }
                             } else {
-                                   maClasse.tempMessage('error', "Il n'y a pas de quizz enregistré", '#tempMessage');
-                                   return false;
+                                   teacherClass.tempMessage('error', "Il n'y a pas de quizz enregistré", '#tempMessage');
+                                   return ;
                             }
-
                      });
+
               await fetchData.fetchStudentGroups()
                      .then(value => {
                             if (value[0] == "error") {
-                                   maClasse.tempMessage('error', value[1], '#tempMessage');
+                                   teacherClass.tempMessage('error', value[1], '#tempMessage');
                             }
                             else if (value[0] == "success" && value[1].length > 0) {
-                                   let liList = maClasse.displayStudentGroups(value, '#groupsList');
+                                   let liList = teacherClass.displayStudentGroups(value, '#groupsList');
                                    if (liList) {
                                           liList.forEach((groupInList) => {
                                                  groupInList.addEventListener('click', () => {
@@ -81,20 +84,20 @@ socketIO.on('connect', () => {
                                           });
                                    }
                             } else {
-                                   maClasse.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
+                                   teacherClass.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
                             }
                      });
        });
 });
 
 socketIO.on('numberOfConnectedStudentChanged', (number) => {
-       maClasse.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
+       teacherClass.updateNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
 });
 
 socketIO.on('sessionStarted', (time) => {
-       maClasse.setCurrentSection('#sectionDisplayQuestions');
-       maClasse.tempMessage('success', 'La session a été démarrée', '#tempMessage');
-       quizzTime = time;
+       teacherClass.setCurrentSection('#sectionDisplayQuestions');
+       teacherClass.tempMessage('success', 'La session a été démarrée', '#tempMessage');
+       fetchData.setQuizzTime(time);
 });
 
 socketIO.on('nextQuestion', (data) => {
@@ -106,7 +109,7 @@ socketIO.on('nextQuestion', (data) => {
               answers = data.currentAnswers;
               questionNumber = data.currentQuestionNumber;
               numberOfQuestions = data.numberOfQuestions;
-              maClasse.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
+              teacherClass.displayQuestion(question, answers, questionNumber, numberOfQuestions, '#question', '#possibleAnswers');
        }
 });
 
@@ -115,26 +118,30 @@ socketIO.on('numberOfAnswersChanged', (numberOfAnswer) => {
 });
 
 socketIO.on('studentAnswerResult', async (data) => {
-       await fetchData.insertResult(data.teacherMail, data.studentMail, data.groupName, data.quizzTitle, data.questionNumber, data.studentAnswers, data.resultQuestion, quizzTime);
+       await fetchData.insertResult(data.studentMail, data.questionNumber, data.studentAnswers, data.resultQuestion);
 });
 
 socketIO.on('updateStudentList', (data) => {
        data.listOfStudents.forEach((student) => {
-              maClasse.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
+              teacherClass.updateStudentList(student.mail, student.status, data.numberOfRegisteredStudents);
        });
 
-       maClasse.updateNumberOfConnectedStudents(data.numberOfConnectedStudents, '#numberOfConnectedStudents');
+       teacherClass.updateNumberOfConnectedStudents(data.numberOfConnectedStudents, '#numberOfConnectedStudents');
 });
 
 socketIO.on('updateSessionStatus', (data) => {
        /* sessionStatus = 'CreateSession' || 'SessionStatus' || 'DisplayQuestions' || 'SessionEnded' */
-       maClasse.setCurrentSection(`#section${data.sessionStatus}`);
+       teacherClass.setCurrentSection(`#section${data.sessionStatus}`);
 
        if (data.sessionStatus != 'CreateSession') {
               mail = data.teacher;
-              quizzName = data.quizzTitle;
-              groupName = data.groupName
-              maClasse.setSessionStatus(data);
+              fetchData.setGroupName(data.groupName);
+              fetchData.setQuizzName(data.quizzTitle);
+
+              teacherClass.setSessionStatus(data);
+              if (data.sessionStatus != 'SessionStatus') {
+                     fetchData.setQuizzTime(data.quizzTime);
+              }
        }
        if (data.sessionStatus == 'SessionStatus') {
               document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
@@ -164,7 +171,7 @@ socketIO.on('last question', () => {
 });
 
 socketIO.on('message', (type, message) => {
-       maClasse.tempMessage(type, message, '#tempMessage');
+       teacherClass.tempMessage(type, message, '#tempMessage');
 });
 
 //////////////////////////////////////////////////////////////////////////////
@@ -177,21 +184,20 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
        e.preventDefault();
        socketIO.emit('checkMail', mail);
 
-       quizzName = document.querySelector('#quizzSelected').innerText;
-       groupName = document.querySelector('#groupSelected').innerText;
+       fetchData.setGroupName(document.querySelector('#groupSelected').innerText);
+       fetchData.setQuizzName(document.querySelector('#quizzSelected').innerText);
 
-       if (quizzName != "Selectionner un quizz" && groupName != "Selectionner un groupe" && quizzName != null && groupName != null) {
-              socketIO.emit('createSession', {
-                     quizzName: quizzName,
-                     groupName: groupName,
-                     mail: this.mail
-              });
-       }
+       console.log('this.mail : ', this.mail);
+       socketIO.emit('createSession', {
+              quizzName: fetchData.quizzName,
+              groupName: fetchData.groupName,
+              mail: this.mail
+       });
 });
 
 document.querySelector('#startSession').addEventListener('click', async () => {
 
-       await fetchData.fetchQuestionsAndAnswers(quizzName, mail).then(value => {
+       await fetchData.fetchQuestionsAndAnswers().then(value => {
               questionsAndAnswers = value[1];
               socketIO.emit('startSession', value);
        });
@@ -212,9 +218,9 @@ document.querySelector('#seeResult').addEventListener('click', (e) => {
 });
 
 function seeResults() {
-       let todayDate = new Date().toISOString().slice(0, 10).replace('T', ' ') + ' ' + quizzTime;
-
-       fetchData.fetchQuizzResults(questionsAndAnswers, mail, quizzName, groupName, todayDate).then(value => {
-              maClasse.displayResults(value[1], value[2], '#accordionForResults')
+       fetchData.fetchQuizzResults(questionsAndAnswers).then(value => {
+              console.log(value)
+              teacherClass.displayResults(value[1], value[2], '#accordionForResults')
        });
+
 }

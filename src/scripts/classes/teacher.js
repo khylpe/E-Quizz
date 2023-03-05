@@ -1,6 +1,5 @@
 class Teacher {
-       constructor(mail) {
-              this.mail = mail;
+       constructor() {
        }
        tempMessage(type, message, selector) { // type = "error" or "success"
               if (!message) return;
@@ -85,30 +84,30 @@ class Teacher {
               return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188
        }
 
-       setSessionStatus(data) {
+       setSessionStatus(sessionInformation) {
               if (this.getCurrentSection().id == "sectionCreateSession") {
                      document.querySelector('#sessionInfo').style.display = "none";
                      return;
               }
               document.querySelector('#sessionInfo').style.display = "block";
               let status;
-              if (data.sessionStatus == "CreateSession")
+              if (sessionInformation.sessionStatus == "CreateSession")
                      status = "Pas connecté";
-              else if (data.sessionStatus == "SessionStatus")
+              else if (sessionInformation.sessionStatus == "SessionStatus")
                      status = "Session créée, en attente de démarrage";
-              else if (data.sessionStatus == "DisplayQuestions")
+              else if (sessionInformation.sessionStatus == "DisplayQuestions")
                      status = "Session démarrée";
-              else if (data.sessionStatus == "SessionEnded")
+              else if (sessionInformation.sessionStatus == "SessionEnded")
                      status = "Session terminée";
-              else if (data.sessionStatus == "SessionClosed")
+              else if (sessionInformation.sessionStatus == "SessionClosed")
                      status = "Session fermée";
               else
                      status = "Session inconnue";
 
               document.querySelector('#sessionStatusInfo').innerHTML = `Status de la session : ${status}`;
-              document.querySelector('#teacherInfo').innerHTML = `Enseignant : ${data.teacher}`;
-              document.querySelector('#quizzInfo').innerHTML = `Quizz : ${data.quizzTitle}`;
-              document.querySelector('#groupInfo').innerHTML = `Groupe : ${data.groupName}`;
+              document.querySelector('#teacherInfo').innerHTML = `Enseignant : ${sessionInformation.teacher}`;
+              document.querySelector('#quizzInfo').innerHTML = `Quizz : ${sessionInformation.quizzTitle}`;
+              document.querySelector('#groupInfo').innerHTML = `Groupe : ${sessionInformation.groupName}`;
        }
 
        updateStudentList(studentName, status, numberOfRegisteredStudents) {
@@ -327,6 +326,7 @@ class Teacher {
 
                      let numberCorrestAnswers = 0;
 
+                     console.log(listOfStudentsWithTheirAnswers[index])
                      listOfStudentsWithTheirAnswers[index].forEach(student => {
                             let liStudent = document.createElement('li');
                             if (student.result == true) {
@@ -585,16 +585,16 @@ class Teacher {
 
        /* methods for seeQuizzResults.php */
 
-       displayDatesOfSelectedQuizz(data, selector) { /* [0] = error or success, [1] = quizzListTitles[] || error message */
+       displayDatesOfSelectedQuizz(dates, selector) { 
               let quizzList = document.querySelector(selector);
               quizzList.innerHTML = "";
-              data[1].forEach((quizzName) => {
+              dates[1].forEach((date) => {
                      let li = document.createElement('li');
                      quizzList.appendChild(li);
                      let span = document.createElement('span');
                      span.classList = "dropdown-item";
                      span.id = "dateInList";
-                     span.innerHTML = quizzName;
+                     span.innerHTML = date;
                      li.appendChild(span);
                      let hr = document.createElement('hr');
                      hr.classList = "dropdown-divider quizzNameDivider";

@@ -1,4 +1,8 @@
-class FetchDataFromDB {
+class DB {
+       groupName;
+       quizzName;
+       quizzTime;
+       
        constructor(mail) {
               this.mail = mail;
        }
@@ -47,12 +51,12 @@ class FetchDataFromDB {
 
        }
 
-       async fetchQuestionsAndAnswers(quizzName, author) {
+       async fetchQuestionsAndAnswers() {
               return await fetch('/src/php/fetchQuestionsAndAnswers.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            quizzName: quizzName,
-                            author: author
+                            quizzName: this.quizzName,
+                            author: this.mail
                      })
               })
                      .then(result => result.json())
@@ -68,10 +72,10 @@ class FetchDataFromDB {
                      });
        }
 
-       async createQuizz(mail, quizzTitle, questionsAndAnswers) {
+       async createQuizz(questionsAndAnswers) {
               return await fetch('/src/php/createQuizz.php', {
                      method: 'POST',
-                     body: JSON.stringify({ mail: mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
+                     body: JSON.stringify({ mail: this.mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
               })
                      .then(result => result.json())
                      .then(array => {
@@ -82,18 +86,18 @@ class FetchDataFromDB {
                      });
        }
 
-       async insertResult(teacherMail, studentMail, groupName, quizzTitle, questionNumber, studentAnswers, resultQuestion, time) {
+       async insertResult(studentMail, questionNumber, studentAnswers, resultQuestion) {
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            teacherMail: teacherMail,
+                            teacherMail: this.mail,
                             studentMail: studentMail,
-                            groupName: groupName,
-                            quizzTitle: quizzTitle,
+                            groupName: this.groupName,
+                            quizzTitle: this.quizzName,
                             questionNumber: questionNumber,
                             studentAnswers: studentAnswers,
                             resultQuestion: resultQuestion,
-                            time: time
+                            time: this.quizzTime
                      })
               })
                      .then(result => result.json())
@@ -105,15 +109,15 @@ class FetchDataFromDB {
                      });
        }
 
-       async fetchQuizzResults(questionsAndAnswers, teacherMail, quizzTitle, studentGroup, date) {
+       async fetchQuizzResults(questionsAndAnswers) {
               return await fetch('/src/php/fetchQuizzResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            listOfQuestionsAndAnswers : questionsAndAnswers,
-                            teacherMail: teacherMail,
-                            quizzName: quizzTitle,
-                            studentGroup: studentGroup,
-                            date: date
+                            listOfQuestionsAndAnswers: questionsAndAnswers,
+                            teacherMail: this.mail,
+                            quizzName: this.quizzName,
+                            studentGroup: this.groupName,
+                            date: this.quizzTime
                      })
               })
                      .then(result => result.json())
@@ -125,14 +129,11 @@ class FetchDataFromDB {
                      });
        }
 
-       async fetchQuizzListFromResults(teacherMail) {
-              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
-                     return Array('error', 'mail error');
-              }
+       async fetchQuizzListFromResults() {
               return await fetch('/src/php/fetchQuizzListFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            teacherMail: teacherMail
+                            teacherMail: this.mail
                      })
               })
                      .then(result => result.json())
@@ -141,15 +142,12 @@ class FetchDataFromDB {
                      })
        }
 
-       async fetchGroupListFromResults(teacherMail, quizzName) {
-              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
-                     return Array('error', 'mail error');
-              }
+       async fetchGroupListFromResults() {
               return await fetch('/src/php/fetchGroupListFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            teacherMail: teacherMail,
-                            quizzName : quizzName
+                            teacherMail: this.mail,
+                            quizzName: this.quizzName
                      })
               })
                      .then(result => result.json())
@@ -158,16 +156,13 @@ class FetchDataFromDB {
                      })
        }
 
-       async fetchDatesOfQuizzFromResults(teacherMail, quizzName, studentGroup) {
-              if(teacherMail == null || teacherMail == undefined || teacherMail == '' || teacherMail != this.mail) {
-                     return Array('error', 'mail error');
-              }
+       async fetchDatesOfQuizzFromResults() {
               return await fetch('/src/php/fetchDatesOfQuizzFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            teacherMail: teacherMail,
-                            quizzName : quizzName,
-                            studentGroup : studentGroup
+                            teacherMail: this.mail,
+                            quizzName: this.quizzName,
+                            studentGroup: this.groupName
                      })
               })
                      .then(result => result.json())
@@ -176,5 +171,17 @@ class FetchDataFromDB {
                      })
 
 
+       }
+
+       setGroupName(groupName) {
+              this.groupName = groupName;
+       }
+
+       setQuizzTime(quizzTime) {
+              this.quizzTime = quizzTime;
+       }
+
+       setQuizzName(quizzName) {
+              this.quizzName = quizzName;
        }
 }

@@ -66,7 +66,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                                       quizz</label>
                                                                <div class="btn-group">
                                                                       <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-
                                                                              <span id="quizzSelected">Selectionner un quizz</span>
                                                                       </button>
                                                                       <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
@@ -95,7 +94,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                                       </ul>
                                                                </div>
                                                         </div>
-                                                        <input type="date" name="" id="">
                                                         <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
                                                  </form>
                                           </div>
