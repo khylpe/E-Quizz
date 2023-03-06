@@ -326,7 +326,6 @@ class Teacher {
 
                      let numberCorrestAnswers = 0;
 
-                     console.log(listOfStudentsWithTheirAnswers[index])
                      listOfStudentsWithTheirAnswers[index].forEach(student => {
                             let liStudent = document.createElement('li');
                             if (student.result == true) {

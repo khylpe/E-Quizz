@@ -2,6 +2,7 @@ class DB {
        groupName;
        quizzName;
        quizzTime;
+       mail
        
        constructor(mail) {
               this.mail = mail;
