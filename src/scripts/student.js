@@ -1,4 +1,4 @@
-const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
+const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
@@ -29,7 +29,6 @@ btnAnswers.forEach((button, index) => {
 socket.on('connect', () => {
        changeDivState('#formMail');
        socket.on('studentRegistered', (sessionStatus) => {
-              console.log(sessionStatus);
               document.querySelector('#mail').innerHTML = inputMail.value;
 
               if (sessionStatus != 'sessionStarted') {

@@ -14,8 +14,8 @@ let listOfStudents = [];
 let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberOfRegisteredStudents = 0;
-let quizzTime;
-let questioNumber = 1;
+let quizzTime = null;
+let questionNumber = 1;
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -26,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.69.88.55') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -53,7 +53,7 @@ io.on('connection', async function (client) {
               }
               else if (sessionStatus == "DisplayQuestions") {
                      client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                     io.to('teacher').emit('numberOfAnswersChanged', getNumberOfAnswers());
+                     client.emit('numberOfAnswersChanged', getNumberOfAnswers());
               }
               else if (sessionStatus == "DisplayResults") {
               }
@@ -69,18 +69,19 @@ io.on('connection', async function (client) {
               client.on('createSession', (data) => {
                      //we get the quizz data from the teacher (title, teacher, group name)
                      quizzTitle = data.quizzName;
-                     teacherMail = data.mail;
                      groupName = data.groupName;
 
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
-                     client.emit('message', `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`);
+                     client.emit('tempMessage',
+                            {
+                                   status: 'success',
+                                   message: `session créée, les étudiants peuvent maintenant se connecter.  <br> Titre du quizz : ${data.quizzName} <br> Groupe : ${data.groupName}`
+                            });
               });
 
               client.on('startSession', (quizzData) => {
-                     quizzTime = getTime();
-                     io.to('student').emit('sessionStarted');
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
 
                      if (quizzQuestionsAndAnswers[1].length == 0) { // if there is no question
@@ -98,36 +99,35 @@ io.on('connection', async function (client) {
                             return;
                      }
 
-                     sessionStatus = "DisplayQuestions";
+                     quizzTime = getTime();
+                     io.to('student').emit('sessionStarted');
 
-                     client.emit('sessionStarted', getSession().quizzTime);
+                     sessionStatus = "DisplayQuestions";
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
+
+                     io.to('teacher').emit('tempMessage',
+                            {
+                                   status: 'success',
+                                   message: 'La session a été démarrée'
+                            });
               });
 
               client.on('getNextQuestion', () => { // when the teacher clicks on the next question button
-                     if (questioNumber == quizzQuestionsAndAnswers[1].length) {
-                            client.emit('last question');
-                            client.emit('nextQuestion', {
-                                   currentQuestion: quizzQuestionsAndAnswers[1][questioNumber - 1][0],
-                                   currentAnswers: quizzQuestionsAndAnswers[1][questioNumber - 1][1],
-                                   currentQuestionNumber: quizzQuestionsAndAnswers[1][questioNumber - 1][3],
-                                   numberOfQuestions: quizzQuestionsAndAnswers[1].length
-                            });
-                     }
-                     else if (questioNumber < quizzQuestionsAndAnswers[1].length) {
-                            client.emit('nextQuestion', {
-                                   currentQuestion: quizzQuestionsAndAnswers[1][questioNumber - 1][0],
-                                   currentAnswers: quizzQuestionsAndAnswers[1][questioNumber - 1][1],
-                                   currentQuestionNumber: quizzQuestionsAndAnswers[1][questioNumber - 1][3],
-                                   numberOfQuestions: quizzQuestionsAndAnswers[1].length
-                            });
-                     }
-                     questioNumber++;
-
                      if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
+
+                            if (questionNumber <= quizzQuestionsAndAnswers[1].length) {
+                                   client.emit('nextQuestion', getCurrentQuestion());
+                            }
+                            if (questionNumber == quizzQuestionsAndAnswers[1].length) {
+                                   client.emit('last question');
+                            }
+                            if (questionNumber > 1) {
+                                   io.to('student').emit('getStudentAnswer');
+                            }
+                            questionNumber++;
                      }
                      else {
                             client.emit('tempMessage', {
@@ -137,16 +137,12 @@ io.on('connection', async function (client) {
                      }
               });
 
-              client.on('getStudentAnswer', () => {
-                     io.to('student').emit('getStudentAnswer');
-              });
-
-              client.on('seeResults', () => {
+              client.on('rdyToDisplayAnswers', () => {
                      sessionStatus = "DisplayResults";
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -187,25 +183,19 @@ io.on('connection', async function (client) {
                                           studentMail: client.mail,
                                           groupName: groupName,
                                           quizzTitle: quizzTitle,
-                                          questionNumber: quizzQuestionsAndAnswers[1][questioNumber - 3][3],
-                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][questioNumber - 3][1]),
+                                          questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
+                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
                                           resultQuestion: checkAnswers(data.answers,
-                                                 quizzQuestionsAndAnswers[1][questioNumber - 3][1], // list of possible answers
-                                                 quizzQuestionsAndAnswers[1][questioNumber - 3][2] // list of good answers
+                                                 quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
+                                                 quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
                                           )
                                    });
-
-                                   var delayInMilliseconds = 1000; //1 second
-
-                                   setTimeout(function () {
-                                          console.log('after delay', questioNumber - 2);
-                                   }, delayInMilliseconds);
                             });
 
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
-                            })
+                            });
                      }
               });
 
@@ -257,7 +247,7 @@ function resetSession() {
        numberOfRegisteredStudents = 0;
        listOfStudents = [];
        quizzQuestionsAndAnswers = null;
-       numberCurrentQuestion = 0;
+       questionNumber = 0;
        return;
 }
 
@@ -334,8 +324,15 @@ function getTime() {
        if (seconds < 10) {
               seconds = "0" + seconds;
        }
-
        return todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
 }
 
+function getCurrentQuestion() {
+       return {
+              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber - 1][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
+              numberOfQuestions: quizzQuestionsAndAnswers[1].length
+       }
+}
 server.listen(8100);
