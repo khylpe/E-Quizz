@@ -13,10 +13,9 @@ let numberOfConnectedStudents = 0;
 let listOfStudents = [];
 let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
-let numberCurrentQuestion = 0;
 let numberOfRegisteredStudents = 0;
-let currentQuestionAndAnswers;
 let quizzTime;
+let questioNumber = 1;
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -27,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.69.88.55') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkMail', (mail) => {
@@ -72,7 +71,6 @@ io.on('connection', async function (client) {
                      quizzTitle = data.quizzName;
                      teacherMail = data.mail;
                      groupName = data.groupName;
-                     console.log(groupName)
 
                      sessionStatus = "SessionStatus";
 
@@ -106,22 +104,30 @@ io.on('connection', async function (client) {
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
 
-              client.on('getNextQuestion', () => { // when the teacher clicks on the next question button   
-                     if (getNumberOfRegisteredStudent() != 0) {
+              client.on('getNextQuestion', () => { // when the teacher clicks on the next question button
+                     if (questioNumber == quizzQuestionsAndAnswers[1].length) {
+                            client.emit('last question');
+                            client.emit('nextQuestion', {
+                                   currentQuestion: quizzQuestionsAndAnswers[1][questioNumber - 1][0],
+                                   currentAnswers: quizzQuestionsAndAnswers[1][questioNumber - 1][1],
+                                   currentQuestionNumber: quizzQuestionsAndAnswers[1][questioNumber - 1][3],
+                                   numberOfQuestions: quizzQuestionsAndAnswers[1].length
+                            });
+                     }
+                     else if (questioNumber < quizzQuestionsAndAnswers[1].length) {
+                            client.emit('nextQuestion', {
+                                   currentQuestion: quizzQuestionsAndAnswers[1][questioNumber - 1][0],
+                                   currentAnswers: quizzQuestionsAndAnswers[1][questioNumber - 1][1],
+                                   currentQuestionNumber: quizzQuestionsAndAnswers[1][questioNumber - 1][3],
+                                   numberOfQuestions: quizzQuestionsAndAnswers[1].length
+                            });
+                     }
+                     questioNumber++;
+
+                     if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            if (numberCurrentQuestion + 1 == quizzQuestionsAndAnswers[1].length) { // will notice the teacher that he is displaying the last question
-                                   currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
-                                   client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                                   client.emit('last question');
-                            }
-                            else if (numberCurrentQuestion == quizzQuestionsAndAnswers[1].length) { // if there is no more question
-                                   client.emit('endOfQuizz');
-                            } else {
-                                   currentQuestionAndAnswers = quizzQuestionsAndAnswers[1][numberCurrentQuestion++]; // go to next question
-                                   client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                            }
                      }
                      else {
                             client.emit('tempMessage', {
@@ -140,7 +146,7 @@ io.on('connection', async function (client) {
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -176,19 +182,24 @@ io.on('connection', async function (client) {
                             });
 
                             client.on('sendStudentAnswer', (data) => {
-                                   // console.log(quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 1][3]);
                                    io.to('teacher').emit('studentAnswerResult', {
                                           teacherMail: teacherMail,
                                           studentMail: client.mail,
                                           groupName: groupName,
                                           quizzTitle: quizzTitle,
-                                          questionNumber: quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][3],
-                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1]),
+                                          questionNumber: quizzQuestionsAndAnswers[1][questioNumber - 3][3],
+                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][questioNumber - 3][1]),
                                           resultQuestion: checkAnswers(data.answers,
-                                                 quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][1], // list of possible answers
-                                                 quizzQuestionsAndAnswers[1][getCurrentQuestionAndAnswers().currentQuestionNumber - 2][2] // list of good answers
+                                                 quizzQuestionsAndAnswers[1][questioNumber - 3][1], // list of possible answers
+                                                 quizzQuestionsAndAnswers[1][questioNumber - 3][2] // list of good answers
                                           )
                                    });
+
+                                   var delayInMilliseconds = 1000; //1 second
+
+                                   setTimeout(function () {
+                                          console.log('after delay', questioNumber - 2);
+                                   }, delayInMilliseconds);
                             });
 
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
@@ -235,27 +246,6 @@ function getStudentsInformations() {
               numberOfRegisteredStudents: getNumberOfRegisteredStudent(),
               listOfStudents: listOfStudents
        };
-}
-
-function getCurrentQuestionAndAnswers() {
-       return {
-              currentQuestion: currentQuestionAndAnswers[0],
-              currentAnswers: currentQuestionAndAnswers[1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][numberCurrentQuestion - 1][3],
-              numberOfQuestions: quizzQuestionsAndAnswers[1].length
-       };
-}
-
-function getNumberOfAnswers() {
-       let numberOfAnswers = 0;
-
-       listOfStudents.forEach(student => {
-              if (student.answerValidated == true) {
-                     numberOfAnswers++;
-              }
-       });
-
-       return numberOfAnswers;
 }
 
 function resetSession() {
@@ -345,7 +335,7 @@ function getTime() {
               seconds = "0" + seconds;
        }
 
-       return  todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
+       return todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
 }
 
 server.listen(8100);

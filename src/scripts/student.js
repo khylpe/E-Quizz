@@ -1,4 +1,4 @@
-const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
+const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
@@ -123,6 +123,7 @@ function getAnswers() {
 function changeDivState(divToDisplay) {
        document.querySelectorAll('#allParts div.part').forEach((div) => {
               div.hidden = true
+              btnModify.hidden = true;
        });
        document.querySelector(divToDisplay).hidden = false;
 }
