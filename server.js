@@ -29,18 +29,19 @@ io.on('connection', async function (client) {
        if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
               /* things to do when a teacher connects */
 
-              client.on('checkMail', (mail) => {
+              client.on('checkSession', (mail, callback) => {
+                     console.log('checkSession')
                      if (!checkMail(mail)) {
-                            client.emit('anotherTeacherConnected');
+                            callback("anotherTeacherConnected")
                             client.removeAllListeners();
                             client.disconnect();
                             return;
                      } else {
+                            callback("connectionAuthorized");
                             teacherMail = mail;
                      }
               });
               client.join("teacher");
-              client.emit('teacherConnected');
               client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
@@ -52,8 +53,6 @@ io.on('connection', async function (client) {
                      // send the list of students to the teacher
               }
               else if (sessionStatus == "DisplayQuestions") {
-                     client.emit('nextQuestion', getCurrentQuestionAndAnswers());
-                     client.emit('numberOfAnswersChanged', getNumberOfAnswers());
               }
               else if (sessionStatus == "DisplayResults") {
               }
@@ -112,21 +111,12 @@ io.on('connection', async function (client) {
                             });
               });
 
-              client.on('getNextQuestion', () => { // when the teacher clicks on the next question button
+              client.on('getFirstQuestion', (callback) => { // when the teacher clicks on the next question button
                      if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-
-                            if (questionNumber <= quizzQuestionsAndAnswers[1].length) {
-                                   client.emit('nextQuestion', getCurrentQuestion());
-                            }
-                            if (questionNumber == quizzQuestionsAndAnswers[1].length) {
-                                   client.emit('last question');
-                            }
-                            if (questionNumber > 1) {
-                                   io.to('student').emit('getStudentAnswer');
-                            }
+                            callback(getCurrentQuestion());
                             questionNumber++;
                      }
                      else {
@@ -137,6 +127,78 @@ io.on('connection', async function (client) {
                      }
               });
 
+
+              client.on('getNextQuestion', (callback) => { // when the teacher clicks on the next question button
+                     if (getNumberOfRegisteredStudent() > 0) {
+                            listOfStudents.forEach(student => {
+                                   student.answerValidated = false;
+                            });
+
+                            callback(getCurrentQuestion());
+
+                            io.timeout(5000).to('student').emit('getStudentAnswer', (err, responses) => {
+                                   if (err) {
+                                          io.to('teacher').emit('tempMessage',
+                                                 {
+                                                        status: "error",
+                                                        message: "An error occured while getting the student answers"
+                                                 });
+                                   }
+                                   else {
+                                          responses.forEach(response => {
+                                                 io.to('teacher').emit('studentAnswerResult', {
+                                                        teacherMail: teacherMail,
+                                                        studentMail: response.studentMail,
+                                                        groupName: groupName,
+                                                        quizzTitle: quizzTitle,
+                                                        questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
+                                                        studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
+                                                        resultQuestion: checkAnswers(response.answers,
+                                                               quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
+                                                               quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
+                                                        )
+                                                 });
+                                          })
+                                   }
+                            });
+                            questionNumber++;
+                     }
+                     else {
+                            client.emit('tempMessage', {
+                                   status: "error",
+                                   message: "There is no student registered"
+                            });
+                     }
+              });
+
+              client.on('endOfQuizz', () => {
+                     io.timeout(5000).to('student').emit('getStudentAnswer', (err, responses) => {
+                            if (err) {
+                                   io.to('teacher').emit('tempMessage',
+                                          {
+                                                 status: "error",
+                                                 message: "An error occured while getting the student answers"
+                                          });
+                            }
+                            else {
+                                   responses.forEach(response => {
+                                          io.to('teacher').emit('studentAnswerResult', {
+                                                 teacherMail: teacherMail,
+                                                 studentMail: response.studentMail,
+                                                 groupName: groupName,
+                                                 quizzTitle: quizzTitle,
+                                                 questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
+                                                 studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
+                                                 resultQuestion: checkAnswers(response.answers,
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
+                                                 )
+                                          });
+                                   })
+                            }
+                     });
+                     questionNumber++;
+              })
               client.on('rdyToDisplayAnswers', () => {
                      sessionStatus = "DisplayResults";
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
@@ -177,21 +239,6 @@ io.on('connection', async function (client) {
                                    io.to('teacher').emit('numberOfAnswersChanged', getNumberOfAnswers());
                             });
 
-                            client.on('sendStudentAnswer', (data) => {
-                                   io.to('teacher').emit('studentAnswerResult', {
-                                          teacherMail: teacherMail,
-                                          studentMail: client.mail,
-                                          groupName: groupName,
-                                          quizzTitle: quizzTitle,
-                                          questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
-                                          studentAnswers: getAnswersAsString(data.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
-                                          resultQuestion: checkAnswers(data.answers,
-                                                 quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
-                                                 quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
-                                          )
-                                   });
-                            });
-
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
@@ -226,7 +273,9 @@ function getSession() {
               groupName: groupName,
               teacher: teacherMail,
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
-              quizzTime: quizzTime
+              quizzTime: quizzTime,
+              currentQuestion: getCurrentQuestion(),
+              numberOfAnswers: getNumberOfAnswers()
        };
 }
 
@@ -328,11 +377,29 @@ function getTime() {
 }
 
 function getCurrentQuestion() {
+       let lastQuestion = new Boolean(false);
+       if(quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length){
+              return null;
+       }
+       if (quizzQuestionsAndAnswers[1].length == questionNumber) {
+              lastQuestion = true;
+       }
        return {
               currentQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
               currentAnswers: quizzQuestionsAndAnswers[1][questionNumber - 1][1],
               currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
-              numberOfQuestions: quizzQuestionsAndAnswers[1].length
+              numberOfQuestions: quizzQuestionsAndAnswers[1].length,
+              lastQuestion: lastQuestion
        }
+}
+
+function getNumberOfAnswers() {
+       let numberOfAnswers = 0;
+       listOfStudents.forEach(student => {
+              if (student.answerValidated == true) {
+                     numberOfAnswers++;
+              }
+       });
+       return numberOfAnswers;
 }
 server.listen(8100);

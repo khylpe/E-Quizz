@@ -12,6 +12,8 @@ let waitingRoomTeacher = document.querySelector('#waitTeacherConnect');
 let nameStudent = document.querySelector('#nameStudent')
 let waitingRoom = document.querySelector('#waiting')
 
+let studentMail;
+
 changeDivState('#test');
 //front  
 btnAnswers.forEach((button, index) => {
@@ -52,12 +54,15 @@ socket.on('connect', () => {
                      changeDivState('#answerQuestion');
               });
 
-              socket.on('getStudentAnswer', () => {
-                     socket.emit('sendStudentAnswer', { answers: getAnswers() });
+              socket.on('getStudentAnswer', (callback) => {
+                     callback({
+                            answers: getAnswers(),
+                            studentMail: studentMail
+                          });
                      newQuestion();
               });
 
-              socket.on('sessionUpdated', (sessionStatus) =>{ // à envoyer looooooooooooooooooooool
+              socket.on('sessionUpdated', (sessionStatus) =>{
                      if (sessionStatus != 'sessionStarted') {
                             nameStudent.innerHTML = `Bienvenue ${inputMail.value}`;
                             changeDivState('#waitTeacherConnect');
@@ -81,8 +86,9 @@ socket.on('connect', () => {
 
 formulaireMail.addEventListener('submit', (e) => {
        e.preventDefault();
-       let inputMail = document.querySelector('#mailAddress');
-       socket.emit('studentTriesToRegister', inputMail.value);
+       let inputMail = document.querySelector('#mailAddress')
+       studentMail = inputMail.value;
+       socket.emit('studentTriesToRegister', studentMail);
        inputMail.value = "";
 });
 
