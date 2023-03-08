@@ -1,4 +1,4 @@
-const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
+const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
@@ -9,8 +9,10 @@ let inputs = document.querySelectorAll('#btnAnswers input[type="checkbox"]');
 let submitAnswer = document.querySelector('#btnValidate');
 let inputMail = document.querySelector('#mailAddress');
 let waitingRoomTeacher = document.querySelector('#waitTeacherConnect');
-let nameStudent = document.querySelector('#nameStudent')
-let waitingRoom = document.querySelector('#waiting')
+let nameStudent = document.querySelector('#nameStudent');
+let waitingRoom = document.querySelector('#waiting');
+let messageEndQuizz = document.querySelector('#End');
+
 
 let studentMail;
 
@@ -54,7 +56,8 @@ socket.on('connect', () => {
                      changeDivState('#answerQuestion');
               });
 
-              socket.on('getStudentAnswer', (callback) => {
+              socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
+                     console.log(jsonContainNumberQuestion['numberQuestion']);
                      callback({
                             answers: getAnswers(),
                             studentMail: studentMail
@@ -75,6 +78,12 @@ socket.on('connect', () => {
                      } else {
                             changeDivState('#answerQuestion');
                      }
+              });
+
+              socket.on('endOfQuizzTeacher', () => {
+                     changeDivState('#endOfQuizz');
+                     messageEndQuizz.innerHTML = "fin";
+                   
               });
        });
 

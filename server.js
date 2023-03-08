@@ -26,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.69.88.55') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkSession', (mail, callback) => {
@@ -118,6 +118,7 @@ io.on('connection', async function (client) {
                             });
                             callback(getCurrentQuestion());
                             questionNumber++;
+
                      }
                      else {
                             client.emit('tempMessage', {
@@ -136,7 +137,7 @@ io.on('connection', async function (client) {
 
                             callback(getCurrentQuestion());
 
-                            io.timeout(5000).to('student').emit('getStudentAnswer', (err, responses) => {
+                            io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
                                    if (err) {
                                           io.to('teacher').emit('tempMessage',
                                                  {
@@ -172,7 +173,8 @@ io.on('connection', async function (client) {
               });
 
               client.on('endOfQuizz', () => {
-                     io.timeout(5000).to('student').emit('getStudentAnswer', (err, responses) => {
+                     io.to('student').emit('endOfQuizzTeacher');
+                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -204,7 +206,7 @@ io.on('connection', async function (client) {
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -378,7 +380,7 @@ function getTime() {
 
 function getCurrentQuestion() {
        let lastQuestion = new Boolean(false);
-       if(quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length){
+       if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
               return null;
        }
        if (quizzQuestionsAndAnswers[1].length == questionNumber) {
