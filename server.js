@@ -174,7 +174,7 @@ io.on('connection', async function (client) {
 
               client.on('endOfQuizz', () => {
                      io.to('student').emit('endOfQuizzTeacher');
-                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
+                            io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -199,6 +199,9 @@ io.on('connection', async function (client) {
                                    })
                             }
                      });
+
+                     io.to('student').emit('endOfQuizzTeacher');
+
                      questionNumber++;
               })
               client.on('rdyToDisplayAnswers', () => {
@@ -206,7 +209,6 @@ io.on('connection', async function (client) {
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
