@@ -15,7 +15,7 @@ let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberOfRegisteredStudents = 0;
 let quizzTime = null;
-let questionNumber = 1;
+let questionNumber = 0;
 
 // Enable access to the src folder :
 app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
@@ -42,7 +42,7 @@ io.on('connection', async function (client) {
                      }
               });
               client.join("teacher");
-              client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
+              client.emit('updateSessionStatus', test()); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
               }
@@ -116,9 +116,9 @@ io.on('connection', async function (client) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
+                            console.log(quizzQuestionsAndAnswers[1][questionNumber])
                             callback(getCurrentQuestion());
                             questionNumber++;
-
                      }
                      else {
                             client.emit('tempMessage', {
@@ -134,8 +134,8 @@ io.on('connection', async function (client) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-
                             callback(getCurrentQuestion());
+                            questionNumber++;
 
                             io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
                                    if (err) {
@@ -152,17 +152,16 @@ io.on('connection', async function (client) {
                                                         studentMail: response.studentMail,
                                                         groupName: groupName,
                                                         quizzTitle: quizzTitle,
-                                                        questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
-                                                        studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
+                                                        questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                                        studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
                                                         resultQuestion: checkAnswers(response.answers,
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
+                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
+                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
                                                         )
                                                  });
                                           })
                                    }
                             });
-                            questionNumber++;
                      }
                      else {
                             client.emit('tempMessage', {
@@ -173,7 +172,10 @@ io.on('connection', async function (client) {
               });
 
               client.on('endOfQuizz', () => {
-                            io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
+                     questionNumber++;
+                     console.log(questionNumber)
+
+                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -188,11 +190,11 @@ io.on('connection', async function (client) {
                                                  studentMail: response.studentMail,
                                                  groupName: groupName,
                                                  quizzTitle: quizzTitle,
-                                                 questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 3][3],
-                                                 studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 3][1]),
+                                                 questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                                 studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
                                                  resultQuestion: checkAnswers(response.answers,
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 3][1], // list of possible answers
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 3][2] // list of good answers
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
                                                  )
                                           });
                                    })
@@ -200,15 +202,13 @@ io.on('connection', async function (client) {
                      });
 
                      io.to('student').emit('endOfQuizzTeacher');
-
-                     questionNumber++;
               })
               client.on('rdyToDisplayAnswers', () => {
                      sessionStatus = "DisplayResults";
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -279,6 +279,19 @@ function getSession() {
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
               quizzTime: quizzTime,
               currentQuestion: getCurrentQuestion(),
+              numberOfAnswers: getNumberOfAnswers()
+       };
+}
+
+function test(){
+       return {
+              sessionStatus: sessionStatus,
+              quizzTitle: quizzTitle,
+              groupName: groupName,
+              teacher: teacherMail,
+              quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
+              quizzTime: quizzTime,
+              currentQuestion: getPreviousQuestion(),
               numberOfAnswers: getNumberOfAnswers()
        };
 }
@@ -385,13 +398,31 @@ function getCurrentQuestion() {
        if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
               return null;
        }
+       if (quizzQuestionsAndAnswers[1].length == questionNumber+1) {
+              lastQuestion = true;
+       }
+       return {
+              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber][3],
+              numberOfQuestions: quizzQuestionsAndAnswers[1].length,
+              lastQuestion: lastQuestion
+       }
+}
+
+function getPreviousQuestion() {
+       let lastQuestion = new Boolean(false);
+       if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
+              return null;
+       }
+       console.log(quizzQuestionsAndAnswers[1].length, questionNumber)
        if (quizzQuestionsAndAnswers[1].length == questionNumber) {
               lastQuestion = true;
        }
        return {
-              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
-              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber - 1][1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
+              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber-1][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber-1][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber-1][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length,
               lastQuestion: lastQuestion
        }

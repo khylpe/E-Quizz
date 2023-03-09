@@ -12,6 +12,8 @@ let waitingRoomTeacher = document.querySelector('#waitTeacherConnect');
 let nameStudent = document.querySelector('#nameStudent');
 let waitingRoom = document.querySelector('#waiting');
 let messageEndQuizz = document.querySelector('#End');
+let currentQuestionNumber = document.querySelector('#numberQuestion');
+
 
 
 let studentMail;
@@ -54,18 +56,20 @@ socket.on('connect', () => {
 
               socket.on('sessionStarted', () => {
                      changeDivState('#answerQuestion');
+                     currentQuestionNumber.innerHTML = "1";
               });
 
               socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
-                     console.log(jsonContainNumberQuestion['numberQuestion']);
                      callback({
                             answers: getAnswers(),
                             studentMail: studentMail
-                          });
+                     });
+                     currentQuestionNumber.innerHTML = jsonContainNumberQuestion['numberQuestion'];
+                     console.log(jsonContainNumberQuestion['numberQuestion']);
                      newQuestion();
               });
 
-              socket.on('sessionUpdated', (sessionStatus) =>{
+              socket.on('sessionUpdated', (sessionStatus) => {
                      if (sessionStatus != 'sessionStarted') {
                             nameStudent.innerHTML = `Bienvenue ${inputMail.value}`;
                             changeDivState('#waitTeacherConnect');
@@ -83,7 +87,7 @@ socket.on('connect', () => {
               socket.on('endOfQuizzTeacher', () => {
                      changeDivState('#endOfQuizz');
                      messageEndQuizz.innerHTML = "fin";
-                   
+
               });
        });
 
@@ -124,6 +128,8 @@ btnReturnHome.addEventListener('click', () => { //bouton Home QCM
        newQuestion();
 });
 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getAnswers() {
@@ -159,4 +165,5 @@ function newQuestion() {
 
        btnModify.hidden = true;
        submitAnswer.hidden = false;
+       currentQuestionNumber.hidden = false;
 }
