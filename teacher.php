@@ -84,7 +84,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    </button>
                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                           <div class="accordion-body" id="bodyNumberOfAnswerSent">
-                                          <p class="card-body display-1" id="numberOfAnswerSent">0</p>
+                                                 <p class="card-body display-1" id="numberOfAnswerSent">0</p>
                                           </div>
                                    </div>
                             </div>
@@ -133,7 +133,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </div>
        </section>
-       
+
        <section id="sectionSessionStatus">
               <div class="container mt-5" id="sessionStatus">
                      <div class="row">
@@ -165,7 +165,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                             <h5 class="card-header list-group-item list-group-item-primary border border-primary-subtle" id="question"></h5>
                             <div class="card-body" id="possibleAnswers">
                             </div>
-
                      </div>
 
                      <div class="text-center mt-5">
@@ -178,6 +177,11 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <section id="sectionDisplayResults">
               <div class="container col-8 mt-5">
                      <div class="accordion" id="accordionForResults">
+                     </div>
+                     <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-warning" id="leaveSession">Quitter la session</button>
+                     </div>
+              </div>
        </section>
 
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>

@@ -7,6 +7,7 @@ document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
 document.querySelector('#infosAndNumberAnswers').style.display = "none";
 document.querySelector('#sectionDisplayQuestions').style.display = "none";
 document.querySelector('#seeResult').style.display = "none";
+document.querySelector('#leaveSession').style.display = "none";
 
 let teacherClass = new Teacher();
 let fetchData = new DB(document.querySelector('#mail').innerText);
@@ -14,7 +15,7 @@ let fetchData = new DB(document.querySelector('#mail').innerText);
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
@@ -121,19 +122,24 @@ socketIO.on('updateSessionStatus', (data) => {
               document.querySelector('#numberOfAnswer').style.display = "none";
        }
        if (data.sessionStatus == 'DisplayQuestions') {
+              if (data.currentQuestion.lastQuestion === true) {
+                     document.querySelector('#seeResult').style.display = "inline-block";
+                     document.querySelector('#nextQuestion').style.display = "none";
+              }
+
               document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "flex";
               document.querySelector('#numberOfAnswer').style.display = "block";
               console.log(document.querySelector('#question').innerHTML = "ehfzjnik");
-              teacherClass.displayQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers,data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
+              teacherClass.displayQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
        }
        if (data.sessionStatus == 'DisplayResults') {
               document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "none";
-              document.querySelector('#numberOfAnswer').style.display = "block";
 
               questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
               seeResults();
+              document.querySelector('#leaveSession').style.display = "inline-block";
        }
 });
 
@@ -208,12 +214,20 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
        socketIO.emit('endOfQuizz');
+       document.querySelector('#leaveSession').style.display = "inline-block";
+});
+
+document.querySelector('#leaveSession').addEventListener('click', (e) => {
+       socketIO.emit('resetSession');
+       teacherClass.setCurrentSection('#sectionCreateSession');
 });
 
 function seeResults() {
        fetchData.fetchQuizzResults(questionsAndAnswers).then(value => {
               teacherClass.displayResults(value[1], value[2], '#accordionForResults')
        });
+       document.querySelector('#leaveSession').style.display = "inline-block";
+
 }
 
 function disableCreateSessionButton() {
