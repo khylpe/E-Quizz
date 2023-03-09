@@ -2,7 +2,6 @@ const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
-let btnReturnHome = document.querySelector('#btnHome');
 let btnModify = document.querySelector('#btnModify');
 let btnAnswers = document.querySelectorAll('#btnAnswers button');
 let inputs = document.querySelectorAll('#btnAnswers input[type="checkbox"]');
@@ -13,6 +12,9 @@ let nameStudent = document.querySelector('#nameStudent');
 let waitingRoom = document.querySelector('#waiting');
 let messageEndQuizz = document.querySelector('#End');
 let currentQuestionNumber = document.querySelector('#numberQuestion');
+let modal = document.querySelector('#ModalDeconnexion');
+let logout = document.querySelector('#deco');
+let btnModalConfirmer = document.querySelector('#modalButtonConfirm');
 
 
 
@@ -121,16 +123,15 @@ btnModify.addEventListener('click', () => { //bouton corriger QCM
        socket.emit('buttonValidateClicked', false);
 });
 
-btnReturnHome.addEventListener('click', () => { //bouton Home QCM
+btnModalConfirmer.addEventListener('click', () => {
        socket.emit('studentDisconnect', () => {
        });
        changeDivState('#formMail');
        newQuestion();
+       modal.style.display = "none";
 });
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 function getAnswers() {
        let arrayAnswers = [];

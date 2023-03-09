@@ -24,15 +24,42 @@
                                           </button>
 
                                           <ul class="user dropdown-menu dropdown-menu-start">
-                                                 <li class="dropdown-item disabled" id="mail">test@ef</li>
+                                                 <li class="dropdown-item disabled" id="mail"></li>
                                                  <li>
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li class="mt-1" id="logout">
-                                                        <button class="btn btn-outline-danger w-100" id="btnHome">
-                                                               <i class="bi bi-box-arrow-right"></i></button>
+                                                        <button type="button" class="btn btn-outline-danger w-100"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#ModalDeconnexion">
+                                                               <i class="bi bi-box-arrow-right"></i>
+                                                        </button>
                                                  </li>
                                           </ul>
+                                          <div class="modal fade" tabindex="-1" id="ModalDeconnexion">
+                                                 <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                               <div class="modal-header">
+                                                                      <h5 class="modal-title">Deconnexion</h5>
+                                                                      <button type="button"
+                                                                             class="btn-close modalButtonClose"
+                                                                             data-bs-dismiss="modal"
+                                                                             aria-label="Close"></button>
+
+                                                               </div>
+                                                               <div class="modal-body">
+                                                                      <p>être vous sur de vouloir vous déconnecter ?</p>
+                                                               </div>
+                                                               <div class="modal-footer">
+                                                                      <button type="button"
+                                                                             class="btn btn-secondary modalButtonClose"
+                                                                             data-bs-dismiss="modal">Fermer</button>
+                                                                      <button type="button" class="btn btn-primary"
+                                                                             id="modalButtonConfirm">Confirmer</button>
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </div>
                                    </div>
                             </div>
                             <h1 class="navbar-nav col-6 justify-content-center">
@@ -67,9 +94,9 @@
                             <button id="btnModify" type="button" class="btn btn-danger">CORRIGER</button>
                             <button id="btnValidate" type="button" class="btn btn-success">Valider</button>
                      </div>
-                     
-                            <h1 id="numberQuestion"></h1>
-              
+
+                     <h1 id="numberQuestion"></h1>
+
               </div>
 
               <div class="part" id="waitTeacherConnect">
