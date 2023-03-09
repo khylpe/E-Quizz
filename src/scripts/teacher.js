@@ -124,6 +124,8 @@ socketIO.on('updateSessionStatus', (data) => {
               document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "flex";
               document.querySelector('#numberOfAnswer').style.display = "block";
+              console.log(document.querySelector('#question').innerHTML = "ehfzjnik");
+              teacherClass.displayQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers,data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
        }
        if (data.sessionStatus == 'DisplayResults') {
               document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
