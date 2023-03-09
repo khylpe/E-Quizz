@@ -11,7 +11,6 @@ let teacherMail = null;
 let sessionStatus = "CreateSession";
 let numberOfConnectedStudents = 0;
 let listOfStudents = [];
-let listOfMails = [];
 let quizzQuestionsAndAnswers = null;
 let numberOfRegisteredStudents = 0;
 let quizzTime = null;
@@ -147,20 +146,20 @@ io.on('connection', async function (client) {
                                    }
                                    else {
                                           responses.forEach(response => {
-                                                 io.to('teacher').emit('studentAnswerResult', {
-                                                        teacherMail: teacherMail,
-                                                        studentMail: response.studentMail,
-                                                        groupName: groupName,
-                                                        quizzTitle: quizzTitle,
-                                                        questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
-                                                        studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
-                                                        resultQuestion: checkAnswers(response.answers,
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
-                                                        )
+                                                 listOfStudents.forEach(student => {
+                                                        if (student.mail == response.studentMail) {
+                                                               student.quizzResult.push({
+                                                                      'answers': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
+                                                                      'questionNumber': quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                                                      'result': checkAnswers(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
+                                                                             quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
+                                                                      )
+                                                               });
+                                                        }
                                                  });
                                           })
                                    }
+                                   ;
                             });
                      }
                      else {
@@ -185,20 +184,34 @@ io.on('connection', async function (client) {
                             }
                             else {
                                    responses.forEach(response => {
-                                          io.to('teacher').emit('studentAnswerResult', {
-                                                 teacherMail: teacherMail,
-                                                 studentMail: response.studentMail,
-                                                 groupName: groupName,
-                                                 quizzTitle: quizzTitle,
-                                                 questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
-                                                 studentAnswers: getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
-                                                 resultQuestion: checkAnswers(response.answers,
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
-                                                 )
+                                          listOfStudents.forEach(student => {
+                                                 if (student.mail == response.studentMail) {
+                                                        student.quizzResult.push({
+                                                               'answers': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
+                                                               'questionNumber': quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                                               'result': checkAnswers(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
+                                                                      quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
+                                                               )
+                                                        });
+                                                 }
                                           });
                                    })
+                                   listOfStudents.forEach((student, i) => {
+                                          if(student.quizzResult.length < quizzQuestionsAndAnswers[1].length) {
+                                                 listOfStudents.splice(i, 1);
+                                          }
+                                          else{
+                                                 student.quizzResult.forEach(question => {
+                                                 if (question.result == true) {
+                                                        student.score++;
+                                                 }
+                                          });
+
+                                          }
+                                   });
+                                   console.log(JSON.stringify(listOfStudents, null, 2));
                             }
+
                      });
 
                      io.to('student').emit('endOfQuizzTeacher');
@@ -208,16 +221,25 @@ io.on('connection', async function (client) {
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               });
        }
-       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.55:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
               client.on('studentTriesToRegister', (studentMail) => {
-                     if (listOfMails.includes(studentMail)) {
+                     let mailExists = false;
+
+                     listOfStudents.forEach(student => {
+                            if (student.mail == studentMail && student.status == "registered") {
+                                   mailExists = true;
+                                   return;
+                            }
+                     });
+                     if (mailExists) {
                             client.emit('doublons');
                      }
                      else {
+
                             client.join('student');
                             client.mail = studentMail;
                             client.emit('studentRegistered', getSession().sessionStatus);
@@ -283,7 +305,7 @@ function getSession() {
        };
 }
 
-function test(){
+function test() {
        return {
               sessionStatus: sessionStatus,
               quizzTitle: quizzTitle,
@@ -332,13 +354,11 @@ function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
 function alterStudentList(action, mail) {
        if (action == "add") {
               numberOfRegisteredStudents++;
-              let tempsNewStudent = { mail: mail, status: "registered" };
+              let tempsNewStudent = { mail: mail, status: "registered", quizzResult: [], answerValidated: false };
               listOfStudents.push(tempsNewStudent);
-              listOfMails.push(mail);
 
        } else if (action == "remove") {
               numberOfRegisteredStudents--;
-              listOfMails.splice(mail, 1);
               listOfStudents.forEach(student => {
                      if (student.mail === mail) {
                             student.status = "not registered anymore";
@@ -398,7 +418,7 @@ function getCurrentQuestion() {
        if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
               return null;
        }
-       if (quizzQuestionsAndAnswers[1].length == questionNumber+1) {
+       if (quizzQuestionsAndAnswers[1].length == questionNumber + 1) {
               lastQuestion = true;
        }
        return {
@@ -420,9 +440,9 @@ function getPreviousQuestion() {
               lastQuestion = true;
        }
        return {
-              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber-1][0],
-              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber-1][1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber-1][3],
+              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber - 1][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length,
               lastQuestion: lastQuestion
        }

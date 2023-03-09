@@ -1,4 +1,4 @@
-const socket = io("http://10.69.88.32:8100", { transports: ["websocket"] });
+const socket = io("http://10.69.88.55:8100", { transports: ["websocket"] });
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
@@ -15,8 +15,6 @@ let currentQuestionNumber = document.querySelector('#numberQuestion');
 let modal = document.querySelector('#ModalDeconnexion');
 let logout = document.querySelector('#deco');
 let btnModalConfirmer = document.querySelector('#modalButtonConfirm');
-
-
 
 let studentMail;
 

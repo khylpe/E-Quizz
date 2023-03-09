@@ -1,0 +1,118 @@
+[
+       {
+              "mail": "valueMail",
+              "status": "valueStatus",
+              "quizzResult": [
+                     {
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     },
+                     {
+                            "question": "valueQuestion",
+                            "answers": [
+                                   0,
+                                   1,
+                                   2,
+                                   3
+                            ],
+                            "result": "boolean",
+                            "questionNumber": "unsigned int"
+                     }
+              ],
+              "isCurrentQuestionAnswered": "boolean"
+       }
+]
