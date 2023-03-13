@@ -29,7 +29,6 @@ io.on('connection', async function (client) {
               /* things to do when a teacher connects */
 
               client.on('checkSession', (mail, callback) => {
-                     console.log('checkSession')
                      if (!checkMail(mail)) {
                             callback("anotherTeacherConnected")
                             client.removeAllListeners();
@@ -115,7 +114,6 @@ io.on('connection', async function (client) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            console.log(quizzQuestionsAndAnswers[1][questionNumber])
                             callback(getCurrentQuestion());
                             questionNumber++;
                      }
@@ -170,9 +168,8 @@ io.on('connection', async function (client) {
                      }
               });
 
-              client.on('endOfQuizz', () => {
+              client.on('endOfQuizz', (callback) => {
                      questionNumber++;
-                     console.log(questionNumber)
 
                      io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
                             if (err) {
@@ -209,17 +206,15 @@ io.on('connection', async function (client) {
 
                                           }
                                    });
+                                   callback(listOfStudents);
                                    console.log(JSON.stringify(listOfStudents, null, 2));
                             }
-
                      });
 
                      io.to('student').emit('endOfQuizzTeacher');
-              })
-              client.on('rdyToDisplayAnswers', () => {
                      sessionStatus = "DisplayResults";
                      client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
-              });
+              })
        }
        else if (client.handshake.headers.origin.includes('http://10.69.88.55:8100')) { // client is a student
               /* things to do when a student connects */
@@ -435,7 +430,6 @@ function getPreviousQuestion() {
        if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
               return null;
        }
-       console.log(quizzQuestionsAndAnswers[1].length, questionNumber)
        if (quizzQuestionsAndAnswers[1].length == questionNumber) {
               lastQuestion = true;
        }
