@@ -15,7 +15,7 @@ let fetchData = new DB(document.querySelector('#mail').innerText);
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://10.69.88.32:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.55:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
@@ -85,13 +85,7 @@ socketIO.on('numberOfAnswersChanged', (numberOfAnswer) => {
        document.querySelector('#numberOfAnswerSent').innerHTML = numberOfAnswer;
 });
 
-socketIO.on('studentAnswerResult', async (data) => {
-       await fetchData.insertResult(data.studentMail, data.questionNumber, data.studentAnswers, data.resultQuestion);
 
-       if (questionsAndAnswers.length == data.questionNumber) {
-              socketIO.emit('rdyToDisplayAnswers');
-       }
-});
 
 socketIO.on('updateStudentList', (data) => {
        data.listOfStudents.forEach((student) => {
@@ -213,7 +207,14 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 });
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
-       socketIO.emit('endOfQuizz');
+       socketIO.emit('endOfQuizz', (listOfStudents) => {
+
+              listOfStudents.forEach(async (student) => {
+                     await student.quizzResult.forEach(async (questionAnswered) => {
+                            await fetchData.insertResult(student.mail, questionAnswered.questionNumber, questionAnswered.answers, questionAnswered.result);
+                     });
+              });
+       });
        document.querySelector('#leaveSession').style.display = "inline-block";
 });
 

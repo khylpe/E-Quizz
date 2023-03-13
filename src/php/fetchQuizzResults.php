@@ -16,7 +16,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                  WHERE `quizz title` = :quizzTitle
                                                  AND `teacher` = :uid
                                                  AND `student group` = :studentGroup
-                                                 AND `date` = :dates");
+                                                 AND `date` = :dates
+                                                 BY `question number` ASC");
 
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
