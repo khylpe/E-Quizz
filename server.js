@@ -206,14 +206,13 @@ io.on('connection', async function (client) {
 
                                           }
                                    });
-                                   callback(listOfStudents);
+                                   callback([quizzQuestionsAndAnswers, listOfStudents]);
                                    console.log(JSON.stringify(listOfStudents, null, 2));
                             }
                      });
 
                      io.to('student').emit('endOfQuizzTeacher');
                      sessionStatus = "DisplayResults";
-                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
               })
        }
        else if (client.handshake.headers.origin.includes('http://10.69.88.55:8100')) { // client is a student
