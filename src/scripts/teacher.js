@@ -15,7 +15,7 @@ let fetchData = new DB(document.querySelector('#mail').innerText);
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://10.69.88.55:8100', { transports: ["websocket"] });
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
@@ -127,14 +127,14 @@ socketIO.on('updateSessionStatus', (data) => {
               console.log(document.querySelector('#question').innerHTML = "ehfzjnik");
               teacherClass.displayQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
        }
-       // if (data.sessionStatus == 'DisplayResults') {
-       //        document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
-       //        document.querySelector('#infosAndNumberAnswers').style.display = "none";
+       if (data.sessionStatus == 'DisplayResults') {
+              document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "none";
+              questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
+              document.querySelector('#leaveSession').style.display = "inline-block";
+              teacherClass.displayResults(data.quizzResults, '#accordionForResults')
 
-       //        questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
-       //        seeResults();
-       //        document.querySelector('#leaveSession').style.display = "inline-block";
-       // }
+       }
 });
 
 socketIO.on('tempMessage', (data) => {
@@ -207,13 +207,12 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 });
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
-       socketIO.emit('endOfQuizz', (data) => {
-
-              data[1].forEach((student) => {
-                     student.quizzResult.forEach(async (questionAnswered) => {
-                            await fetchData.insertResult(student.mail, questionAnswered.questionNumber, questionAnswered.answers, questionAnswered.result);
+       socketIO.emit('endOfQuizz', (questions) => {
+              questions.forEach((question) => {
+                     question.answers.forEach(async (answer) => {
+                            await fetchData.insertResult(answer.studentMail, question.questionNumber, answer.studentAnswer, answer.result);
                      });
-              });              
+              });
        });
        document.querySelector('#leaveSession').style.display = "inline-block";
 });
@@ -225,6 +224,7 @@ document.querySelector('#leaveSession').addEventListener('click', (e) => {
 
 function seeResults() {
        fetchData.fetchQuizzResults(questionsAndAnswers).then(value => {
+              console.log(value)
               teacherClass.displayResults(value[1], value[2], '#accordionForResults')
        });
        document.querySelector('#leaveSession').style.display = "inline-block";

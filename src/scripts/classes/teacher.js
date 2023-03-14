@@ -204,14 +204,13 @@ class Teacher {
               }
        }
 
-       displayResults(questions, listOfStudentsWithTheirAnswers, selector) {
-              console.log(listOfStudentsWithTheirAnswers)
+       displayResults(questions, selector) {
               document.querySelector(selector).innerHTML = "";
               let numberOfQuestions = questions.length;
-              questions.forEach((question, index) => {
+              questions.forEach((question) => {
                      let questionDiv = document.createElement('div');
                      questionDiv.classList = 'accordion-item border border-primary-subtle questions';
-                     questionDiv.setAttribute('id', `question${index + 1}`);
+                     questionDiv.setAttribute('id', `question${question.questionNumber}`);
 
                      let questionHeader = document.createElement('h2');
                      questionHeader.classList = 'accordion-header';
@@ -221,15 +220,15 @@ class Teacher {
                      questionButton.classList = 'accordion-button collapsed';
                      questionButton.setAttribute('type', 'button');
                      questionButton.setAttribute('data-bs-toggle', 'collapse');
-                     questionButton.setAttribute('data-bs-target', `#collapse${index + 1}`);
+                     questionButton.setAttribute('data-bs-target', `#collapse${question.questionNumber}`);
                      questionButton.setAttribute('aria-expanded', 'false');
-                     questionButton.setAttribute('aria-controls', `collapse${index + 1}`);
-                     questionButton.innerText = `Question ${index + 1}/${numberOfQuestions} : ${question[0]}`;
+                     questionButton.setAttribute('aria-controls', `collapse${question.questionNumber}`);
+                     questionButton.innerText = `Question ${question.questionNumber}/${numberOfQuestions} : ${question.question}`;
                      questionHeader.appendChild(questionButton);
 
                      let questionBody = document.createElement('div');
                      questionBody.classList = 'accordion-collapse collapse';
-                     questionBody.setAttribute('id', `collapse${index + 1}`);
+                     questionBody.setAttribute('id', `collapse${question.questionNumber}`);
                      questionDiv.appendChild(questionBody);
 
                      let questionBodyDiv = document.createElement('div');
@@ -326,34 +325,34 @@ class Teacher {
                      let numberOfAnswers = 0;
 
                      let numberCorrestAnswers = 0;
-
-                     listOfStudentsWithTheirAnswers[index].forEach(student => {
+                     console.log(JSON.stringify(questions, null, 2));
+                     question.answers.forEach(studentAnswers => {
                             let liStudent = document.createElement('li');
-                            if (student.result == true) {
+                            if (studentAnswers.result == true) {
                                    liStudent.classList = 'list-group-item list-group-item-action list-group-item-success collapsed';
                                    numberCorrestAnswers++;
                             } else {
                                    liStudent.classList = 'list-group-item list-group-item-action list-group-item-danger collapsed';
                             }
-                            liStudent.innerHTML = student['studentMail'];
+                            liStudent.innerHTML = studentAnswers['studentMail'];
                             liStudent.setAttribute('data-bs-toggle', 'collapse');
-                            liStudent.setAttribute('data-bs-target', `#collapse${student['studentMail']}`);
+                            liStudent.setAttribute('data-bs-target', `#collapse${studentAnswers['studentMail']}`);
                             liStudent.setAttribute('aria-expanded', 'false');
-                            liStudent.setAttribute('aria-controls', `collapse${student['studentMail']}`);
+                            liStudent.setAttribute('aria-controls', `collapse${studentAnswers['studentMail']}`);
 
                             listStudents.appendChild(liStudent);
 
                             let div = document.createElement('div');
                             div.classList = 'collapse';
 
-                            div.setAttribute('id', `collapse${student['studentMail']}`);
+                            div.setAttribute('id', `collapse${studentAnswers['studentMail']}`);
                             listStudents.appendChild(div);
 
                             let studentAnswersDiv = document.createElement('div');
                             studentAnswersDiv.classList = 'd-flex justify-content-center mt-2';
                             div.appendChild(studentAnswersDiv);
                             let isAnswerCounted = false;
-                            student.answerSubmitted.forEach((answer, index) => {
+                            studentAnswers.studentAnswer.forEach((answer, index) => {
                                    if (answer != null && answer != '') {
                                           if (!isAnswerCounted) {
 
@@ -371,7 +370,7 @@ class Teacher {
                                    card2Body.innerHTML = numberOfAnswers;
                                    card2.appendChild(card2Body);
 
-                                   card3Body.innerHTML = numberOfAnswers / listOfStudentsWithTheirAnswers[index].length * 100 + '%';
+                                   card3Body.innerHTML = numberOfAnswers / question.answers.length * 100 + '%';
                                    card3.appendChild(card3Body);
 
                             });

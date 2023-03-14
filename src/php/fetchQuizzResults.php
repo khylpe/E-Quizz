@@ -17,7 +17,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                  AND `teacher` = :uid
                                                  AND `student group` = :studentGroup
                                                  AND `date` = :dates
-                                                 BY `question number` ASC");
+                                                 GROUP BY `question number`");
 
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
