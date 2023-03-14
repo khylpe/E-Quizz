@@ -205,6 +205,7 @@ class Teacher {
        }
 
        displayResults(questions, listOfStudentsWithTheirAnswers, selector) {
+              console.log(listOfStudentsWithTheirAnswers)
               document.querySelector(selector).innerHTML = "";
               let numberOfQuestions = questions.length;
               questions.forEach((question, index) => {

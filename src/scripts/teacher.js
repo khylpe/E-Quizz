@@ -127,14 +127,14 @@ socketIO.on('updateSessionStatus', (data) => {
               console.log(document.querySelector('#question').innerHTML = "ehfzjnik");
               teacherClass.displayQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
        }
-       if (data.sessionStatus == 'DisplayResults') {
-              document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
-              document.querySelector('#infosAndNumberAnswers').style.display = "none";
+       // if (data.sessionStatus == 'DisplayResults') {
+       //        document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+       //        document.querySelector('#infosAndNumberAnswers').style.display = "none";
 
-              questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
-              seeResults();
-              document.querySelector('#leaveSession').style.display = "inline-block";
-       }
+       //        questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
+       //        seeResults();
+       //        document.querySelector('#leaveSession').style.display = "inline-block";
+       // }
 });
 
 socketIO.on('tempMessage', (data) => {
@@ -207,13 +207,13 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 });
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
-       socketIO.emit('endOfQuizz', (listOfStudents) => {
+       socketIO.emit('endOfQuizz', (data) => {
 
-              listOfStudents.forEach(async (student) => {
-                     await student.quizzResult.forEach(async (questionAnswered) => {
+              data[1].forEach((student) => {
+                     student.quizzResult.forEach(async (questionAnswered) => {
                             await fetchData.insertResult(student.mail, questionAnswered.questionNumber, questionAnswered.answers, questionAnswered.result);
                      });
-              });
+              });              
        });
        document.querySelector('#leaveSession').style.display = "inline-block";
 });
@@ -228,7 +228,6 @@ function seeResults() {
               teacherClass.displayResults(value[1], value[2], '#accordionForResults')
        });
        document.querySelector('#leaveSession').style.display = "inline-block";
-
 }
 
 function disableCreateSessionButton() {
