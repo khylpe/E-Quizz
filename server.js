@@ -26,7 +26,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 });
 
 io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
+       if (client.handshake.headers.origin == 'http://10.69.88.55') { // client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkSession', (mail, callback) => {
@@ -172,7 +172,7 @@ io.on('connection', async function (client) {
                      }
               });
 
-              client.on('endOfQuizz', () => {
+              client.on('endOfQuizz', (callback) => {
                      questionNumber++;
 
                      io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
@@ -201,7 +201,6 @@ io.on('connection', async function (client) {
                                           });
                                    })
 
-                                   console.log(JSON.stringify(quizzResults, null, 2));
                                    io.to('teacher').emit('tempMessage',
                                           {
                                                  status: "success",
@@ -210,6 +209,7 @@ io.on('connection', async function (client) {
 
                                    sessionStatus = "DisplayResults";
                                    io.to('teacher').emit('updateSessionStatus', getSession());
+                                   callback(quizzResults);
                             }
                      });
 
@@ -217,7 +217,7 @@ io.on('connection', async function (client) {
                      sessionStatus = "DisplayResults";
               })
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.55:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
