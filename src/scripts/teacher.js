@@ -15,7 +15,7 @@ let fetchData = new DB(document.querySelector('#mail').innerText);
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
+socketIO = io('http://10.69.88.55:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
@@ -133,7 +133,6 @@ socketIO.on('updateSessionStatus', (data) => {
               questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
               document.querySelector('#leaveSession').style.display = "inline-block";
               teacherClass.displayResults(data.quizzResults, '#accordionForResults')
-
        }
 });
 
@@ -207,8 +206,8 @@ document.querySelector('#nextQuestion').addEventListener('click', (e) => {
 });
 
 document.querySelector('#seeResult').addEventListener('click', (e) => {
-       socketIO.emit('endOfQuizz', (questions) => {
-              questions.forEach((question) => {
+       socketIO.emit('endOfQuizz', (quizzResults) => {
+              quizzResults.forEach((question) => {
                      question.answers.forEach(async (answer) => {
                             await fetchData.insertResult(answer.studentMail, question.questionNumber, answer.studentAnswer, answer.result);
                      });
