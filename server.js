@@ -41,7 +41,7 @@ io.on('connection', async function (client) {
                      }
               });
               client.join("teacher");
-              client.emit('updateSessionStatus', test()); // send the session status to the teacher when he connects (in case he refreshed the page)
+              client.emit('updateSessionStatus', getSession(true)); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
               }
@@ -60,7 +60,7 @@ io.on('connection', async function (client) {
               client.on('resetSession', () => {
                      resetSession();
                      io.disconnectSockets();
-                     client.emit('updateSessionStatus', getSession());
+                     client.emit('updateSessionStatus', getSession(false));
                      io.to('teacher').emit('teacherNotConnectedAnymore');
               });
 
@@ -71,7 +71,7 @@ io.on('connection', async function (client) {
 
                      sessionStatus = "SessionStatus";
 
-                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
                      client.emit('tempMessage',
                             {
                                    status: 'success',
@@ -101,7 +101,7 @@ io.on('connection', async function (client) {
                      io.to('student').emit('sessionStarted');
 
                      sessionStatus = "DisplayQuestions";
-                     client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
 
                      io.to('teacher').emit('tempMessage',
                             {
@@ -115,7 +115,7 @@ io.on('connection', async function (client) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            callback(getCurrentQuestion());
+                            callback(getQuestion(false));
                             questionNumber++;
                      }
                      else {
@@ -132,7 +132,7 @@ io.on('connection', async function (client) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            callback(getCurrentQuestion());
+                            callback(getQuestion(false));
                             questionNumber++;
 
                             io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
@@ -208,7 +208,7 @@ io.on('connection', async function (client) {
                                           });
 
                                    sessionStatus = "DisplayResults";
-                                   io.to('teacher').emit('updateSessionStatus', getSession());
+                                   io.to('teacher').emit('updateSessionStatus', getSession(false));
                                    callback(quizzResults);
                             }
                      });
@@ -238,9 +238,9 @@ io.on('connection', async function (client) {
 
                             client.join('student');
                             client.mail = studentMail;
-                            client.emit('studentRegistered', getSession().sessionStatus);
+                            client.emit('studentRegistered', getSession(false).sessionStatus);
 
-                            if (getSession().sessionStatus == "DisplayQuestions") {
+                            if (getSession(false).sessionStatus == "DisplayQuestions") {
                                    client.emit('sessionStarted');
                             }
 
@@ -288,7 +288,7 @@ function checkMail(mail) {
        return teacherMail == null || mail == teacherMail;
 }
 
-function getSession() {
+function getSession(isLastQuestion) {
        return {
               sessionStatus: sessionStatus,
               quizzTitle: quizzTitle,
@@ -297,20 +297,7 @@ function getSession() {
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
               quizzResults: quizzResults,
               quizzTime: quizzTime,
-              currentQuestion: getCurrentQuestion(),
-              numberOfAnswers: getNumberOfAnswers()
-       };
-}
-
-function test() {
-       return {
-              sessionStatus: sessionStatus,
-              quizzTitle: quizzTitle,
-              groupName: groupName,
-              teacher: teacherMail,
-              quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
-              quizzTime: quizzTime,
-              currentQuestion: getPreviousQuestion(),
+              currentQuestion: getQuestion(isLastQuestion),
               numberOfAnswers: getNumberOfAnswers()
        };
 }
@@ -410,35 +397,33 @@ function getTime() {
        return todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
 }
 
-function getCurrentQuestion() {
+function getQuestion(previousQuestion) {
+       let questionToGet
+       let lastQuestionNumber;
        let lastQuestion = new Boolean(false);
-       if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
-              return null;
-       }
-       if (quizzQuestionsAndAnswers[1].length == questionNumber + 1) {
-              lastQuestion = true;
-       }
-       return {
-              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber][0],
-              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber][1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber][3],
-              numberOfQuestions: quizzQuestionsAndAnswers[1].length,
-              lastQuestion: lastQuestion
-       }
-}
+       
+       if(previousQuestion === true){
+              questionToGet = questionNumber - 1;
+              lastQuestionNumber = questionNumber;
 
-function getPreviousQuestion() {
-       let lastQuestion = new Boolean(false);
+       }else if(previousQuestion === false){
+              questionToGet = questionNumber;
+              lastQuestionNumber = questionNumber + 1;
+       }
+       else{
+              return null;
+       }
+
        if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
               return null;
        }
-       if (quizzQuestionsAndAnswers[1].length == questionNumber) {
+       if (quizzQuestionsAndAnswers[1].length == lastQuestionNumber) {
               lastQuestion = true;
        }
        return {
-              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
-              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber - 1][1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
+              currentQuestion: quizzQuestionsAndAnswers[1][questionToGet][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionToGet][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionToGet][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length,
               lastQuestion: lastQuestion
        }
