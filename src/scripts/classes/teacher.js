@@ -178,13 +178,38 @@ class Teacher {
 
               let firstAnswer = document.createElement('p');
               firstAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-              firstAnswer.innerText = `A. ${answers[0]}`;
+
+              let firstAnswerLetter = document.createElement('span');
+              firstAnswerLetter.classList = `text-primary`;
+              firstAnswerLetter.innerText = `A. `;
+
+              let firstAnswerSpan = document.createElement('span');
+              firstAnswerSpan.innerText = `${answers[0]}`;
+              firstAnswer.appendChild(firstAnswerSpan);
+
+              firstAnswer.appendChild(firstAnswerLetter);
+              firstAnswer.appendChild(firstAnswerSpan);
+
+
               secondDiv.appendChild(firstAnswer);
 
               let secondAnswer = document.createElement('p');
               secondAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-              secondAnswer.innerText = `B. ${answers[1]}`;
+
+              let secondAnswerLetter = document.createElement('span');
+              secondAnswerLetter.classList = `text-primary`;
+              secondAnswerLetter.innerText = `B. `;
+
+              let secondAnswerSpan = document.createElement('span');
+              secondAnswerSpan.innerText = `${answers[1]}`;
+              secondAnswer.appendChild(secondAnswerSpan);
+
+              secondAnswer.appendChild(secondAnswerLetter);
+              secondAnswer.appendChild(secondAnswerSpan);
+
               secondDiv.appendChild(secondAnswer);
+
+
 
               if (answers.length > 2 && answers[2] != "") {
                      let thirdDiv = document.createElement('div');
@@ -193,12 +218,35 @@ class Teacher {
 
                      let thirdAnswer = document.createElement('p');
                      thirdAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-                     thirdAnswer.innerText = `C. ${answers[2]}`;
+
+
+                     let thirdAnswerLetter = document.createElement('span');
+                     thirdAnswerLetter.classList = `text-primary`;
+                     thirdAnswerLetter.innerText = `C. `;
+
+                     let thirdAnswerSpan = document.createElement('span');
+                     thirdAnswerSpan.innerText = `${answers[2]}`;
+                     thirdAnswer.appendChild(thirdAnswerSpan);
+
+                     thirdAnswer.appendChild(thirdAnswerLetter);
+                     thirdAnswer.appendChild(thirdAnswerSpan);
+
                      thirdDiv.appendChild(thirdAnswer);
                      if (answers.length == 4 && answers[3] != "") {
                             let fourthAnswer = document.createElement('p');
                             fourthAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-                            fourthAnswer.innerText = `D. ${answers[3]}`;
+
+                            let fourthAnswerLetter = document.createElement('span');
+                            fourthAnswerLetter.classList = `text-primary`;
+                            fourthAnswerLetter.innerText = `D. `;
+
+                            let fourthAnswerSpan = document.createElement('span');
+                            fourthAnswerSpan.innerText = `${answers[3]}`;
+                            fourthAnswer.appendChild(fourthAnswerSpan);
+
+                            fourthAnswer.appendChild(fourthAnswerLetter);
+                            fourthAnswer.appendChild(fourthAnswerSpan);
+
                             thirdDiv.appendChild(fourthAnswer);
                      }
               }
@@ -378,9 +426,13 @@ class Teacher {
                      card4Body.innerHTML = numberCorrestAnswers;
                      card4.appendChild(card4Body);
 
-                     card5Body.innerHTML = numberCorrestAnswers / numberOfAnswers * 100 + '%';
+                     if (numberOfAnswers < 0) {
+                            card5Body.innerHTML = numberCorrestAnswers / numberOfAnswers * 100 + '%';
+                     }
+                     else {
+                            card5Body.innerHTML = '0%';
+                     }
                      card5.appendChild(card5Body);
-
                      document.querySelector(selector).appendChild(questionDiv);
               })
        }
@@ -438,11 +490,11 @@ class Teacher {
               let accordionItem = document.createElement("div");
               accordionItem.classList.add("accordion-item", "questions");
               accordionItem.setAttribute("id", "question" + questionNumber);
-       
+
               let h2 = document.createElement("h2");
               h2.classList.add("accordion-header");
               h2.setAttribute("id", "heading" + questionNumber);
-       
+
               let button = document.createElement("button");
               button.classList.add("accordion-button", "collapsed");
               button.setAttribute("type", "button");
@@ -451,28 +503,28 @@ class Teacher {
               button.setAttribute("aria-expanded", "false");
               button.setAttribute("aria-controls", "collapseOne");
               button.innerHTML = "Question n°" + questionNumber;
-       
+
               h2.appendChild(button);
-       
+
               let collapseOne = document.createElement("div");
               collapseOne.setAttribute("id", "collapse" + questionNumber);
               collapseOne.classList.add("accordion-collapse", "collapse");
               collapseOne.setAttribute("aria-labelledby", "heading" + questionNumber);
-       
+
               let div = document.createElement("div");
               div.classList.add("accordion-body");
-       
+
               let questionDiv = document.createElement("div");
               questionDiv.classList.add("mb-3");
-       
+
               let label = document.createElement("label");
               label.classList.add("form-label");
               label.setAttribute("for", "question" + questionNumber);
               label.innerHTML = "Question";
-       
+
               let inputDiv = document.createElement("div");
               inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
-       
+
               let input = document.createElement("input");
               input.classList.add("form-control", "me-3");
               input.setAttribute("id", "question" + questionNumber);
@@ -480,12 +532,12 @@ class Teacher {
               input.setAttribute("value", "");
               input.setAttribute("disabled", "disabled");
               input.value = question;
-       
+
               let iElem = document.createElement("i");
               iElem.classList.add("bi", "bi-pen");
               iElem.setAttribute("id", "editOrConfirmQuestion" + questionNumber);
               iElem.setAttribute("style", "font-size: 2rem;");
-       
+
               iElem.addEventListener('click', (e) => {
                      if (input.hasAttribute('disabled')) {
                             input.removeAttribute('disabled');
@@ -497,49 +549,49 @@ class Teacher {
                             iElem.style = "font-size: 2rem;";
                      }
               });
-       
+
               inputDiv.appendChild(input);
               inputDiv.appendChild(iElem);
-       
+
               questionDiv.appendChild(label);
               questionDiv.appendChild(inputDiv);
-       
+
               collapseOne.appendChild(div);
               accordionItem.appendChild(h2);
               accordionItem.appendChild(collapseOne);
-       
+
               div.appendChild(questionDiv);
               for (let i = 1; i <= 4; i++) {
                      let questionDiv = document.createElement("div");
                      questionDiv.classList.add("mb-3");
-       
+
                      let label = document.createElement("label");
                      label.classList.add("form-label");
                      label.setAttribute("for", "answer" + i);
                      label.innerHTML = "Réponse n°" + i;
-       
+
                      let inputDiv = document.createElement("div");
                      inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
-       
+
                      let checkBoxDiv = document.createElement("div");
                      checkBoxDiv.classList.add("form-check", "me-3");
-       
+
                      inputDiv.appendChild(checkBoxDiv);
-       
+
                      let checkBox = document.createElement("input");
                      checkBox.classList.add("form-check-input");
                      checkBox.setAttribute("type", "checkbox");
                      checkBox.setAttribute("value", "");
                      checkBox.setAttribute("id", "checkBoxCorrectAnswer" + i);
                      checkBox.setAttribute("disabled", "disabled");
-       
+
                      if (correctAnswers.includes(answers[i - 1])) {
                             checkBox.checked = true;
                      } else {
                             checkBox.checked = false;
                      }
                      checkBoxDiv.appendChild(checkBox);
-       
+
                      let input = document.createElement("input");
                      input.classList.add("form-control", "me-3", 'answer');
                      input.setAttribute("id", "confirmAnswer" + i);
@@ -547,15 +599,15 @@ class Teacher {
                      input.setAttribute("value", "");
                      input.setAttribute("disabled", "disabled");
                      input.value = answers[i - 1];
-       
+
                      let iElem = document.createElement("i");
                      iElem.classList.add("bi", "bi-pen");
                      iElem.setAttribute("id", "editOrConfirmAnswer" + i);
                      iElem.setAttribute("style", "font-size: 2rem;");
-       
+
                      inputDiv.appendChild(input);
                      inputDiv.appendChild(iElem);
-       
+
                      iElem.addEventListener('click', (e) => {
                             if (input.hasAttribute('disabled')) {
                                    input.removeAttribute('disabled');
@@ -569,13 +621,13 @@ class Teacher {
                                    checkBox.setAttribute('disabled', 'disabled');
                             }
                      });
-       
+
                      questionDiv.appendChild(label);
                      questionDiv.appendChild(inputDiv);
-       
+
                      div.appendChild(questionDiv);
               }
-       
+
               collapseOne.appendChild(div);
               accordionItem.appendChild(h2);
               accordionItem.appendChild(collapseOne);
@@ -584,7 +636,7 @@ class Teacher {
 
        /* methods for seeQuizzResults.php */
 
-       displayDatesOfSelectedQuizz(dates, selector) { 
+       displayDatesOfSelectedQuizz(dates, selector) {
               let quizzList = document.querySelector(selector);
               quizzList.innerHTML = "";
               dates[1].forEach((date) => {
