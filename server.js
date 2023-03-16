@@ -217,13 +217,13 @@ io.on('connection', async function (client) {
                      sessionStatus = "DisplayResults";
               })
        }
-       else if (client.handshake.headers.origin.includes('http://10.69.88.55:8100')) { // client is a student
+       else if (client.handshake.headers.origin.includes('http://10.69.88.32:8100')) { // client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
               /* events from student */
-              client.on('studentTriesToRegister', (studentMail) => {
-                     let mailExists = false;
+              client.on('studentTriesToRegister', (studentMail, callback) => {
+                     let mailExists = false;                     
 
                      listOfStudents.forEach(student => {
                             if (student.mail == studentMail && student.status == "registered") {
@@ -231,14 +231,13 @@ io.on('connection', async function (client) {
                                    return;
                             }
                      });
+
                      if (mailExists) {
-                            client.emit('doublons');
+                            callback({status : "doublons"})
                      }
                      else {
-
                             client.join('student');
                             client.mail = studentMail;
-                            client.emit('studentRegistered', getSession(false).sessionStatus);
 
                             if (getSession(false).sessionStatus == "DisplayQuestions") {
                                    client.emit('sessionStarted');
@@ -264,7 +263,8 @@ io.on('connection', async function (client) {
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
-                            });
+                            });                     
+                            callback({status : "accepted", sessionStatus : getSession(false).sessionStatus})
                      }
               });
 

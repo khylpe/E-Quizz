@@ -15,7 +15,7 @@
               <nav class="navbar navbar-expand">
                      <div class="collapse navbar-collapse d-flex">
                             <div class="d-flex col-3 justify-content-start">
-                                   <div class="btn-group">
+                                   <div id="user" class="btn-group">
                                           <button class="btn btn-outline-light"><i class="bi bi-person"></i></button>
                                           <button type="button"
                                                  class="btn btn-outline-light dropdown-toggle dropdown-toggle-split"
@@ -24,8 +24,9 @@
                                           </button>
 
                                           <ul class="user dropdown-menu dropdown-menu-start">
-                                                 <li class="dropdown-item disabled" id="mail"></li>
+                                                 <li class="dropdown-item"></li>
                                                  <li>
+                                                        <h5 id="mail"></h5>
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li class="mt-1" id="logout">
@@ -54,7 +55,7 @@
                                                                       <button type="button"
                                                                              class="btn btn-secondary modalButtonClose"
                                                                              data-bs-dismiss="modal">Fermer</button>
-                                                                      <button type="button" class="btn btn-primary"
+                                                                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                                                                              id="modalButtonConfirm">Confirmer</button>
                                                                </div>
                                                         </div>
@@ -73,7 +74,7 @@
        <div id="allParts">
               <div class="part" id="formMail">
                      <form id="formulaireMail" class="container text-center col-sm-2 col-form-label">
-                            <input type="email" id="mailAddress" class="form-control align-bottom" autocomplete="off"
+                            <input type="email" id="mailAddress" class="form-control align-bottom" autocomplete="on"
                                    autofocus required />
                             <button id="btnSend" class="btn btn-primary">Envoyer</button>
                      </form>
@@ -108,7 +109,7 @@
                      <h1 id="End"></h1>
               </div>
 
-              <div class="part" id="test">grtyhubofnijdkv,lfqhoegrtiujkv,lfd;jgirnthu</div>
+              <div class="part" id="test">Socket not connected</div>
        </div>
 
 

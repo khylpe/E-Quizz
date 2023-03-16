@@ -3,3 +3,8 @@
 body{
 background-color: #2d303e;
 }
+
+.css{
+/* opacity:inherit; */
+position: initial;
+}
