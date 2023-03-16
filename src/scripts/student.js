@@ -18,6 +18,10 @@ let btnModalConfirmer = document.querySelector('#modalButtonConfirm');
 let user = document.querySelector('#user');
 
 let studentMail = null;
+let answers = [];
+let currentQuestion = 1;
+let isCurrentQuestion = true;
+let quizzCurrentQuestion = null;
 
 user.hidden = true;
 changeDivState('#test');
@@ -66,18 +70,21 @@ socket.on('connect', () => {
                                    waitingRoom.innerHTML = "Le prof n'est pas connecté";
                             });
 
-                            socket.on('sessionStarted', () => {
-                                   changeDivState('#answerQuestion');
-                                   currentQuestionNumber.innerHTML = "1";
-                            });
+              socket.on('sessionStarted', () => {
+                     changeDivState('#answerQuestion');
+                     currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
+              });
 
                             socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
+                     quizzCurrentQuestion = jsonContainNumberQuestion['numberQuestion'];
                                    callback({
-                                          answers: getAnswers(),
+                                          answers: getAnswers(jsonContainNumberQuestion['numberQuestion'] - 1),
                                           studentMail: studentMail
                                    });
-                                   currentQuestionNumber.innerHTML = jsonContainNumberQuestion['numberQuestion'];
-                                   console.log(jsonContainNumberQuestion['numberQuestion']);
+                     isCurrentQuestion = true;
+                                   currentQuestion = jsonContainNumberQuestion['numberQuestion'];
+
+                                   currentQuestionNumber.innerHTML = `Numéro de la question : ${jsonContainNumberQuestion['numberQuestion']}`;
                                    newQuestion();
                             });
 
@@ -112,13 +119,38 @@ socket.on('connect', () => {
               inputMail.value = "";
        });
 
-       submitAnswer.addEventListener('click', () => { //bouton valider QCM
-              changeButtonState();
-              btnAnswers.forEach((element) => {
-                     element.classList += " disabled";
-              });
-              socket.emit('buttonValidateClicked', true);
+submitAnswer.addEventListener('click', () => { //bouton valider QCM
+       let arrayAnswers = [];
+       for (let a = 0; a < inputs.length; a++) {
+              arrayAnswers.push(inputs[a].checked);
+       }
+       answers.some((element) => {
+              if (element['questionNumber'] === currentQuestion) {
+                     element['answers'] = arrayAnswers;
+                     return true;
+              }
+       }) || answers.push({
+              answers: arrayAnswers,
+              questionNumber: currentQuestion
        });
+
+       if (isCurrentQuestion) {
+              socket.emit('buttonValidateClicked', true);
+
+       } else {
+              socket.emit('answerChanged', {
+                     answers: getAnswers(currentQuestion),
+                     studentMail: studentMail,
+                     questionNumber: currentQuestion
+              });
+       }
+
+       changeButtonState();
+       btnAnswers.forEach((element) => {
+              element.classList += " disabled";
+       });
+       console.log(answers)
+});
 
        btnModify.addEventListener('click', () => { //bouton corriger QCM
               changeButtonState();
@@ -137,14 +169,76 @@ socket.on('connect', () => {
 
        });
 });
+
+document.querySelector('#previousQuestion').addEventListener('click', () => {
+       if (currentQuestion > 1) {
+              isCurrentQuestion = false;
+              currentQuestion--;
+              inputs.forEach((input, index) => {
+                     input.checked = answers[currentQuestion - 1]['answers'][index];
+                     if (answers[currentQuestion - 1]['answers'][index]) {
+                            btnAnswers[index].classList = "btn btn-primary p-4";
+                     } else {
+                            btnAnswers[index].classList = "btn btn-outline-primary p-4";
+                     }
+
+              });
+              currentQuestionNumber.innerHTML = currentQuestion;
+              btnAnswers.forEach((button, index) => {
+                     button.classList.add("disabled");
+              });
+              submitAnswer.hidden = true;
+              btnModify.hidden = false;
+       }
+})
+
+document.querySelector('#nextQuestion').addEventListener('click', () => {
+       if (currentQuestion < quizzCurrentQuestion) {
+              currentQuestion++;
+              inputs.forEach((input, index) => {
+                     if (answers[currentQuestion - 1] != undefined) {
+                            input.checked = answers[currentQuestion - 1]['answers'][index];
+                            if (answers[currentQuestion - 1]['answers'][index]) {
+                                   btnAnswers[index].classList = "btn btn-primary p-4";
+                            } else {
+                                   btnAnswers[index].classList = "btn btn-outline-primary p-4";
+                            }
+                     } else {
+                            input.checked = false;
+                            btnAnswers[index].classList = "btn btn-outline-primary p-4";
+                     }
+
+              });
+              currentQuestionNumber.innerHTML = `Numéro de la question : ${currentQuestion}`;
+              console.log(currentQuestion, quizzCurrentQuestion)
+              if (quizzCurrentQuestion == currentQuestion) {
+                     isCurrentQuestion = true;
+
+                     btnAnswers.forEach((button, index) => {
+                            button.classList.remove("disabled");
+                     });
+                     submitAnswer.hidden = false;
+                     btnModify.hidden = true;
+              } else {
+                     btnAnswers.forEach((button, index) => {
+                            button.classList.add("disabled");
+                     });
+                     submitAnswer.hidden = true;
+                     btnModify.hidden = false;
+
+              }
+       }
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-function getAnswers() {
-       let arrayAnswers = [];
-       for (let a = 0; a < inputs.length; a++) {
-              arrayAnswers.push(inputs[a].checked);
+function getAnswers(questionNumber) {
+       if (answers[questionNumber - 1] == undefined) {
+              answers[questionNumber - 1] = {
+                     answers: [false, false, false, false],
+                     questionNumber: questionNumber
+              }
        }
-       return arrayAnswers;
+       return answers[questionNumber - 1]['answers'];
 }
 
 function changeDivState(divToDisplay) {

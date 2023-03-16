@@ -81,7 +81,9 @@
               </div>
 
               <div class="part" id="answerQuestion">
-                     <div id="divButtons" class="container text-center align-bottom">
+                     <h1 id="numberQuestion" class="d-flex align-items-center justify-content-center"></h1>
+
+                     <div id="divButtons" class="container text-center align-bottom mt-5">
                             <div id="btnAnswers" class="text-center row align-items-start">
                                    <button id="btnA" type="button" class="btn btn-outline-primary p-4">A</button>
                                    <input type="checkbox" id="stateBtnA" hidden>
@@ -92,12 +94,15 @@
                                    <button id="btnD" type="button" class="btn btn-outline-primary p-4">D</button>
                                    <input type="checkbox" id="stateBtnD" hidden>
                             </div>
-                            <button id="btnModify" type="button" class="btn btn-danger">CORRIGER</button>
-                            <button id="btnValidate" type="button" class="btn btn-success">Valider</button>
+
+                            <div class="d-flex align-items-center justify-content-evenly mt-3">
+                                   <i class="bi bi-arrow-left-square" style="font-size: 2rem; color: cornflowerblue;" id="previousQuestion"></i>   
+                                   <button id="btnModify" type="button" class="btn btn-danger">CORRIGER</button>
+                                   <button id="btnValidate" type="button" class="btn btn-success">Valider</button>
+                                   <i class="bi bi-arrow-right-square" style="font-size: 2rem; color: cornflowerblue;" id="nextQuestion"></i>
+
+                            </div>
                      </div>
-
-                     <h1 id="numberQuestion"></h1>
-
               </div>
 
               <div class="part" id="waitTeacherConnect">

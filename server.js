@@ -209,6 +209,7 @@ io.on('connection', async function (client) {
 
                                    sessionStatus = "DisplayResults";
                                    io.to('teacher').emit('updateSessionStatus', getSession(false));
+                                   console.log(JSON.stringify(quizzResults, null, 2));
                                    callback(quizzResults);
                             }
                      });
@@ -259,6 +260,24 @@ io.on('connection', async function (client) {
                                    });
                                    io.to('teacher').emit('numberOfAnswersChanged', getNumberOfAnswers());
                             });
+
+                            client.on('answerChanged', (answer) => {
+                                   quizzResults.forEach(question => {
+                                          console.log(question)
+                                          if (question.questionNumber == answer.questionNumber) {
+                                                 console.log(quizzQuestionsAndAnswers[1][answer.questionNumber - 1][0]);
+                                                 question.answers.forEach(studentAnswer => {
+                                                        if (studentAnswer.studentMail == client.mail) {
+                                                               studentAnswer.studentAnswer = getAnswersAsString(answer.answers, quizzQuestionsAndAnswers[1][answer.questionNumber - 1][1]),
+                                                                      studentAnswer.result = checkAnswers(answer.answers,
+                                                                             quizzQuestionsAndAnswers[1][question.questionNumber - 1][1], // list of possible answers
+                                                                             quizzQuestionsAndAnswers[1][question.questionNumber - 1][2] // list of good answers
+                                                                      )
+                                                        }
+                                                 });
+                                          }
+                                   });
+                            })
 
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
@@ -401,16 +420,16 @@ function getQuestion(previousQuestion) {
        let questionToGet
        let lastQuestionNumber;
        let lastQuestion = new Boolean(false);
-       
-       if(previousQuestion === true){
+
+       if (previousQuestion === true) {
               questionToGet = questionNumber - 1;
               lastQuestionNumber = questionNumber;
 
-       }else if(previousQuestion === false){
+       } else if (previousQuestion === false) {
               questionToGet = questionNumber;
               lastQuestionNumber = questionNumber + 1;
        }
-       else{
+       else {
               return null;
        }
 
