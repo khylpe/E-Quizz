@@ -49,7 +49,6 @@ class DB {
                      .catch(err => {
                             return Array('error', err);
                      });
-
        }
 
        async fetchQuestionsAndAnswers() {
@@ -108,71 +107,7 @@ class DB {
                      .catch(err => {
                             return Array('error', err);
                      });
-       }
-
-       async fetchQuizzResults(questionsAndAnswers) {
-              return await fetch('/src/php/fetchQuizzResults.php', {
-                     method: 'POST',
-                     body: JSON.stringify({
-                            listOfQuestionsAndAnswers: questionsAndAnswers,
-                            teacherMail: this.mail,
-                            quizzName: this.quizzName,
-                            studentGroup: this.groupName,
-                            date: this.quizzTime
-                     })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            return array;
-                     })
-                     .catch(err => {
-                            return Array('error', err);
-                     });
-       }
-
-       async fetchQuizzListFromResults() {
-              return await fetch('/src/php/fetchQuizzListFromResults.php', {
-                     method: 'POST',
-                     body: JSON.stringify({
-                            teacherMail: this.mail
-                     })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            return array;
-                     })
-       }
-
-       async fetchGroupListFromResults() {
-              return await fetch('/src/php/fetchGroupListFromResults.php', {
-                     method: 'POST',
-                     body: JSON.stringify({
-                            teacherMail: this.mail,
-                            quizzName: this.quizzName
-                     })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            return array;
-                     })
-       }
-
-       async fetchDatesOfQuizzFromResults() {
-              return await fetch('/src/php/fetchDatesOfQuizzFromResults.php', {
-                     method: 'POST',
-                     body: JSON.stringify({
-                            teacherMail: this.mail,
-                            quizzName: this.quizzName,
-                            studentGroup: this.groupName
-                     })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            return array;
-                     })
-
-
-       }
+       }       
 
        setGroupName(groupName) {
               this.groupName = groupName;

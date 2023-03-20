@@ -1,5 +1,5 @@
 let mail = document.querySelector('#mail').innerHTML;
-const db = new DB(mail);
+const db = new DataForResults(mail);
 const maClasse = new Teacher();
 
 document.querySelector('#sectionDisplayResults').style.display = "none";
@@ -92,5 +92,10 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                             maClasse.tempMessage('error', "Ce quizz n'a jamais été fait à cette classe", '#tempMessage');
                      }
               });
+});
+
+document.querySelector('#searchValue').addEventListener('input', (e) => {
+       let searchValue = e.target.value;
+       db.fetchStudentResults(searchValue);
 });
 

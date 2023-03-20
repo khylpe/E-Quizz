@@ -15,7 +15,7 @@ let fetchData = new DB(document.querySelector('#mail').innerText);
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://10.69.88.55:8100', { transports: ["websocket"] });
+socketIO = io('http://192.168.1.45:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
