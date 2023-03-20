@@ -25,6 +25,7 @@ let quizzCurrentQuestion = null;
 
 user.hidden = true;
 changeDivState('#test');
+answerQuestion.hidden = true;
 //front  
 btnAnswers.forEach((button, index) => {
        button.addEventListener('click', () => {
@@ -40,7 +41,7 @@ btnAnswers.forEach((button, index) => {
 
 socket.on('connect', () => {
        changeDivState('#formMail');
-       
+
        /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
        formulaireMail.addEventListener('submit', (e) => {
@@ -106,12 +107,13 @@ socket.on('connect', () => {
                             socket.on('endOfQuizzTeacher', () => {
                                    changeDivState('#endOfQuizz');
                                    messageEndQuizz.innerHTML = "fin";
+                                   timerReturnHome();
 
                             });
 
                      }else if(response.status == "doublons"){
-                            
-                            document.body.innerHTML = "DOUBLONS";
+                            document.querySelector('#')
+                            formulaireMail.innerHTML = "DOUBLONS";
                      }
               });
 
@@ -163,9 +165,7 @@ submitAnswer.addEventListener('click', () => { //bouton valider QCM
        btnModalConfirmer.addEventListener('click', () => {
               socket.emit('studentDisconnect', () => {
               });
-              changeDivState('#formMail');
-              newQuestion();
-              modal.style.display = "none";
+              returnHome();
 
        });
 });
@@ -267,4 +267,15 @@ function newQuestion() {
        btnModify.hidden = true;
        submitAnswer.hidden = false;
        currentQuestionNumber.hidden = false;
+}
+
+function returnHome() {
+       changeDivState('#formMail');
+       newQuestion();
+       modal.style.display = "none";
+}
+
+function timerReturnHome() {  ///// A TESTER
+ let monTimer = setTimeout(returnHome(), 3000);
+ clearTimeout(monTimer);
 }

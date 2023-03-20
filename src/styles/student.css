@@ -1,10 +1,7 @@
 @import "/bootstrap/css/bootstrap.css";
 
 body{
-background-color: #2d303e;
-}
-
-.css{
-/* opacity:inherit; */
-position: initial;
+/* background-color: #2d303e; */
+height:100%;
+margin:0;
 }
