@@ -1,8 +1,13 @@
 let quizzTitle;
 let questionsAndAnswers = [];
 
-const maClasse = new Teacher();
-const fetchData = new DB(document.querySelector('#mail').innerHTML);
+import BackCreate from "./classes/back/BackCreate.js";
+import FrontCreate from "./classes/front/FrontCreate.js";
+
+const Back = new BackCreate(document.querySelector('#mail').innerHTML);
+const Front = new FrontCreate();
+
+/*
 
 document.querySelector('section#creatingQuizz #questionAndAnswers').style.display = "none";
 document.querySelector('section#confirmQuizz').style.display = "none";
@@ -115,4 +120,4 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
               .catch((error) => {
                      maClasse.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
               });
-});
+});*/

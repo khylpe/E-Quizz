@@ -1,8 +1,10 @@
-class DB {
+import BackGlobal from "./BackGlobal.js";
+
+export default class BackSession extends BackGlobal {
        groupName;
        quizzName;
        quizzTime;
-       mail
+       mail;
        
        constructor(mail) {
               this.mail = mail;
@@ -51,41 +53,6 @@ class DB {
                      });
        }
 
-       async fetchQuestionsAndAnswers() {
-              return await fetch('/src/php/fetchQuestionsAndAnswers.php', {
-                     method: 'POST',
-                     body: JSON.stringify({
-                            quizzName: this.quizzName,
-                            author: this.mail
-                     })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            if (array[0] == "success") {
-                                   return Array('success', array[1]);
-                            } else {
-                                   return Array('error', "Une erreur est survenue lors de la récupération des questions et réponses : " + array[1]);
-                            }
-                     })
-                     .catch(err => {
-                            return Array('error', err);
-                     });
-       }
-
-       async createQuizz(questionsAndAnswers) {
-              return await fetch('/src/php/createQuizz.php', {
-                     method: 'POST',
-                     body: JSON.stringify({ mail: this.mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
-              })
-                     .then(result => result.json())
-                     .then(array => {
-                            return Array(array[0], array[1]);
-                     })
-                     .catch(err => {
-                            return Array('error', err);
-                     });
-       }
-
        async insertResult(studentMail, questionNumber, studentAnswers, resultQuestion) {
               return await fetch('/src/php/insertResult.php', {
                      method: 'POST',
@@ -107,7 +74,7 @@ class DB {
                      .catch(err => {
                             return Array('error', err);
                      });
-       }       
+       }
 
        setGroupName(groupName) {
               this.groupName = groupName;

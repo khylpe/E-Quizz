@@ -1,14 +1,17 @@
-class DataForResults {
+import BackGlobal from "./BackGlobal.js";
+
+export default class BackResults extends BackGlobal {
        groupName;
        quizzName;
        quizzTime;
        mail;
        
        constructor(mail) {
+              super();
               this.mail = mail;
        }
 
-       async fetchQuizzListFromResults() {
+       async fetchQuizzList() {
               return await fetch('/src/php/fetchQuizzListFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
@@ -21,7 +24,7 @@ class DataForResults {
                      })
        }
 
-       async fetchGroupListFromResults() {
+       async fetchGroupList() {
               return await fetch('/src/php/fetchGroupListFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
@@ -35,7 +38,7 @@ class DataForResults {
                      })
        }
 
-       async fetchDatesOfQuizzFromResults() {
+       async fetchDatesOfQuizz() {
               return await fetch('/src/php/fetchDatesOfQuizzFromResults.php', {
                      method: 'POST',
                      body: JSON.stringify({

@@ -9,13 +9,16 @@ document.querySelector('#sectionDisplayQuestions').style.display = "none";
 document.querySelector('#seeResult').style.display = "none";
 document.querySelector('#leaveSession').style.display = "none";
 
-let teacherClass = new Teacher();
-let fetchData = new DB(document.querySelector('#mail').innerText);
+import BackSession from "./classes/back/BackSession";
+import FrontSession from "./classes/front/FrontSession";
+
+const Back = new BackSession(document.querySelector('#mail').innerText);
+const Front = new FrontSession();
 
 let quizzName;
 let questionsAndAnswers;
 
-socketIO = io('http://192.168.1.45:8100', { transports: ["websocket"] });
+socketIO = io('http://10.191.179.176:8100', { transports: ["websocket"] });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
@@ -84,8 +87,6 @@ socketIO.on('numberOfConnectedStudentChanged', (number) => {
 socketIO.on('numberOfAnswersChanged', (numberOfAnswer) => {
        document.querySelector('#numberOfAnswerSent').innerHTML = numberOfAnswer;
 });
-
-
 
 socketIO.on('updateStudentList', (data) => {
        data.listOfStudents.forEach((student) => {

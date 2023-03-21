@@ -186,9 +186,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-       <script src="src/scripts/classes/FetchDataFromDB.js"></script>
-       <script src="src/scripts/classes/teacher.js"></script>
-       <script src="src/scripts/teacher.js"></script>
+       <script type="module" src="src/scripts/session.js"></script>
 </body>
 
 </html>

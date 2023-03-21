@@ -111,16 +111,9 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div class="container col-8 mt-5">
                      <div class="accordion" id="accordionResult">
        </section>
-
-
-
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-       <script src="src/scripts/classes/DataForResults.js"></script>
-       <script src="src/scripts/classes/teacher.js"></script>
-
-       <script src="src/scripts/seeQuizzResults.js"></script>
-
-
+       
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>       
+       <script type="module" src="src/scripts/results.js"></script>
 </body>
 
 </html>
