@@ -1,23 +1,23 @@
-# E-Quizz Website
-This branch is about the website and the technologies we are using.
+# E-Quizz Student Interface
+This branch is about the student interface, the connection centralization system and the technologies we are using.
 ## Tech Stack
-**Client:** HTML, JavaScript, CSS, Bootstrap
+**Client:** HTML, CSS, Bootstrap, JavaScript
 
 **Server:** Node, Express, Socket.io (WebSoket)
 ## Versions
-[![Node.js version](https://img.shields.io/badge/Node.js-18.12.1-green)](https://nodejs.org/dist/v18.12.1/node-v18.12.1-x64.msi)
+![Node.js version](https://img.shields.io/badge/Node.js-18.15.0-green)
 [![Express version](https://img.shields.io/badge/Express-4.18.2-blue)](https://expressjs.com/fr/)
-[![Socket.io version](https://img.shields.io/badge/Socket.io-4.5.4-orange)](https://socket.io/)
-![MySQL version](https://img.shields.io/badge/MySQL-2.18.1-lightgrey)
-## Authors of this part of the project
-- [Arthur CRAHÉ](https://github.com/khylpe)
+[![Socket.io version](https://img.shields.io/badge/Socket.io-4.5.4-red)](https://socket.io/)
+[![Bootstrap version](https://img.shields.io/badge/Bootstrap-5.3.0.alpha_1-purple)](https://getbootstrap.com/)
+[![Bootstrap-icons version](https://img.shields.io/badge/Bootstrap_icons-1.10.3-blueviolet)](https://icons.getbootstrap.com/)
+
 ## Run Locally
-[**Requires Node**](https://nodejs.org/en/)
+Requires [**Node**](https://nodejs.org/en/) and Git
 
 Clone the project
 
 ```bash
-  git clone -b website https://github.com/Tristan13R/E-Quizz
+  git clone -b server_student_node_express_socket https://github.com/Tristan13R/E-Quizz
 ```
 
 Go to the project directory
@@ -26,11 +26,13 @@ Go to the project directory
   cd E-Quizz
 ```
 
-Install dependencies (should not be needed)
+All dependencies should already be installed in `node_modules` folder, otherwise : 
 
 ```bash
-  npm install express --save
-  npm install socket.io
+  npm install express@4.18.2
+  npm install socket.io@4.5.4
+  npm i bootstrap@5.3.0-alpha1
+  npm i bootstrap-icons
 ```
 
 Start the server
@@ -41,6 +43,10 @@ Start the server
 Access it
 
 ```bash
-  http://localhost:8100/
+  http://[your_IP]:8100/
 ```
 
+
+## Authors of this part of the project :
+- [Arthur CRAHÉ](https://github.com/khylpe)
+- [Tristan ROOS](https://github.com/Tristan13R)
