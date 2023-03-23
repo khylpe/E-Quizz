@@ -1,4 +1,10 @@
-const socket = io("http://10.191.179.176:8100", { transports: ["websocket"] });
+const socket = io("http://10.191.179.176:8100", {
+       transports:
+              ["websocket"],
+       query: {
+              status: 'student'
+       }
+});
 
 let formulaireMail = document.querySelector('#formMail');
 let divButtons = document.querySelector('#answerQuestion');
@@ -71,18 +77,18 @@ socket.on('connect', () => {
                                    waitingRoom.innerHTML = "Le prof n'est pas connecté";
                             });
 
-              socket.on('sessionStarted', () => {
-                     changeDivState('#answerQuestion');
-                     currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
-              });
+                            socket.on('sessionStarted', () => {
+                                   changeDivState('#answerQuestion');
+                                   currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
+                            });
 
                             socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
-                     quizzCurrentQuestion = jsonContainNumberQuestion['numberQuestion'];
+                                   quizzCurrentQuestion = jsonContainNumberQuestion['numberQuestion'];
                                    callback({
                                           answers: getAnswers(jsonContainNumberQuestion['numberQuestion'] - 1),
                                           studentMail: studentMail
                                    });
-                     isCurrentQuestion = true;
+                                   isCurrentQuestion = true;
                                    currentQuestion = jsonContainNumberQuestion['numberQuestion'];
 
                                    currentQuestionNumber.innerHTML = `Numéro de la question : ${jsonContainNumberQuestion['numberQuestion']}`;
@@ -111,7 +117,7 @@ socket.on('connect', () => {
 
                             });
 
-                     }else if(response.status == "doublons"){
+                     } else if (response.status == "doublons") {
                             document.querySelector('#')
                             formulaireMail.innerHTML = "DOUBLONS";
                      }
@@ -121,38 +127,38 @@ socket.on('connect', () => {
               inputMail.value = "";
        });
 
-submitAnswer.addEventListener('click', () => { //bouton valider QCM
-       let arrayAnswers = [];
-       for (let a = 0; a < inputs.length; a++) {
-              arrayAnswers.push(inputs[a].checked);
-       }
-       answers.some((element) => {
-              if (element['questionNumber'] === currentQuestion) {
-                     element['answers'] = arrayAnswers;
-                     return true;
+       submitAnswer.addEventListener('click', () => { //bouton valider QCM
+              let arrayAnswers = [];
+              for (let a = 0; a < inputs.length; a++) {
+                     arrayAnswers.push(inputs[a].checked);
               }
-       }) || answers.push({
-              answers: arrayAnswers,
-              questionNumber: currentQuestion
-       });
-
-       if (isCurrentQuestion) {
-              socket.emit('buttonValidateClicked', true);
-
-       } else {
-              socket.emit('answerChanged', {
-                     answers: getAnswers(currentQuestion),
-                     studentMail: studentMail,
+              answers.some((element) => {
+                     if (element['questionNumber'] === currentQuestion) {
+                            element['answers'] = arrayAnswers;
+                            return true;
+                     }
+              }) || answers.push({
+                     answers: arrayAnswers,
                      questionNumber: currentQuestion
               });
-       }
 
-       changeButtonState();
-       btnAnswers.forEach((element) => {
-              element.classList += " disabled";
+              if (isCurrentQuestion) {
+                     socket.emit('buttonValidateClicked', true);
+
+              } else {
+                     socket.emit('answerChanged', {
+                            answers: getAnswers(currentQuestion),
+                            studentMail: studentMail,
+                            questionNumber: currentQuestion
+                     });
+              }
+
+              changeButtonState();
+              btnAnswers.forEach((element) => {
+                     element.classList += " disabled";
+              });
+              console.log(answers)
        });
-       console.log(answers)
-});
 
        btnModify.addEventListener('click', () => { //bouton corriger QCM
               changeButtonState();
@@ -276,6 +282,6 @@ function returnHome() {
 }
 
 function timerReturnHome() {  ///// A TESTER
- let monTimer = setTimeout(returnHome(), 3000);
- clearTimeout(monTimer);
+       let monTimer = setTimeout(returnHome(), 3000);
+       clearTimeout(monTimer);
 }

@@ -18,15 +18,16 @@ let quizzTime = null;
 let questionNumber = 0;
 
 // Enable access to the src folder :
-app.use(express.static('src')); // https://stackoverflow.com/a/54747432/19601188
+app.use(express.static('src'));
 
-// Express routing :
+// Start of Express routing :
 app.get('/', (dataFromClient, serverResponse) => {
        serverResponse.sendFile(__dirname + '/student.html');
 });
+// End of Express routing
 
-io.on('connection', async function (client) {
-       if (client.handshake.headers.origin == 'http://10.191.179.176') { // client is a teacher
+io.on('connection', async function (client) { // Client socket connected
+       if (client.handshake.query.status == 'teacher') { // Client is a teacher
               /* things to do when a teacher connects */
 
               client.on('checkSession', (mail, callback) => {
@@ -218,7 +219,7 @@ io.on('connection', async function (client) {
                      sessionStatus = "DisplayResults";
               })
        }
-       else if (client.handshake.headers.origin.includes('http://10.191.179.176:8100')) { // client is a student
+       else if (client.handshake.query.status == 'student') { // Client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
 
@@ -295,7 +296,8 @@ io.on('connection', async function (client) {
               client.on('disconnect', () => { // Update the number of connected students when a student disconnects
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });
-       } else { // unknown user
+       }
+       else { // Unknown client
               /* things to do when an unknown user connects */
               client.removeAllListeners();
               client.disconnect();
