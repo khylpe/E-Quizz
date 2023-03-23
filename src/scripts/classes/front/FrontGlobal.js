@@ -266,7 +266,4 @@ export default class FrontGlobal {
                      document.querySelector(selector).appendChild(questionDiv);
               })
        }
-
-
-
 }

@@ -18,7 +18,13 @@ const Front = new FrontSession();
 let quizzName;
 let questionsAndAnswers;
 
-let socketIO = io('http://10.69.88.55:8100', { transports: ["websocket"] });
+let socketIO = io('http://10.191.179.176:8100', {
+       transports:
+              ["websocket"],
+              query: {
+                     status: 'teacher'
+                   }
+});
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
