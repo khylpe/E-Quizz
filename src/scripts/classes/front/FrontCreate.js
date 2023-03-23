@@ -1,6 +1,11 @@
 import FrontGlobal from "./FrontGlobal.js";
 
 export default class FrontCreate extends FrontGlobal {
+       
+       constructor() {
+              super();
+       }
+
        createAndAppendConfirmQuizzTitle(title, selector) {
               let confirmDataDiv = document.querySelector(selector);
               let confirmTitle = document.createElement('div');

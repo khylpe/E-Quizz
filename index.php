@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['sessionStatus']) && $_SESSION['sessionStatus'] == 'connected' && isset($_SESSION['mail'])) {
-       header('location:teacher.php');
+       header('location:session.php');
        die();
 }
 ?>

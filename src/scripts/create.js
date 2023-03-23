@@ -7,13 +7,11 @@ import FrontCreate from "./classes/front/FrontCreate.js";
 const Back = new BackCreate(document.querySelector('#mail').innerHTML);
 const Front = new FrontCreate();
 
-/*
-
 document.querySelector('section#creatingQuizz #questionAndAnswers').style.display = "none";
 document.querySelector('section#confirmQuizz').style.display = "none";
 document.querySelector('#checkQuizz').style.display = "none";
 
-maClasse.setCurrentSection('#creatingQuizz');
+Front.setCurrentSection('#creatingQuizz');
 
 document.querySelector('#quizzTitleForm').addEventListener('submit', (e) => {
        e.preventDefault();
@@ -26,7 +24,7 @@ document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submi
        e.preventDefault();
 
        if (document.querySelectorAll('#answers input[type="checkbox"]:checked').length == 0) {
-              maClasse.tempMessage("error", "Veuillez sélectionner au moins une bonne réponse", "#tempMessage");
+              Front.tempMessage("error", "Veuillez sélectionner au moins une bonne réponse", "#tempMessage");
               return;
        }
        document.querySelector('#checkQuizz').style.display = "inline-block";
@@ -58,14 +56,14 @@ document.querySelector('#confirmQuestionAndAnswersForm').addEventListener('submi
        });
 
        document.querySelector('#questionNumber').innerHTML = `Question n°${questionsAndAnswers.length + 1} :`;
-       maClasse.tempMessage("success", "Question ajoutée avec succès", "#tempMessage");
+       Front.tempMessage("success", "Question ajoutée avec succès", "#tempMessage");
 });
 
 document.querySelector('#checkQuizz').addEventListener('click', (e) => {
        document.querySelector('#confirmQuizzButton').style.display = "inline-block";
 
-       maClasse.setCurrentSection('#confirmQuizz');
-       maClasse.createAndAppendConfirmQuizzTitle(quizzTitle, "section#confirmQuizz #dataConfirmQuizz");
+       Front.setCurrentSection('#confirmQuizz');
+       Front.createAndAppendConfirmQuizzTitle(quizzTitle, "section#confirmQuizz #dataConfirmQuizz");
 
        //create the accordion for the questions and answers
        let accordion = document.createElement('div');
@@ -75,12 +73,12 @@ document.querySelector('#checkQuizz').addEventListener('click', (e) => {
 
        // append the questions and answers to the accordion
        questionsAndAnswers.forEach((element, index) => { // element = {question: "questionValue", answers: [], correctAnswers: []}
-              maClasse.createAccordionItemForQuestionAndAnswers(index + 1, element.question, element.answers, element.correctAnswers, "#accordionConfirmQuizz");
+              Front.createAccordionItemForQuestionAndAnswers(index + 1, element.question, element.answers, element.correctAnswers, "#accordionConfirmQuizz");
        });
 });
 
 document.querySelector('#confirmQuizzButton').addEventListener('click', async (e) => {
-       fetchData.setQuizzName(document.querySelector('#confirmQuizz #confirmQuizzTitle').value);
+       Back.setQuizzName(document.querySelector('#confirmQuizz #confirmQuizzTitle').value);
        let finalQuestionsAndAnswers = [];
 
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
@@ -108,16 +106,16 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
               finalQuestionsAndAnswers.push(questAndAns);
        });
 
-       fetchData.createQuizz(finalQuestionsAndAnswers)
+       Back.createQuizz(finalQuestionsAndAnswers)
               .then((response) => {
                      if (response[0] == "success") {
-                            maClasse.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
-                            maClasse.setCurrentSection("#quizzCreated");                            
+                            Front.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
+                            Front.setCurrentSection("#quizzCreated");                            
                      } else {
-                            maClasse.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
+                            Front.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
                      }
               })
               .catch((error) => {
-                     maClasse.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
+                     Front.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
               });
-});*/
+});

@@ -2,6 +2,10 @@ import FrontGlobal from "./FrontGlobal.js";
 
 export default class FrontResults extends FrontGlobal {
        
+       constructor() {
+              super();
+       }
+       
        displayDatesOfSelectedQuizz(dates, selector) {
               let quizzList = document.querySelector(selector);
               quizzList.innerHTML = "";

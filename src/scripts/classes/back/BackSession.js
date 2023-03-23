@@ -7,6 +7,7 @@ export default class BackSession extends BackGlobal {
        mail;
        
        constructor(mail) {
+              super();
               this.mail = mail;
        }
 

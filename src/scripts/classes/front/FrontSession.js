@@ -2,6 +2,7 @@ import FrontGlobal from "./FrontGlobal.js";
 
 export default class Teacher extends FrontGlobal {
        constructor() {
+              super();
        }
        
        setSessionStatus(sessionInformation) {

@@ -1,5 +1,6 @@
 console.log('global')
 export default class BackGlobal {
+       
        async fetchQuestionsAndAnswers() {
               return await fetch('/src/php/fetchQuestionsAndAnswers.php', {
                      method: 'POST',

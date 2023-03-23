@@ -9,7 +9,7 @@ export default class BackCreate extends BackGlobal {
        }
 
        async createQuizz(questionsAndAnswers) {
-              return await fetch('/src/php/createQuizz.php', {
+              return await fetch('/src/php/create.php', {
                      method: 'POST',
                      body: JSON.stringify({ mail: this.mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
               })
