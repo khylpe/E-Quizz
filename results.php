@@ -51,68 +51,87 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <div id="tempMessage" role="alert">
        </div>
-       <section id="sectionSelectQuizz">
-              <div class="container text-center mt-5">
-                     <div class="row">
-                            <div class="col-lg-6 offset-lg-3">
-                                   <div class="card text-center">
-                                          <h5 class="card-header">Sélection du quizz
-                                          </h5>
-                                          <div class="card-body">
-                                                 <form id="seeResultsForm">
-                                                        <div class="mb-3 d-flex flex-column">
-                                                               <label for="quizzName" class="form-label">Nom
-                                                                      du
-                                                                      quizz</label>
-                                                               <div class="btn-group">
-                                                                      <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                             <span id="quizzSelected">Selectionner un quizz</span>
-                                                                      </button>
-                                                                      <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
-                                                                      </ul>
-                                                               </div>
-                                                        </div>
-                                                        <div class="mb-3 d-flex flex-column">
-                                                               <label for="studentGroup" class="form-label">Groupe
-                                                                      d'étudiants</label>
-                                                               <div class="btn-group">
-                                                                      <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
-                                                                             <span id="groupSelected">Selectionner un groupe</span>
-                                                                      </button>
-                                                                      <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="groupsList">
-                                                                      </ul>
-                                                               </div>
-                                                        </div>
 
-                                                        <div class="mb-3 d-flex flex-column">
-                                                               <label class="form-label">Date du quizz</label>
-                                                               <div class="btn-group">
-                                                                      <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonDates">
-                                                                             <span id="dateSelected">Selectionner une date</span>
-                                                                      </button>
-                                                                      <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="datesList">
-                                                                      </ul>
+       <div class="container-fluid d-flex justify-content-center flex-row">
+              <section id="sectionSelectQuizz" class="col-4 mt-5">
+                     <div class="container text-center">
+                            <div class="row">
+                                   <div class="">
+                                          <div class="card text-center">
+                                                 <h5 class="card-header">Recherche par quizz
+                                                 </h5>
+                                                 <div class="card-body">
+                                                        <form id="seeResultsForm">
+                                                               <div class="mb-3 d-flex flex-column">
+                                                                      <label for="quizzName" class="form-label">Nom
+                                                                             du
+                                                                             quizz</label>
+                                                                      <div class="btn-group">
+                                                                             <button id="buttonDisplayQuizzList" type="button" class="btn btn-lg btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                    <span id="quizzSelected">Selectionner un quizz</span>
+                                                                             </button>
+                                                                             <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="quizzList">
+                                                                             </ul>
+                                                                      </div>
                                                                </div>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
-                                                 </form>
+                                                               <div class="mb-3 d-flex flex-column">
+                                                                      <label for="studentGroup" class="form-label">Groupe
+                                                                             d'étudiants</label>
+                                                                      <div class="btn-group">
+                                                                             <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonStudentGroup">
+                                                                                    <span id="groupSelected">Selectionner un groupe</span>
+                                                                             </button>
+                                                                             <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="groupsList">
+                                                                             </ul>
+                                                                      </div>
+                                                               </div>
+
+                                                               <div class="mb-3 d-flex flex-column">
+                                                                      <label class="form-label">Date du quizz</label>
+                                                                      <div class="btn-group">
+                                                                             <button type="button" class="btn btn-lg btn-secondary dropdown-toggle disabled" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButtonDates">
+                                                                                    <span id="dateSelected">Selectionner une date</span>
+                                                                             </button>
+                                                                             <ul class="dropdown-menu w-100 text-center text-primary-emphasis bg-primary-subtle border border-primary-subtle" id="datesList">
+                                                                             </ul>
+                                                                      </div>
+                                                               </div>
+                                                               <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
+                                                        </form>
+                                                 </div>
                                           </div>
                                    </div>
                             </div>
                      </div>
+              </section>
+
+              <section id="searchEngine" class="col-4 mt-5">
+              <div class="row">
+                                   <div class="">
+                                          <div class="card text-center">
+                                                 <h5 class="card-header">Recherche par élève
+                                                 </h5>
+                                                 <div class="card-body">
+                                                        <form id="seeResultsForm">
+                                                               <div class="mb-3 d-flex flex-column">
+                                                                      <label for="studentMail" class="form-label">Adresse mail de l'élève</label>
+                                                                      <input type="text" class="form-control" id="studentMail" autocomplete="off">
+
+                                                               </div>                                                        
+                                                        </form>
+                                                 </div>
+                                          </div>
+                                   </div>
+                            </div>
+              </section>
+       </div>
+
+       <section id="sectionDisplayResults" class="mt-5">
+              <div id="accordionResult" class="accordion container">
               </div>
        </section>
 
-
-       <section id="searchEngine">
-              <input type="text" name="" id="searchValue">
-       </section>
-       <section id="sectionDisplayResults">
-              <div class="container col-8 mt-5">
-                     <div class="accordion" id="accordionResult">
-       </section>
-       
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>       
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script type="module" src="src/scripts/results.js"></script>
 </body>
 

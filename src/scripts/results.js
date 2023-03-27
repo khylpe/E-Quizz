@@ -6,8 +6,6 @@ import FrontResults from "./classes/front/FrontResults.js";
 const Back = new BackResults(mail);
 const Front = new FrontResults();
 
-document.querySelector('#sectionDisplayResults').style.display = "none";
-
 Back.fetchQuizzList().then(array => {
        if (array[0] == "error") {
               Front.tempMessage('error', array[1], '#tempMessage');
@@ -73,9 +71,8 @@ Back.fetchQuizzList().then(array => {
 });
 
 document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
+       let arrayToSend = [];
        e.preventDefault();
-       document.querySelector('#sectionDisplayResults').style.display = "block";
-       document.querySelector('#sectionSelectQuizz').style.display = "none";
 
        Back.setQuizzName(document.querySelector('#quizzSelected').innerHTML);
        Back.setGroupName(document.querySelector('#groupSelected').innerHTML);
@@ -87,10 +84,30 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                             Front.tempMessage('error', questionsReturned[1], '#tempMessage');
                      }
                      else if (questionsReturned[0] == "success" && questionsReturned[1].length > 0) {
-                            Back.fetchQuizzResults(questionsReturned[1])
-                                   .then(quizzResultsReturned => {
-                                          Front.displayResults(questionsReturned[1], quizzResultsReturned[2], '#accordionResult')
-                                   });
+                            Back.fetchQuizzResults().then(resultsReturned => {
+                                   console.log('questionsReturned', questionsReturned)
+                                   console.log('resultsReturned', resultsReturned);
+
+                                   if (resultsReturned[0] == "error") {
+                                          Front.tempMessage('error', resultsReturned[1], '#tempMessage');
+                                   }
+                                   else if (resultsReturned[0] == "success" && resultsReturned[1].length > 0) {
+                                          questionsReturned[1].forEach((question) => {
+                                                 let answers = [];
+                                                 resultsReturned[1].forEach((result) => {
+                                                        console.log(result[0])
+                                                        if (question[3] == result[0].questionNumber) {
+                                                               answers.push({ "studentMail": result[0].studentMail, "studentAnswer": result[0].answerSubmitted, "result": result[0].result });
+                                                        }
+                                                 });
+                                                 arrayToSend.push({ 'question': question[0], 'questionNumber': question[3], 'answers': answers });
+                                          });
+                                          Front.displayResults(arrayToSend, '#accordionResult');
+                                   }
+                                   else {
+                                          Front.tempMessage('error', "Ce quizz n'a jamais été fait à cette classe", '#tempMessage');
+                                   }
+                            });
                      }
                      else {
                             Front.tempMessage('error', "Ce quizz n'a jamais été fait à cette classe", '#tempMessage');
@@ -98,9 +115,10 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
               });
 });
 
-document.querySelector('#searchValue').addEventListener('input', (e) => {
+document.querySelector('#studentMail').addEventListener('input', async (e) => {
+       document.querySelector('#accordionResult').innerHTML = "";
        let searchValue = e.target.value;
-       Back.fetchStudentResults(searchValue).then(array => {
+       await Back.fetchStudentResults(searchValue).then(array => {
               if (array[0] == "error") {
                      Front.tempMessage('error', array[1], '#tempMessage');
               } else if (array[0] == "success" && array[1].length > 0) {

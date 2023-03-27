@@ -18,12 +18,12 @@ const Front = new FrontSession();
 let quizzName;
 let questionsAndAnswers;
 
-let socketIO = io('http://10.191.179.176:8100', {
+let socketIO = io('http://10.69.88.55:8100', {
        transports:
               ["websocket"],
-              query: {
-                     status: 'teacher'
-                   }
+       query: {
+              status: 'teacher'
+       }
 });
 
 socketIO.on('connect', () => {
@@ -227,14 +227,6 @@ document.querySelector('#leaveSession').addEventListener('click', (e) => {
        socketIO.emit('resetSession');
        Front.setCurrentSection('#sectionCreateSession');
 });
-
-function seeResults() {
-       Back.fetchQuizzResults(questionsAndAnswers).then(value => {
-              console.log(value)
-              Front.displayResults(value[1], value[2], '#accordionForResults')
-       });
-       document.querySelector('#leaveSession').style.display = "inline-block";
-}
 
 function disableCreateSessionButton() {
        buttonDisplayQuizzList = document.querySelector('#buttonDisplayQuizzList');

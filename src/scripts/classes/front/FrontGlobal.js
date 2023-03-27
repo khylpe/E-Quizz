@@ -83,7 +83,31 @@ export default class FrontGlobal {
        }
 
        displayResults(questions, selector) {
+              let totalAnswers = 0;
+              let totalGoodAnswers = 0;
+
               document.querySelector(selector).innerHTML = "";
+
+              let introduction = document.createElement('div');
+              introduction.classList = 'text-center';
+
+              let h1 = document.createElement('h1');
+              h1.innerText = 'Résultats';
+              introduction.appendChild(h1);
+
+              let resultSumUp = document.createElement('div');
+              resultSumUp.classList = 'text-center';
+
+              let h3 = document.createElement('h3');
+              resultSumUp.appendChild(h3);
+
+              introduction.appendChild(resultSumUp);
+
+              let p = document.createElement('p');
+              p.innerText = 'Cliquez sur une question pour voir les réponses';
+              introduction.appendChild(p);
+              document.querySelector(selector).appendChild(introduction);
+
               let numberOfQuestions = questions.length;
               questions.forEach((question) => {
                      let questionDiv = document.createElement('div');
@@ -201,14 +225,16 @@ export default class FrontGlobal {
                      divStudents.appendChild(listStudents);
 
                      let numberOfAnswers = 0;
-
                      let numberCorrestAnswers = 0;
-                     console.log(JSON.stringify(questions, null, 2));
+
                      question.answers.forEach(studentAnswers => {
+                            totalAnswers++;
+                            console.log(totalAnswers)
                             let liStudent = document.createElement('li');
                             if (studentAnswers.result == true) {
                                    liStudent.classList = 'list-group-item list-group-item-action list-group-item-success collapsed';
                                    numberCorrestAnswers++;
+                                   totalGoodAnswers++;
                             } else {
                                    liStudent.classList = 'list-group-item list-group-item-action list-group-item-danger collapsed';
                             }
@@ -262,6 +288,7 @@ export default class FrontGlobal {
                      else {
                             card5Body.innerHTML = '0%';
                      }
+                     h3.innerText = `Le résultat global du quizz est de : ${totalGoodAnswers} sur ${totalAnswers}, soit ${Math.round(totalGoodAnswers / totalAnswers * 100) }% de bonnes réponses.`;
                      card5.appendChild(card5Body);
                      document.querySelector(selector).appendChild(questionDiv);
               })

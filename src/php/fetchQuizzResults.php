@@ -3,8 +3,6 @@ require('connectToDB.php');
 $entityBody = file_get_contents('php://input');
 $data = json_decode($entityBody, true);
 
-$listOfQuestionsAndAnswers = $data['listOfQuestionsAndAnswers'];
-
 if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || empty($_SESSION['mail']) || $_SESSION['mail'] != $data['teacherMail']) {
        $response = array('error', 'session error');
        echo json_encode($response);
@@ -19,6 +17,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                  AND `date` = :dates
                                                  GROUP BY `question number`");
 
+                                                 //https://stackoverflow.com/questions/41887460/select-list-is-not-in-group-by-clause-and-contains-nonaggregated-column-inc
+
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
                      ':uid' => $_SESSION['uid'],
@@ -28,8 +28,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
 
               $result = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
               $arrayOfStudentsAnswers = array();
+              
               $questionNumber = 0;
-              $arrayOfStudentsAnswers[0] = array();
 
               foreach ($result as $key => $value) {
                      $studentMail = "";
@@ -37,9 +37,9 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      $studentResult = 0;
                      foreach ($value as $key2 => $value2) {
                             if ($key2 == "question number") {
-                                   if($arrayOfStudentsAnswers[$value2-1] == null){
+                                   if(!isset($arrayOfStudentsAnswers[$value2-1]) || empty($arrayOfStudentsAnswers[$value2-1] ||$arrayOfStudentsAnswers[$value2-1] == null || $arrayOfStudentsAnswers[$value2-1] == "")){
                                           $questionNumber = $value2;
-                                          $arrayOfStudentsAnswers[$value2] = array();
+                                          $arrayOfStudentsAnswers[$value2-1] = array();
                                    }
                             }
                             if ($key2 == "student mail") {
@@ -55,12 +55,12 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      $tab = array(
                             'studentMail' => $studentMail,
                             'answerSubmitted' => $answerSubmitted,
-                            'result' => $studentResult
-                     );
-                     
+                            'result' => $studentResult,
+                            'questionNumber' => $questionNumber,
+                     );                     
                      array_push($arrayOfStudentsAnswers[$questionNumber-1], $tab);
               }
-              $response = array('success', $listOfQuestionsAndAnswers, $arrayOfStudentsAnswers);
+              $response = array('success', $arrayOfStudentsAnswers);
               echo json_encode($response);
        } catch (Exception $e) {
               $response = array('error', $e);

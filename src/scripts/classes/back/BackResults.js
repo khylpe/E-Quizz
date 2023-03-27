@@ -53,11 +53,10 @@ export default class BackResults extends BackGlobal {
                      })
        }
 
-       async fetchQuizzResults(questionsAndAnswers) {
+       async fetchQuizzResults() {
               return await fetch('/src/php/fetchQuizzResults.php', {
                      method: 'POST',
                      body: JSON.stringify({
-                            listOfQuestionsAndAnswers: questionsAndAnswers,
                             teacherMail: this.mail,
                             quizzName: this.quizzName,
                             studentGroup: this.groupName,
@@ -80,7 +79,7 @@ export default class BackResults extends BackGlobal {
               })
                      .then(result => result.json())
                      .then(array => {
-                            return console.log(array);
+                            return array;
                      })
        }
        

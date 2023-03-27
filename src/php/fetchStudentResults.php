@@ -17,7 +17,9 @@ try {
               $studentMail = $result['student mail'];
               $quizzTitle = $result['quizz title'];
               $questionResult = $result['question result'];
-
+              $date = $result['date'];
+              $groupName = $result['student group'];
+              
               // Check if the student mail already exists in the final array
               $found = false;
               foreach ($finalArray as &$student) {
@@ -27,7 +29,7 @@ try {
                             // Check if the quizz title already exists for this student
                             $quizzFound = false;
                             foreach ($student['quizzResults'] as &$quizzResult) {
-                                   if ($quizzResult['quizzName'] === $quizzTitle) {
+                                   if ($quizzResult['quizzName'] === $quizzTitle && $quizzResult['date'] === $date) {
                                           $quizzFound = true;
                                           $quizzResult['numberOfQuestions']++;
                                           $quizzResult['numberOfGoodAnswer'] += $questionResult;
@@ -40,7 +42,10 @@ try {
                                    $student['quizzResults'][] = array(
                                           'quizzName' => $quizzTitle,
                                           'numberOfGoodAnswer' => $questionResult,
-                                          'numberOfQuestions' => 1
+                                          'numberOfQuestions' => 1,
+                                          'date' => $date,
+                                          'groupName' => $groupName
+
                                    );
                             }
                             break;
@@ -55,7 +60,9 @@ try {
                                    array(
                                           'quizzName' => $quizzTitle,
                                           'numberOfGoodAnswer' => $questionResult,
-                                          'numberOfQuestions' => 1
+                                          'numberOfQuestions' => 1,
+                                          'date' => $date,
+                                          'groupName' => $groupName
                                    )
                             )
                      );
