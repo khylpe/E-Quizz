@@ -9,15 +9,15 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
        die();
 } else {
        try {
-              $fetchQuizzList = $db->prepare("   SELECT    *
+              $fetchQuizzList = $db->prepare("
+                                                 SELECT *
                                                  FROM `results` 
                                                  WHERE `quizz title` = :quizzTitle
                                                  AND `teacher` = :uid
                                                  AND `student group` = :studentGroup
                                                  AND `date` = :dates
-                                                 GROUP BY `question number`");
-
-                                                 //https://stackoverflow.com/questions/41887460/select-list-is-not-in-group-by-clause-and-contains-nonaggregated-column-inc
+                                                 ORDER BY `question number`, `student mail`
+                                          ");
 
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
@@ -26,42 +26,32 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      ':dates' => $data['date']
               ));
 
-              $result = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
-              $arrayOfStudentsAnswers = array();
-              
-              $questionNumber = 0;
+              $fetchResult = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
+              $results = array();
 
-              foreach ($result as $key => $value) {
-                     $studentMail = "";
-                     $answerSubmitted = array();
-                     $studentResult = 0;
-                     foreach ($value as $key2 => $value2) {
-                            if ($key2 == "question number") {
-                                   if(!isset($arrayOfStudentsAnswers[$value2-1]) || empty($arrayOfStudentsAnswers[$value2-1] ||$arrayOfStudentsAnswers[$value2-1] == null || $arrayOfStudentsAnswers[$value2-1] == "")){
-                                          $questionNumber = $value2;
-                                          $arrayOfStudentsAnswers[$value2-1] = array();
-                                   }
-                            }
-                            if ($key2 == "student mail") {
-                                   $studentMail = $value2;
-                            }
-                            if ($key2 == "answer submitted 1" || $key2 == "answer submitted 2" || $key2 == "answer submitted 3" || $key2 == "answer submitted 4") {
-                                   array_push($answerSubmitted, $value2);
-                            }
-                            if ($key2 == "question result") {
-                                   $studentResult = $value2;
-                            }                            
-                     }
-                     $tab = array(
-                            'studentMail' => $studentMail,
-                            'answerSubmitted' => $answerSubmitted,
-                            'result' => $studentResult,
-                            'questionNumber' => $questionNumber,
-                     );                     
-                     array_push($arrayOfStudentsAnswers[$questionNumber-1], $tab);
+              foreach ($fetchResult as $value) {
+                     $questionNumber = $value['question number'];
+
+                     $results[$questionNumber][$value['student mail']] = array(
+                            'studentMail' => $value['student mail'],
+                            'answerSubmitted' => array(
+                                   $value['answer submitted 1'],
+                                   $value['answer submitted 2'],
+                                   $value['answer submitted 3'],
+                                   $value['answer submitted 4']
+                            ),
+                            'result' => $value['question result'],
+                            'questionNumber' => $value['question number']
+                     );
               }
-              $response = array('success', $arrayOfStudentsAnswers);
-              echo json_encode($response);
+
+              // Reformat the results array
+              $output = array();
+              foreach ($results as $questionNumber => $students) {
+                     $output[$questionNumber] = array_values($students);
+              }
+
+              echo json_encode(array('success', $output));
        } catch (Exception $e) {
               $response = array('error', $e);
               echo json_encode($response);

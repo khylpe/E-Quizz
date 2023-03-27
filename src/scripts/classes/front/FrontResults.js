@@ -30,12 +30,10 @@ export default class FrontResults extends FrontGlobal {
        }
 
        displayStudentResults(dataFromDB, selector) {
-              let i = 0;
-              dataFromDB[1].forEach((student) => {
+              dataFromDB[1].forEach((student, i) => {
                      let totalResult = 0;
                      let totalQuestions = 0;
 
-                     i++
                      let accordionItem = document.createElement('div');
                      accordionItem.classList = 'accordion-item border border-primary-subtle';
                      accordionItem.setAttribute('id', `accordionItem${i}`);

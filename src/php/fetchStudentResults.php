@@ -68,8 +68,8 @@ try {
                      );
               }
        }
-       $response = array('success', $finalArray);
-       echo json_encode($response);
+              $response = array('success', $finalArray);
+              echo json_encode($response);
 } catch (Exception $e) {
        $response = array('error', $e);
        echo json_encode($response);

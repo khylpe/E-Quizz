@@ -18,7 +18,7 @@ const Front = new FrontSession();
 let quizzName;
 let questionsAndAnswers;
 
-let socketIO = io('http://10.69.88.55:8100', {
+let socketIO = io('http://10.191.179.176:8100', {
        transports:
               ["websocket"],
        query: {

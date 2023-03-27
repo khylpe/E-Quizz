@@ -85,20 +85,20 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                      }
                      else if (questionsReturned[0] == "success" && questionsReturned[1].length > 0) {
                             Back.fetchQuizzResults().then(resultsReturned => {
-                                   console.log('questionsReturned', questionsReturned)
-                                   console.log('resultsReturned', resultsReturned);
+                                   const arr = Object.values(resultsReturned[1]);
 
                                    if (resultsReturned[0] == "error") {
                                           Front.tempMessage('error', resultsReturned[1], '#tempMessage');
                                    }
-                                   else if (resultsReturned[0] == "success" && resultsReturned[1].length > 0) {
+                                   else if (resultsReturned[0] == "success" && arr.length > 0) {
                                           questionsReturned[1].forEach((question) => {
                                                  let answers = [];
-                                                 resultsReturned[1].forEach((result) => {
-                                                        console.log(result[0])
-                                                        if (question[3] == result[0].questionNumber) {
-                                                               answers.push({ "studentMail": result[0].studentMail, "studentAnswer": result[0].answerSubmitted, "result": result[0].result });
-                                                        }
+                                                 arr.forEach((questionResult) => {
+                                                        questionResult.forEach(result =>{
+                                                               if (question[3] == result.questionNumber) {
+                                                                      answers.push({ "studentMail": result.studentMail, "studentAnswer": result.answerSubmitted, "result": result.result });
+                                                               }       
+                                                        })
                                                  });
                                                  arrayToSend.push({ 'question': question[0], 'questionNumber': question[3], 'answers': answers });
                                           });

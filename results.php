@@ -126,7 +126,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </section>
        </div>
 
-       <section id="sectionDisplayResults" class="mt-5">
+       <section id="sectionDisplayResults" class="mt-5 mb-5">
               <div id="accordionResult" class="accordion container">
               </div>
        </section>

@@ -65,7 +65,7 @@ export default class BackResults extends BackGlobal {
               })
                      .then(result => result.json())
                      .then(array => {
-                            return array;
+                            return array
                      })
                      .catch(err => {
                             return Array('error', err);
