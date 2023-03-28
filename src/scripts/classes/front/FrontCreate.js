@@ -1,7 +1,7 @@
 import FrontGlobal from "./FrontGlobal.js";
 
 export default class FrontCreate extends FrontGlobal {
-       
+
        constructor() {
               super();
        }
@@ -199,5 +199,19 @@ export default class FrontCreate extends FrontGlobal {
               accordionItem.appendChild(h2);
               accordionItem.appendChild(collapseOne);
               document.querySelector(selector).appendChild(accordionItem);
+
+              // Add the posibility to add a question to the quizz
+
+              let buttonAddQuestion = document.createElement('button');
+              buttonAddQuestion.classList.add('btn', 'btn-info', 'mt-5');
+              let icon = document.createElement('i');
+              icon.classList.add('bi', 'bi-plus-circle-dotted');
+              let span = document.createElement('span');
+              span.classList.add('ms-3');
+              span.textContent = 'Ajouter une question au QCM';
+              icon.appendChild(span);
+              buttonAddQuestion.appendChild(icon);
+
+              document.querySelector(selector).appendChild(buttonAddQuestion);
        }
 }
