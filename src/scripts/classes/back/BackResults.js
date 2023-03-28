@@ -82,16 +82,4 @@ export default class BackResults extends BackGlobal {
                             return array;
                      })
        }
-       
-       setGroupName(groupName) {
-              this.groupName = groupName;
-       }
-
-       setQuizzTime(quizzTime) {
-              this.quizzTime = quizzTime;
-       }
-
-       setQuizzName(quizzName) {
-              this.quizzName = quizzName;
-       }
 }

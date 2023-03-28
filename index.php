@@ -17,7 +17,20 @@ if (isset($_SESSION['sessionStatus']) && $_SESSION['sessionStatus'] == 'connecte
 
 <body>
        <div class="container-fluid">
-              <h1 class="text-center">E-Quizz</h1>
+              <div class="d-flex flex-column text-center">
+                     <h1>
+                            <span class="text-info">E</span>
+                            <span class="">-</span>
+                            <span class="text-warning">Q</span>
+                            <span class="text-danger">U</span>
+                            <span class="text-success">I</span>
+                            <span class="text-primary">Z</span>
+                            <span class="text-info">Z</span>
+                     </h1>
+                     <div>
+                            <h5 class="text-light">Connexion</h5>
+                     </div>
+              </div>
        </div>
        <hr class="container">
 
@@ -51,7 +64,7 @@ if (isset($_SESSION['sessionStatus']) && $_SESSION['sessionStatus'] == 'connecte
                      </div>
               </div>
        </div>
-       
+
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 

@@ -9,6 +9,7 @@ export default class FrontResults extends FrontGlobal {
        displayDatesOfSelectedQuizz(dates, selector) {
               let quizzList = document.querySelector(selector);
               quizzList.innerHTML = "";
+              
               dates[1].forEach((date) => {
                      let li = document.createElement('li');
                      quizzList.appendChild(li);

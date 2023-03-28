@@ -41,9 +41,22 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           </ul>
                                    </div>
                             </div>
-                            <h1 class="navbar-nav col-6 justify-content-center">
-                                   E-Quizz
-                            </h1>
+                            <div class="navbar-nav col-6 justify-content-center">
+                            <div class="d-flex flex-column text-center">
+                                         <h1>
+                                                 <span class="text-info">E</span>
+                                                 <span class="">-</span>
+                                                 <span class="text-warning">Q</span>
+                                                 <span class="text-danger">U</span>
+                                                 <span class="text-success">I</span>
+                                                 <span class="text-primary">Z</span>
+                                                 <span class="text-info">Z</span>
+                                          </h1>                                          
+                                          <div>
+                                                 <h5 class="text-light">Consultation des résultats</h5>
+                                          </div>
+                                   </div>
+</div>
                      </div>
               </nav>
        </div>

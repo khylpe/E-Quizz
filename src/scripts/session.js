@@ -1,5 +1,4 @@
 /* Description: This file contains the javascript code for the teacher page */
-document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants enregistrés`;
 document.querySelector('#studentList').style.minHeight = document.querySelector('#numberOfConnectedStudents').offsetHeight + "px";
 document.querySelector('#sectionSessionStatus').style.display = "none";
 document.querySelector('#tempMessage').style.display = "none";
@@ -14,9 +13,6 @@ import FrontSession from "./classes/front/FrontSession.js";
 
 const Back = new BackSession(document.querySelector('#mail').innerText);
 const Front = new FrontSession();
-
-let quizzName;
-let questionsAndAnswers;
 
 let socketIO = io('http://10.191.179.176:8100', {
        transports:
@@ -41,7 +37,7 @@ socketIO.on('connect', () => {
               }
               else if (response == "connectionAuthorized") {
                      await Back.fetchQuizzList()
-                            .then(value => {     /*     [0] = error || success,                  
+                            .then(value => {     /*     [0] = success || error,                  
                                                         [1] = quizzListTitles[] || error message
                                                  */
                                    if (value[0] != "success") {
@@ -122,7 +118,7 @@ socketIO.on('updateSessionStatus', (data) => {
 
               document.querySelector('#numberOfAnswer').style.display = "none";
        }
-       if (data.sessionStatus == 'setQuestions') {
+       if (data.sessionStatus == 'DisplayQuestions') {
               if (data.currentQuestion.lastQuestion === true) {
                      document.querySelector('#seeResult').style.display = "inline-block";
                      document.querySelector('#nextQuestion').style.display = "none";
@@ -131,13 +127,12 @@ socketIO.on('updateSessionStatus', (data) => {
               document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "flex";
               document.querySelector('#numberOfAnswer').style.display = "block";
-              console.log(document.querySelector('#question').innerHTML = "ehfzjnik");
+              console.log(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions);
               Front.setQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
        }
        if (data.sessionStatus == 'DisplayResults') {
               document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
               document.querySelector('#infosAndNumberAnswers').style.display = "none";
-              questionsAndAnswers = data.quizzQuestionsAndAnswers[1];
               document.querySelector('#leaveSession').style.display = "inline-block";
               Front.displayResults(data.quizzResults, '#accordionForResults')
        }
@@ -180,7 +175,6 @@ document.querySelector('#createSessionForm').addEventListener('submit', (e) => {
 
 document.querySelector('#startSession').addEventListener('click', async () => {
        await Back.fetchQuestionsAndAnswers().then(value => {
-              questionsAndAnswers = value[1];
               socketIO.emit('startSession', value);
        });
        socketIO.emit('getFirstQuestion', (questionData) => {

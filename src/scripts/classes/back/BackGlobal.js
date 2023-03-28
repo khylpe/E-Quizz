@@ -20,4 +20,16 @@ export default class BackGlobal {
                             return Array('error', err);
                      });
        }      
+       
+       setGroupName(groupName) {
+              this.groupName = groupName;
+       }
+
+       setQuizzTime(quizzTime) {
+              this.quizzTime = quizzTime;
+       }
+
+       setQuizzName(quizzName) {
+              this.quizzName = quizzName;
+       }
 }

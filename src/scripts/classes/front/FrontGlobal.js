@@ -60,7 +60,8 @@ export default class FrontGlobal {
 
        displayStudentGroups(data, selector) { /* [0] = error or success, [1] = studentGroups[] || error message */
               let groupsList = document.querySelector(selector);
-
+              groupsList.innerHTML = "";
+              
               data[1].forEach((groupName) => {
                      let li = document.createElement('li');
                      groupsList.appendChild(li);

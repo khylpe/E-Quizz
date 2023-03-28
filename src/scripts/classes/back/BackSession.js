@@ -76,16 +76,4 @@ export default class BackSession extends BackGlobal {
                             return Array('error', err);
                      });
        }
-
-       setGroupName(groupName) {
-              this.groupName = groupName;
-       }
-
-       setQuizzTime(quizzTime) {
-              this.quizzTime = quizzTime;
-       }
-
-       setQuizzName(quizzName) {
-              this.quizzName = quizzName;
-       }
 }
