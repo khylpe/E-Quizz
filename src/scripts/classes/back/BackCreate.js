@@ -9,9 +9,9 @@ export default class BackCreate extends BackGlobal {
        }
 
        async createQuizz(questionsAndAnswers) {
-              return await fetch('/src/php/create.php', {
+              return await fetch('/src/php/createQuizz.php', {
                      method: 'POST',
-                     body: JSON.stringify({ mail: this.mail, quizzTitle: quizzTitle, questionsAndAnswers: questionsAndAnswers })
+                     body: JSON.stringify({ mail: this.mail, quizzTitle: this.quizzName, questionsAndAnswers: questionsAndAnswers })
               })
                      .then(result => result.json())
                      .then(array => {
@@ -20,5 +20,17 @@ export default class BackCreate extends BackGlobal {
                      .catch(err => {
                             return Array('error', err);
                      });
+       }
+
+       setGroupName(groupName) {
+              this.groupName = groupName;
+       }
+
+       setQuizzTime(quizzTime) {
+              this.quizzTime = quizzTime;
+       }
+
+       setQuizzName(quizzName) {
+              this.quizzName = quizzName;
        }
 }
