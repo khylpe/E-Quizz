@@ -341,7 +341,8 @@ function resetSession() {
        listOfStudents = [];
        quizzQuestionsAndAnswers = null;
        questionNumber = 0;
-       return;
+       quizzResults = [];
+       quizzTime = 0;
 }
 
 function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
