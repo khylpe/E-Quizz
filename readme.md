@@ -1,4 +1,4 @@
-# Project Name
+# E-Quizz
 
 Ce projet est une application web interactive permettant aux enseignants d'évaluer les élèves en temps réel à l'aide de QCM interactifs. Les questions sont projetées sur le tableau, les élèves peuvent y répondre en utilisant leur smartphone ou une télécommande, et les résultats sont affichés à la fin du l'évaltuation.
 
