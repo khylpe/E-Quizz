@@ -119,3 +119,4 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', async (e
                      Front.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
               });
 });
+

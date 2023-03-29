@@ -94,14 +94,14 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                                           questionsReturned[1].forEach((question) => {
                                                  let answers = [];
                                                  arr.forEach((questionResult) => {
-                                                        questionResult.forEach(result =>{
+                                                        questionResult.forEach(result => {
                                                                if (question[3] == result.questionNumber) {
                                                                       answers.push({ "studentMail": result.studentMail, "studentAnswer": result.answerSubmitted, "result": result.result });
-                                                               }       
+                                                               }
                                                         })
                                                  });
                                                  arrayToSend.push({ 'question': question[0], 'questionNumber': question[3], 'answers': answers });
-                                          });
+                                          });                                          
                                           Front.displayResults(arrayToSend, '#accordionResult');
                                    }
                                    else {
