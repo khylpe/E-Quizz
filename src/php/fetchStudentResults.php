@@ -2,12 +2,11 @@
 
 require('connectToDB.php');
 $mail = file_get_contents('php://input');
-$mail = $mail . '%';
+$mail = '%' . $mail . '%';
 $arrayResult = array();
 try {
        $fetchQuizzList = $db->prepare("SELECT * FROM results WHERE teacher = :uid AND `student mail` LIKE :studentMail");
        $fetchQuizzList->execute(array(':uid' => $_SESSION['uid'], ':studentMail' => $mail));
-
 
        $results = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
        $finalArray = array();
@@ -45,7 +44,6 @@ try {
                                           'numberOfQuestions' => 1,
                                           'date' => $date,
                                           'groupName' => $groupName
-
                                    );
                             }
                             break;
