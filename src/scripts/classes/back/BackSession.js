@@ -1,11 +1,6 @@
 import BackGlobal from "./BackGlobal.js";
 
 export default class BackSession extends BackGlobal {
-       groupName;
-       quizzName;
-       quizzTime;
-       mail;
-       
        constructor(mail) {
               super();
               this.mail = mail;

@@ -1,10 +1,6 @@
 import BackGlobal from "./BackGlobal.js";
 
 export default class BackResults extends BackGlobal {
-       groupName;
-       quizzName;
-       quizzTime;
-       mail;
        
        constructor(mail) {
               super();
@@ -70,7 +66,7 @@ export default class BackResults extends BackGlobal {
                      .catch(err => {
                             return Array('error', err);
                      });
-       }       
+       }
 
        async fetchStudentResults(studentMail) {
               return await fetch('/src/php/fetchStudentResults.php', {

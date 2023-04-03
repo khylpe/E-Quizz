@@ -14,7 +14,7 @@ import FrontSession from "./classes/front/FrontSession.js";
 const Back = new BackSession(document.querySelector('#mail').innerText);
 const Front = new FrontSession();
 
-let socketIO = io('http://10.69.88.55:8100', {
+let socketIO = io('http://192.168.0.254:8100', {
        transports:
               ["websocket"],
        query: {

@@ -8,10 +8,10 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
        die();
 } else {
        try {
-              $fetchQuizzList = $db->prepare("SELECT DISTINCT `student group`
-              FROM `results`
-              WHERE `teacher` = :uid
-              AND `quizz title` = :quizzTitle");
+              $fetchQuizzList = $db->prepare("   SELECT DISTINCT `student group`
+                                                 FROM `results`
+                                                 WHERE `teacher` = :uid
+                                                 AND `quizz title` = :quizzTitle");
 
               $fetchQuizzList->execute(array(
                      ':uid' => $_SESSION['uid'],

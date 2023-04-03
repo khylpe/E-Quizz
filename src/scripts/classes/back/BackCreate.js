@@ -1,7 +1,6 @@
 import BackGlobal from "./BackGlobal.js";
 
 export default class BackCreate extends BackGlobal {
-       mail;
        constructor(mail) {
               super();
               this._back = new BackGlobal();
