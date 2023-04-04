@@ -14,74 +14,74 @@ import FrontSession from "./classes/front/FrontSession.js";
 const Back = new BackSession(document.querySelector('#mail').innerText);
 const Front = new FrontSession();
 
-let socketIO = io('http://192.168.0.254:8100', {
+let socketIO = io('http://10.191.179.176:8100', {
        transports:
               ["websocket"],
        query: {
-              status: 'teacher'
+              status: 'teacher',
+              mail: Back.mail
        }
 });
 
 socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
-       socketIO.emit('checkSession', Back.mail, async (response) => {
-              if (response == 'anotherTeacherConnected') {
-                     Front.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
-                     Front.setCurrentSection('#sectionCreateSession');
-                     disableCreateSessionButton();
+       socketIO.on('anotherTeacherConnected', () => {
+              Front.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
+              Front.setCurrentSection('#sectionCreateSession');
+              disableCreateSessionButton();
 
-                     socketIO.on('teacherNotConnectedAnymore', (data) => {
-                            ableCreateSessionButton();
-                            Front.tempMessage('success', `Vous pouvez desormais créer une session`, '#tempMessage');
-                     });
-              }
-              else if (response == "connectionAuthorized") {
-                     await Back.fetchQuizzList()
-                            .then(value => {     /*     [0] = success || error,                  
+              socketIO.on('teacherNotConnectedAnymore', (data) => {
+                     ableCreateSessionButton();
+                     Front.tempMessage('success', `Vous pouvez desormais créer une session`, '#tempMessage');
+              });
+       });
+
+       socketIO.on("connectionAuthorized", async () => {
+              console.log("connection autorisée")
+              await Back.fetchQuizzList()
+                     .then(value => {     /*     [0] = success || error,                  
                                                         [1] = quizzListTitles[] || error message
                                                  */
-                                   if (value[0] != "success") {
-                                          Front.tempMessage('error', value[1], '#tempMessage'); /* display error message */
-                                          return;
-                                   } else if (value[1].length > 0) { /* check if there is at least one quizz */
-                                          let liListe = Front.displayQuizzList(value, '#quizzList');
-                                          if (liListe) {
-                                                 liListe.forEach((nameInList) => {
-                                                        nameInList.addEventListener('click', () => {
-                                                               document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
-                                                               document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
-                                                        });
+                            if (value[0] != "success") {
+                                   Front.tempMessage('error', value[1], '#tempMessage'); /* display error message */
+                                   return;
+                            } else if (value[1].length > 0) { /* check if there is at least one quizz */
+                                   let liListe = Front.displayQuizzList(value, '#quizzList');
+                                   if (liListe) {
+                                          liListe.forEach((nameInList) => {
+                                                 nameInList.addEventListener('click', () => {
+                                                        document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
+                                                        document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
                                                  });
-                                          }
-                                   } else {
-                                          Front.tempMessage('error', "Il n'y a pas de quizz enregistré", '#tempMessage');
-                                          return;
+                                          });
                                    }
-                            });
+                            } else {
+                                   Front.tempMessage('error', "Il n'y a pas de quizz enregistré", '#tempMessage');
+                                   return;
+                            }
+                     });
 
-                     await Back.fetchStudentGroups()
-                            .then(value => {
-                                   if (value[0] == "error") {
-                                          Front.tempMessage('error', value[1], '#tempMessage');
-                                   }
-                                   else if (value[0] == "success" && value[1].length > 0) {
-                                          let liList = Front.displayStudentGroups(value, '#groupsList');
-                                          if (liList) {
-                                                 liList.forEach((groupInList) => {
-                                                        groupInList.addEventListener('click', () => {
-                                                               document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
-                                                               document.querySelector('#submitCreateSession').classList.remove('disabled');
-                                                        });
+              await Back.fetchStudentGroups()
+                     .then(value => {
+                            if (value[0] == "error") {
+                                   Front.tempMessage('error', value[1], '#tempMessage');
+                            }
+                            else if (value[0] == "success" && value[1].length > 0) {
+                                   let liList = Front.displayStudentGroups(value, '#groupsList');
+                                   if (liList) {
+                                          liList.forEach((groupInList) => {
+                                                 groupInList.addEventListener('click', () => {
+                                                        document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
+                                                        document.querySelector('#submitCreateSession').classList.remove('disabled');
                                                  });
-                                          }
-                                   } else {
-                                          Front.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
+                                          });
                                    }
-                            });
-              }
+                            } else {
+                                   Front.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
+                            }
+                     });
        });
-});
-
+       });
 socketIO.on('numberOfConnectedStudentChanged', (number) => {
        Front.setNumberOfConnectedStudents(number, '#numberOfConnectedStudents');
 });
