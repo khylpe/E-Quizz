@@ -299,6 +299,7 @@ io.on('connection', async function (client) { // Client socket connected
        }
        else { // Unknown client
               /* things to do when an unknown user connects */
+              console.log("Unknown user connected");
               client.removeAllListeners();
               client.disconnect();
               return;
@@ -460,4 +461,5 @@ function getNumberOfAnswers() {
        });
        return numberOfAnswers;
 }
+
 server.listen(8100);
