@@ -5,7 +5,10 @@ export default class FrontGlobal {
                      type = "alert alert-danger";
               } else if (type == "success") {
                      type = "alert alert-success";
-              } else {
+              } else if(type == "warning") {
+                     type = "alert alert-warning";
+              }
+              else {
                      return;
               }
 

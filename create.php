@@ -45,7 +45,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                             </div>
                             <div class="navbar-nav col-6 justify-content-center">
                                    <div class="d-flex flex-column text-center">
-                                         <h1>
+                                          <h1>
                                                  <span class="text-info">E</span>
                                                  <span class="">-</span>
                                                  <span class="text-warning">Q</span>
@@ -53,11 +53,11 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <span class="text-success">I</span>
                                                  <span class="text-primary">Z</span>
                                                  <span class="text-info">Z</span>
-                                          </h1>                                          
+                                          </h1>
                                           <div>
                                                  <h5 class="text-light">Création d'un QCM</h5>
                                           </div>
-                                   </div>                                   
+                                   </div>
                             </div>
                      </div>
               </nav>
@@ -67,69 +67,15 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <div id="tempMessage" role="alert">
        </div>
 
-       <section class="container text-center" id="creatingQuizz">
-              <div class="col-6 text-center offset-3">
-                     <div id="title" class="mt-5">
-                            <form id="quizzTitleForm">
-                                   <div class="col">
-                                          <label for="quizzTitle">Titre du QCM</label>
-                                          <input type="text" class="form-control mt-3" id="quizzTitle" placeholder="" autocapitalize="sentences" required autocomplete="off">
-                                   </div>
-
-                                   <button id="confirmTitle" type="submit" class="mt-5 btn btn-primary">Confirmer le titre</button>
-                            </form>
-                     </div>
-
-                     <div id="questionAndAnswers">
-                            <form id="confirmQuestionAndAnswersForm">
-                                   <div id="question">
-                                          <div class="col">
-                                                 <label for="questionValue" id="questionNumber">Question n°1 :</label>
-                                                 <input type="text" class="form-control" id="questionValue" required autocomplete="off" autocapitalize="sentences">
-                                          </div>
-                                   </div>
-
-                                   <div id="answers" class="mt-5 d-flex flex-column">
-                                          <label for="answer1">Réponse 1 : </label>
-                                          <div class="d-flex flex-row align-items-center">
-                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
-                                                 <input class="form-control" type="text" name="" id="answer1" required autocomplete="off" autocapitalize="sentences">
-                                          </div>
-                                          <label for="answer2" class="mt-4">Réponse 2 : </label>
-
-                                          <div class="d-flex flex-row align-items-center">
-                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
-                                                 <input type="text" name="" class="form-control" id="answer2" required autocomplete="off" autocapitalize="on">
-                                          </div>
-
-                                          <label for="answer3" class="mt-4">Réponse 3 : </label>
-                                          <div class="d-flex flex-row align-items-center">
-                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
-                                                 <input type="text" name="" class="form-control" id="answer3" autocomplete="off" autocapitalize="sentences">
-                                          </div>
-
-                                          <label for="answer4" class="mt-4">Réponse 4 : </label>
-                                          <div class="d-flex flex-row align-items-center">
-                                                 <input class="form-check-input me-3" type="checkbox" value="" id="flexCheckDefault">
-                                                 <input type="text" name="" class="form-control" id="answer4" autocomplete="off" autocapitalize="sentences">
-                                          </div>
-                                   </div>
-                                   <div class="d-flex flex-column mb-5">
-                                          <button id="confirmQuestionAndAnswers" type="submit" class=" btn btn-primary mt-5">Confirmer cette question et ses réponses</button>
-                                   </div>
-                            </form>
-                     </div>
-
-                     <button id="checkQuizz" class="btn btn-success mt-2">Vérifier</button>
-
+       <section class="container text-center col-6 text-center offset-3" id="createQuizz">
+              <div class="input-group input-group-lg">
+                     <span class="input-group-text" id="inputGroup-sizing-lg">Titre du QCM</span>
+                     <input type="text" class="form-control" id="quizzTitle">
               </div>
-       </section>
-
-       <section class="container text-center" id="confirmQuizz">
-              <div class="col-6 text-center offset-3" id="dataConfirmQuizz">
+              <div class="accordion mt-5" id="dataCreateQuizz">
               </div>
-              <div class="col-6 text-center offset-3">
-                     <button id="confirmQuizzButton" class="btn btn-success mt-5">Confirmer</button>
+              <div>
+                     <button id="confirmQuizzButton" class="btn btn-success mt-5">Enregistrer le QCM</button>
               </div>
        </section>
 

@@ -13,6 +13,14 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
        echo json_encode($response);
        die();
 } else {
+       try{
+
+       }
+       catch (Exception $e) {
+              $response = array('error', $e);
+              echo json_encode($response);
+              die();
+       }
        try {
               $questionNumber = 1;
               foreach ($questionsAndAnswers as $questionAndAnswers) {
