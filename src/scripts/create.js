@@ -39,8 +39,9 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', (e) => {
 });
 
 function saveQuizz(isQuizzFinished) {
+       console.log('quizz number : ' + quizzNumber);
        let finalQuestionsAndAnswers = [];
-
+       let numberOfPossibleAnswers = 0;
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
        allQuestionsAndAnswers.forEach((currentQuestion, index) => {
 
@@ -49,15 +50,29 @@ function saveQuizz(isQuizzFinished) {
               let allPossibleAnswersForThisQuestion = document.querySelectorAll('#' + allQuestionsAndAnswersID + ' input[type="text"].answer');
               let allCorrectAnswersForThisQuestion = document.querySelectorAll('#' + allQuestionsAndAnswersID + " input[type='checkbox']");
 
-              let questionValue = document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value
+              let questionValue = document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value;
 
               if (questionValue != '') {
+
+                     // if there is no correct answer, we don't save the quizz
+                     if (document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]:checked`).length == 0) {
+                            Front.tempMessage("error", "Veuillez sélectionner au moins une bonne réponse", "#tempMessage");
+                            return;
+                     }
 
                      let questAndAns = { question: questionValue, answers: [], correctAnswers: [] };
 
                      allPossibleAnswersForThisQuestion.forEach((element) => {
+                            if (element.value != "")
+                                   numberOfPossibleAnswers++;
                             questAndAns.answers.push(element.value);
                      });
+
+                     // if there is less than 2 possible answers, we don't save the quizz
+                     if (numberOfPossibleAnswers < 2) {
+                            Front.tempMessage("error", "Veuillez saisir au moins 2 réponses possibles", "#tempMessage");
+                            return;
+                     }
 
                      allCorrectAnswersForThisQuestion.forEach((element, indexOfCorrectAnswer) => {
                             if (element.checked) {
@@ -68,29 +83,34 @@ function saveQuizz(isQuizzFinished) {
                      });
                      finalQuestionsAndAnswers.push(questAndAns);
 
-                     Back.checkIfQuizzNameIsAvailable(document.querySelector('#quizzTitle').value)
-                            .then((response) => {
-                                   if (response[0] == "success") {
-                                          if (quizzNumber == null) {
-                                                 Back.createQuizzNumber().then((response) => {
-                                                        quizzNumber = response;
-                                                        Back.createQuizz(document.querySelector('#quizzTitle').value , finalQuestionsAndAnswers, quizzNumber)
-                                                 })
-
-                                          }else{
-                                                 Back.modifyQuizz(document.querySelector('#quizzTitle').value , finalQuestionsAndAnswers, quizzNumber)
+                     if (quizzNumber == null) {
+                            Back.checkIfQuizzNameIsAvailable(document.querySelector('#quizzTitle').value)
+                                   .then((response) => {
+                                          if (response[0] == "success") {
+                                                 Back.createQuizzNumber().then((responseQuizzNumber) => {
+                                                        quizzNumber = responseQuizzNumber;
+                                                        Back.createQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
+                                                 });
+                                                 Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
+                                          } else {
+                                                 Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
                                           }
+                                   })
+                                   .catch((error) => {
+                                          Front.tempMessage("error", "Quizz non sauvegardé : " + error, "#tempMessage");
+                                   });
+                     } else {
+                            Back.modifyQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
+                            Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
+                     }
+              } else {
+                     if (isQuizzFinished) {
+                            Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
+                     } else if (!isQuizzFinished && index + 1 != allQuestionsAndAnswers.length) {
+                            console.log("last question")
+                            Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
 
-                                          Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
-                                   } else {
-                                          Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
-                                   }
-                            })
-                            .catch((error) => {
-
-                            });
-              } else if (allQuestionsAndAnswers.length != index + 1 && !isQuizzFinished || allQuestionsAndAnswers.length != index && isQuizzFinished) {
-                     Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
+                     }
               }
        });
        return console.log(finalQuestionsAndAnswers);

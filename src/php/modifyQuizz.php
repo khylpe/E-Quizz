@@ -14,7 +14,10 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
        die();
 } else {
        try{
-
+              $deleteQuizz = $db->prepare("DELETE FROM quizz WHERE `quizz number` = :quizzNumber AND author = :author");
+              $deleteQuizz->bindParam(':quizzNumber', $quizzNumber);
+              $deleteQuizz->bindParam(':author', $_SESSION['uid']);
+              $deleteQuizz->execute();
        }
        catch (Exception $e) {
               $response = array('error', $e);
