@@ -71,78 +71,80 @@
               </nav>
        </div>
        <hr class="container">
+       <div class="container bg-dark  d-flex">
+              <div class="col" id="allParts">
+                     <div class="part " id="formMail">
+                            <form id="formulaireMail" class="container text-center col-sm-2 col-form-label">
+                                   <input type="email" id="mailAddress" class="form-control align-bottom"
+                                          autocomplete="on" autofocus required />
+                                   <button id="btnSend" class="btn btn-primary justify-content-center">Envoyer</button>
+                            </form>
+                     </div>
 
-       <div id="allParts">
-              <div class="part" id="formMail">
-                     <form id="formulaireMail" class="container text-center col-sm-2 col-form-label">
-                            <input type="email" id="mailAddress" class="form-control align-bottom" autocomplete="on"
-                                   autofocus required />
-                            <button id="btnSend" class="btn btn-primary">Envoyer</button>
-                     </form>
-              </div>
-
-              <div class="part" id="answerQuestion">
-                     <div class="row">
+                     <div class="part" id="answerQuestion">
                             <div class="col">
-                                   <h1 id="numberQuestion" class=""></h1>
-                                   <div class="text-center row align-items-start">
-                                          <svg xmlns="http://www.w3.org/2000/svg" style="color: cornflowerblue;" width="2rem" height="2rem" fill="currentColor" id="previousQuestion" class="bi bi-arrow-left-square" viewBox="0 0 16 16">
-                                                 <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>     
-                                          </svg>
-
-
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem"
-                                                 fill="currentColor" class="bi bi-arrow-right-square"
-                                                 style="color: cornflowerblue;"
-                                                 id="nextQuestion"
-                                                 viewBox="0 0 16 16">
-                                                 <path fill-rule="evenodd"
-                                                        d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-                                          </svg>
+                                   <div class="col w-50">
+                                          <h1 id="numberQuestion" class=""></h1>
+                                          <div class="text-center row align-items-start">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" style="color: cornflowerblue;"
+                                                        width="2rem" height="2rem" fill="currentColor"
+                                                        id="previousQuestion" class="bi bi-arrow-left-square"
+                                                        viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd"
+                                                               d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+                                                 </svg>
+                                                 <svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem"
+                                                        fill="currentColor" class="bi bi-arrow-right-square"
+                                                        style="color: cornflowerblue;" id="nextQuestion"
+                                                        viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd"
+                                                               d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                                                 </svg>
+                                          </div>
                                    </div>
-                            </div>
 
-                            <div class="col">
-                                   <div id="divButtons" class="align-items-end">
-                                          <div id="btnAnswers" class="text-center row">
-                                                 <button id="btnA" type="button"
-                                                        class="btn btn-outline-primary p-4">A</button>
-                                                 <input type="checkbox" id="stateBtnA" hidden>
-                                                 <button id="btnB" type="button"
-                                                        class="btn btn-outline-primary p-4">B</button>
-                                                 <input type="checkbox" id="stateBtnB" hidden>
-                                                 <button id="btnC" type="button"
-                                                        class="btn btn-outline-primary p-4">C</button>
-                                                 <input type="checkbox" id="stateBtnC" hidden>
-                                                 <button id="btnD" type="button"
-                                                        class="btn btn-outline-primary p-4">D</button>
-                                                 <input type="checkbox" id="stateBtnD" hidden>
+                                   <div class="col w-50">
+                                          <div id="divButtons" class="align-items-end">
+                                                 <div id="btnAnswers" class="text-center row">
+                                                        <button id="btnA" type="button"
+                                                               class="btn btn-outline-primary p-4">A</button>
+                                                        <input type="checkbox" id="stateBtnA" hidden>
+                                                        <button id="btnB" type="button"
+                                                               class="btn btn-outline-primary p-4">B</button>
+                                                        <input type="checkbox" id="stateBtnB" hidden>
+                                                        <button id="btnC" type="button"
+                                                               class="btn btn-outline-primary p-4">C</button>
+                                                        <input type="checkbox" id="stateBtnC" hidden>
+                                                        <button id="btnD" type="button"
+                                                               class="btn btn-outline-primary p-4">D</button>
+                                                        <input type="checkbox" id="stateBtnD" hidden>
+                                                 </div>
+                                          </div>
+                                   </div>
+
+                                   <div class="col w-50">
+                                          <div class="col">
+                                                 <button id="btnModify" type="button"
+                                                        class="btn btn-danger">CORRIGER</button>
+                                                 <button id="btnValidate" type="button"
+                                                        class="btn btn-success">Valider</button>
                                           </div>
                                    </div>
                             </div>
-
-                            <div class="col">
-                                   <div class="row">
-                                          <button id="btnModify" type="button" class="btn btn-danger">CORRIGER</button>
-                                          <button id="btnValidate" type="button"
-                                                 class="btn btn-success">Valider</button>
-                                   </div>
-                            </div>
                      </div>
-              </div>
 
-              <div class="part" id="waitTeacherConnect">
-                     <h1 id="nameStudent"></h1>
-                     <h2 id="waiting"></h2>
-              </div>
+                     <div class="part" id="waitTeacherConnect">
+                            <h1 id="nameStudent"></h1>
+                            <h2 id="waiting"></h2>
+                     </div>
 
-              <div class="part" id="endOfQuizz">
-                     <h1 id="End"></h1>
-              </div>
+                     <div class="part" id="endOfQuizz">
+                            <h1 id="End"></h1>
+                     </div>
 
-              <div class="part" id="test">Socket not connected</div>
+                     <div class="part" id="test">Socket not connected</div>
+              </div>
        </div>
-
        <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
        <script src="/socket.io/socket.io.js"></script>
        <script type="module" src="/scripts/student.js"></script>
