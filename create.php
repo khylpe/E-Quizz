@@ -59,6 +59,11 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           </div>
                                    </div>
                             </div>
+
+                            <div class="d-flex col-3 justify-content-end">
+                                   <i id="saveStatus" class="bi bi-cloud-arrow-up" style="font-size: 4rem;"></i>
+
+                            </div>
                      </div>
               </nav>
        </div>
@@ -67,7 +72,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <div id="tempMessage" role="alert">
        </div>
 
-       <section class="container text-center col-6 text-center offset-3" id="createQuizz">
+       <section class="container text-center col-6 text-center offset-3 mt-3" id="createQuizz">
               <div class="input-group input-group-lg">
                      <span class="input-group-text" id="inputGroup-sizing-lg">Titre du QCM</span>
                      <input type="text" class="form-control" id="quizzTitle">
@@ -75,7 +80,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div class="accordion mt-5" id="dataCreateQuizz">
               </div>
               <div>
-                     <button id="confirmQuizzButton" class="btn btn-success mt-5">Enregistrer le QCM</button>
+                     <button id="confirmQuizzButton" class="btn btn-success mt-5 mb-5">Enregistrer le QCM</button>
               </div>
        </section>
 

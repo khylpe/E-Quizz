@@ -51,7 +51,6 @@ export default class FrontCreate extends FrontGlobal {
               input.setAttribute("id", "question" + questionNumber);
               input.setAttribute("type", "text");
               input.setAttribute("value", "");
-              input.setAttribute("disabled", "disabled");
               input.value = question;
 
               input.addEventListener('input', (e) => {
@@ -59,25 +58,7 @@ export default class FrontCreate extends FrontGlobal {
                      button.innerHTML = `Question n° ${questionNumber} : ${question}`;
               });
 
-              let iElem = document.createElement("i");
-              iElem.classList.add("bi", "bi-pen");
-              iElem.setAttribute("id", "editOrConfirmQuestion" + questionNumber);
-              iElem.setAttribute("style", "font-size: 2rem;");
-
-              iElem.addEventListener('click', (e) => {
-                     if (input.hasAttribute('disabled')) {
-                            input.removeAttribute('disabled');
-                            iElem.classList = 'bi-check';
-                            iElem.style = "font-size: 2rem;";
-                     } else {
-                            input.setAttribute('disabled', 'disabled');
-                            iElem.classList = 'bi-pen';
-                            iElem.style = "font-size: 2rem;";
-                     }
-              });
-
               inputDiv.appendChild(input);
-              inputDiv.appendChild(iElem);
 
               questionDiv.appendChild(label);
               questionDiv.appendChild(inputDiv);
@@ -105,7 +86,6 @@ export default class FrontCreate extends FrontGlobal {
                      checkBox.setAttribute("type", "checkbox");
                      checkBox.setAttribute("value", "");
                      checkBox.setAttribute("id", "checkBoxCorrectAnswer" + i);
-                     checkBox.setAttribute("disabled", "disabled");
 
                      if (correctAnswers.includes(answers[i - 1])) {
                             checkBox.checked = true;
@@ -119,29 +99,9 @@ export default class FrontCreate extends FrontGlobal {
                      input.setAttribute("id", "confirmAnswer" + i);
                      input.setAttribute("type", "text");
                      input.setAttribute("value", "");
-                     input.setAttribute("disabled", "disabled");
                      (answers[i - 1]) ? input.value = answers[i - 1] : input.value = '';
-                     let iElem = document.createElement("i");
-                     iElem.classList.add("bi", "bi-pen");
-                     iElem.setAttribute("id", "editOrConfirmAnswer" + i);
-                     iElem.setAttribute("style", "font-size: 2rem;");
 
                      inputDiv.appendChild(input);
-                     inputDiv.appendChild(iElem);
-
-                     iElem.addEventListener('click', (e) => {
-                            if (input.hasAttribute('disabled')) {
-                                   input.removeAttribute('disabled');
-                                   iElem.classList = 'bi-check';
-                                   iElem.style = "font-size: 2rem;";
-                                   checkBox.removeAttribute('disabled');
-                            } else {
-                                   input.setAttribute('disabled', 'disabled');
-                                   iElem.classList = 'bi-pen';
-                                   iElem.style = "font-size: 2rem;";
-                                   checkBox.setAttribute('disabled', 'disabled');
-                            }
-                     });
 
                      questionDiv.appendChild(label);
                      questionDiv.appendChild(inputDiv);
