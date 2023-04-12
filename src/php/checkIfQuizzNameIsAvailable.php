@@ -6,7 +6,10 @@ $toJSON = json_decode($data, true);
 $title = $toJSON['quizzName'];
 
 try {
-       $fetchQuizzList = $db->prepare("SELECT distinct title FROM quizz WHERE title = :title AND author = :uid");
+       $fetchQuizzList = $db->prepare("   SELECT distinct title FROM quizz
+                                          WHERE title = :title
+                                          AND author = :uid");
+
        $fetchQuizzList->execute(array(
               ':uid' => $_SESSION['uid'],
               ':title' => $title

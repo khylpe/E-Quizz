@@ -25,7 +25,7 @@ export default class FrontGlobal {
               document.querySelectorAll('section').forEach((section) => {
                      section.style.display = "none";
               });
-              document.querySelector(`${elementToDisplay}`).style.display = "block";
+              document.querySelector(elementToDisplay).style.display = "block";
        }
 
        getCurrentSection() {

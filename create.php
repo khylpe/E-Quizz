@@ -8,17 +8,25 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 <html lang="en" data-bs-theme="dark">
 
 <head>
+       <!-- meta -->
        <meta charset="UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>EQuizz - Création de QCM</title>
+
+       <title>E-Quizz - Création de QCM</title>
+
+       <!-- CDN links -->
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+       <!-- Styles links -->
        <link rel="stylesheet" href="src/styles/createQuizz.css">
 </head>
 
 <body>
-       <div class="container">
+
+       <!-- Header with page title, navigation, logout and save status -->
+       <header class="container">
               <nav class="navbar navbar-expand">
                      <div class="collapse navbar-collapse d-flex">
                             <div class="d-flex col-3 justify-content-start">
@@ -66,12 +74,15 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                             </div>
                      </div>
               </nav>
-       </div>
+       </header>
+
+       <!-- devider -->
        <hr class="container">
 
        <div id="tempMessage" role="alert">
        </div>
 
+       <!-- Main section with the form to create a new quizz -->
        <section class="container text-center col-6 text-center offset-3 mt-3" id="createQuizz">
               <div class="input-group input-group-lg">
                      <span class="input-group-text" id="inputGroup-sizing-lg">Titre du QCM</span>
@@ -84,6 +95,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </section>
 
+       <!-- Section to display when the quizz is finished -->
        <section class="container text-center" id="quizzCreated">
               <div class="col-6 text-center offset-3">
                      <h1 class="mt-5">Votre QCM a bien été créé !</h1>
@@ -95,6 +107,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <i class="bi bi-heart-fill text-white"></i>
        </div>
 
+       <!-- Scripts links -->
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
        <script type="module" src="src/scripts/create.js"></script>
 </body>

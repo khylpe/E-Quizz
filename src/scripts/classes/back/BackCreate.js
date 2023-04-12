@@ -6,7 +6,7 @@ export default class BackCreate extends BackGlobal {
               this._back = new BackGlobal();
               this.mail = mail;
        }
-
+       
        async checkIfQuizzNameIsAvailable(quizzName) {
               return fetch('/src/php/checkIfQuizzNameIsAvailable.php', {
                      method: 'POST',

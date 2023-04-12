@@ -1,4 +1,3 @@
-let questionsAndAnswers = [];
 let quizzNumber = null;
 
 import BackCreate from "./classes/back/BackCreate.js";
@@ -15,21 +14,6 @@ Front.addQuestion(1, '', [], [], '#dataCreateQuizz');
 document.querySelector('#addQuestion').addEventListener('click', async (e) => {
        e.preventDefault();
        saveQuizz(false);
-       // Back.setQuizzName(document.querySelector('#confirmQuizz #confirmQuizzTitle').value);
-
-
-       // Back.createQuizz(finalQuestionsAndAnswers)
-       //        .then((response) => {
-       //               if (response[0] == "success") {
-       //                      Front.tempMessage("success", "Quizz créé avec succès", "#tempMessage");
-       //                      Front.setCurrentSection("#quizzCreated");                            
-       //               } else {
-       //                      Front.tempMessage("danger", "Quizz non créé : " + response[1], "#tempMessage");
-       //               }
-       //        })
-       //        .catch((error) => {
-       //               Front.tempMessage("error", "Quizz non créé from php : " + error, "#tempMessage");
-       //        });
 });
 
 document.querySelector('#confirmQuizzButton').addEventListener('click', (e) => {
@@ -110,6 +94,7 @@ function saveQuizz(isQuizzFinished) {
                                                  });
                                                  Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
                                                  alterSaveStatus("saved", '#saveStatus');
+                                                 Front.setCurrentSection("#quizzCreated");
                                           } else {
                                                  Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
                                                  alterSaveStatus("not saved", '#saveStatus');
