@@ -37,6 +37,7 @@ function saveQuizz(isQuizzFinished) {
        let finalQuestionsAndAnswers = [];
        let numberOfPossibleAnswers = 0;
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
+       let isQuizzValid = true;
        allQuestionsAndAnswers.forEach((currentQuestion, index) => {
 
               let allQuestionsAndAnswersID = currentQuestion.getAttribute('id'); // ex: questions1 which is the id of the div containing the question and the answers
@@ -46,15 +47,37 @@ function saveQuizz(isQuizzFinished) {
 
               let questionValue = document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value;
 
-              if(document.querySelector('#quizzTitle').value == '') {
-                     Front.tempMessage("error", "Veuillez saisir un titre à votre quizz", "#tempMessage");
-                     alterSaveStatus("not saved", '#saveStatus');
-                     return;
-              }
-              if (questionValue != '') {
+              if (isQuizzFinished || (!isQuizzFinished && index + 1 != allQuestionsAndAnswers.length)) {
+                     allPossibleAnswersForThisQuestion.forEach((element) => {
+                            if (element.value != "")
+                                   numberOfPossibleAnswers++;
+                     });
 
+                     if (document.querySelector('#quizzTitle').value == '') {
+                            isQuizzValid = false;
+                            Front.tempMessage("error", "Veuillez saisir un titre à votre quizz", "#tempMessage");
+                            alterSaveStatus("not saved", '#saveStatus');
+                            return;
+                     }
+
+                     // if there is less than 2 possible answers, we don't save the quizz
+                     if (numberOfPossibleAnswers < 2) {
+                            isQuizzValid = false;
+                            Front.tempMessage("error", `Veuillez saisir au moins 2 réponses possibles à la question n°${index + 1}`, "#tempMessage");
+                            alterSaveStatus("not saved", '#saveStatus');
+                            return;
+                     }
+
+                     if (questionValue == '') {
+                            isQuizzValid = false;
+                            Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
+                            alterSaveStatus("not saved", '#saveStatus');
+                            return
+                     }
                      // if there is no correct answer, we don't save the quizz
                      if (document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]:checked`).length == 0) {
+                            isQuizzValid = false;
+                            console.log(document.querySelectorAll(`#${allQuestionsAndAnswersID}`));
                             Front.tempMessage("error", `Veuillez sélectionner au moins une bonne réponse à la question n°${index + 1}`, "#tempMessage");
                             alterSaveStatus("not saved", '#saveStatus');
                             return;
@@ -63,17 +86,8 @@ function saveQuizz(isQuizzFinished) {
                      let questAndAns = { question: questionValue, answers: [], correctAnswers: [] };
 
                      allPossibleAnswersForThisQuestion.forEach((element) => {
-                            if (element.value != "")
-                                   numberOfPossibleAnswers++;
                             questAndAns.answers.push(element.value);
                      });
-
-                     // if there is less than 2 possible answers, we don't save the quizz
-                     if (numberOfPossibleAnswers < 2) {
-                            Front.tempMessage("error", `Veuillez saisir au moins 2 réponses possibles à la question n°${index + 1}`, "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return;
-                     }
 
                      allCorrectAnswersForThisQuestion.forEach((element, indexOfCorrectAnswer) => {
                             if (element.checked) {
@@ -83,37 +97,43 @@ function saveQuizz(isQuizzFinished) {
                             }
                      });
                      finalQuestionsAndAnswers.push(questAndAns);
-
-                     if (quizzNumber == null) {
-                            Back.checkIfQuizzNameIsAvailable(document.querySelector('#quizzTitle').value)
-                                   .then((response) => {
-                                          if (response[0] == "success") {
-                                                 Back.createQuizzNumber().then((responseQuizzNumber) => {
-                                                        quizzNumber = responseQuizzNumber;
-                                                        Back.createQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
-                                                 });
-                                                 Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
-                                                 alterSaveStatus("saved", '#saveStatus');
-                                                 Front.setCurrentSection("#quizzCreated");
-                                          } else {
-                                                 Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
-                                                 alterSaveStatus("not saved", '#saveStatus');
-                                          }
-                                   })
-                                   .catch((error) => {
-                                          Front.tempMessage("error", "Quizz non sauvegardé : " + error, "#tempMessage");
-                                          alterSaveStatus("not saved", '#saveStatus');
-                                   });
-                     } else {
-                            Back.modifyQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
-                            Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
-                            alterSaveStatus("saved", '#saveStatus');
-                     }
-              } else if (isQuizzFinished || index + 1 == allQuestionsAndAnswers.length) {
-                     Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
-                     alterSaveStatus("not saved", '#saveStatus');
               }
        });
+
+       if (!isQuizzValid) return;
+
+       if (quizzNumber == null) {
+              Back.checkIfQuizzNameIsAvailable(document.querySelector('#quizzTitle').value)
+                     .then((response) => {
+                            if (response[0] == "success") {
+                                   Back.createQuizzNumber().then((responseQuizzNumber) => {
+                                          quizzNumber = responseQuizzNumber;
+                                          Back.createQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
+                                   });
+                                   Front.tempMessage("success", "Quizz créé", "#tempMessage");
+                                   alterSaveStatus("saved", '#saveStatus');
+
+                                   if (isQuizzFinished) {
+                                          Front.setCurrentSection("#quizzCreated");
+                                   }
+                            } else {
+                                   Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
+                                   alterSaveStatus("not saved", '#saveStatus');
+                            }
+                     })
+                     .catch((error) => {
+                            Front.tempMessage("error", "Quizz non sauvegardé : " + error, "#tempMessage");
+                            alterSaveStatus("not saved", '#saveStatus');
+                     });
+       } else {
+              Back.modifyQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
+              Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
+              alterSaveStatus("saved", '#saveStatus');
+
+              if(isQuizzFinished) {
+                     Front.setCurrentSection("#quizzCreated");
+              }
+       }
 }
 
 function alterSaveStatus(status, selector) {
