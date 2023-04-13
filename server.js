@@ -5,6 +5,7 @@ const express = require('express'),
        { Server } = require("socket.io"),
        io = new Server(server);
 
+
 let quizzTitle = null;
 let groupName = null;
 let teacherMail = null;
@@ -81,6 +82,7 @@ io.on('connection', async function (client) { // Client socket connected
               });
 
               client.on('startSession', (quizzData) => {
+                     console.log('on le fait')
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
 
                      if (quizzQuestionsAndAnswers[1].length == 0) { // if there is no question
@@ -125,6 +127,9 @@ io.on('connection', async function (client) { // Client socket connected
                                    message: "There is no student registered"
                             });
                      }
+                     client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]);
+
+
               });
 
 
@@ -164,6 +169,8 @@ io.on('connection', async function (client) { // Client socket connected
                                    }
                                    ;
                             });
+                            client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]);
+
                      }
                      else {
                             client.emit('tempMessage', {
@@ -225,7 +232,7 @@ io.on('connection', async function (client) { // Client socket connected
 
               /* events from student */
               client.on('studentTriesToRegister', (studentMail, callback) => {
-                     let mailExists = false;                     
+                     let mailExists = false;
 
                      listOfStudents.forEach(student => {
                             if (student.mail == studentMail && student.status == "registered") {
@@ -235,7 +242,7 @@ io.on('connection', async function (client) { // Client socket connected
                      });
 
                      if (mailExists) {
-                            callback({status : "doublons"})
+                            callback({ status: "doublons" })
                      }
                      else {
                             client.join('student');
@@ -283,8 +290,8 @@ io.on('connection', async function (client) { // Client socket connected
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
-                            });                     
-                            callback({status : "accepted", sessionStatus : getSession(false).sessionStatus})
+                            });
+                            callback({ status: "accepted", sessionStatus: getSession(false).sessionStatus })
                      }
               });
 
@@ -297,13 +304,21 @@ io.on('connection', async function (client) { // Client socket connected
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });
        }
-       else { // Unknown client
+       else if (client.handshake.query.status == 'boitier') {
+              client.join('boitier');
+              client.emit('test', "bvgyuf")
+              client.on('trameComplete', (trame) => {
+                     console.log(trame);
+              })
+       }
+       else {  // Unknown client
               /* things to do when an unknown user connects */
               console.log("Unknown user connected");
               client.removeAllListeners();
               client.disconnect();
               return;
        }
+
 });
 
 function checkMail(mail) {
