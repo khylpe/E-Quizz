@@ -32,7 +32,7 @@ if (!isset($_POST['mail']) || !isset($_POST['password']) || empty($_POST['mail']
               $_SESSION['mail'] = $resul['mail'];
               $_SESSION['sessionStatus'] = 'connected';
               $_SESSION['uid'] = $resul['id'];
-              header('location:../../session.php');
+              header('location:../../navigation.html');
               die();
        } else {
               $_SESSION['tempMessage'] = array(
