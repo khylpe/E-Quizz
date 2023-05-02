@@ -5,7 +5,7 @@ export default class FrontGlobal {
                      type = "alert alert-danger";
               } else if (type == "success") {
                      type = "alert alert-success";
-              } else if(type == "warning") {
+              } else if (type == "warning") {
                      type = "alert alert-warning";
               }
               else {
@@ -64,7 +64,7 @@ export default class FrontGlobal {
        displayStudentGroups(data, selector) { /* [0] = error or success, [1] = studentGroups[] || error message */
               let groupsList = document.querySelector(selector);
               groupsList.innerHTML = "";
-              
+
               data[1].forEach((groupName) => {
                      let li = document.createElement('li');
                      groupsList.appendChild(li);
@@ -77,11 +77,25 @@ export default class FrontGlobal {
                      hr.classList = "dropdown-divider groupsNameDivider";
                      groupsList.appendChild(hr);
               });
+              let createGroup = document.createElement('li');
+              groupsList.appendChild(createGroup);
+              let div = document.createElement('div');
+              div.classList = "dropdown-item d-flex justify-content-between align-items-center";
+              div.id = "groupInList";
 
-              // Remove the last divider // https://stackoverflow.com/a/5684878/19601188
-              var nodes = groupsList.querySelectorAll('.groupsNameDivider');
-              var last = nodes[nodes.length - 1];
-              groupsList.removeChild(last);
+              let input = document.createElement('input');
+              input.classList = "form-control";
+              input.type = "text";
+              input.placeholder = "Nom du groupe";
+              input.id = "newGroupName";
+              div.appendChild(input);
+
+              let button = document.createElement('button');
+              button.classList = "btn btn-primary ms-1";
+              button.id = "createGroup";
+              button.innerText = "Créer";
+              div.appendChild(button);
+              createGroup.appendChild(div);
 
               return document.querySelectorAll('#groupInList')
        }
@@ -292,7 +306,7 @@ export default class FrontGlobal {
                      else {
                             card5Body.innerHTML = '0%';
                      }
-                     h3.innerText = `Le résultat global du quizz est de : ${totalGoodAnswers} sur ${totalAnswers}, soit ${Math.round(totalGoodAnswers / totalAnswers * 100) }% de bonnes réponses.`;
+                     h3.innerText = `Le résultat global du quizz est de : ${totalGoodAnswers} sur ${totalAnswers}, soit ${Math.round(totalGoodAnswers / totalAnswers * 100)}% de bonnes réponses.`;
                      card5.appendChild(card5Body);
                      document.querySelector(selector).appendChild(questionDiv);
               })
