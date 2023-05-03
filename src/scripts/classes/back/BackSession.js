@@ -71,4 +71,20 @@ export default class BackSession extends BackGlobal {
                             return Array('error', err);
                      });
        }
+
+       async createGroup(groupName){
+              return await fetch('/src/php/createGroup.php', {
+                     method: 'POST',
+                     body: JSON.stringify({
+                            groupName: groupName
+                     })
+              })
+                     .then(result => result.json())
+                     .then(array => {
+                            return array;
+                     })
+                     .catch(err => {
+                            return Array('error', err);
+                     });
+       }
 }

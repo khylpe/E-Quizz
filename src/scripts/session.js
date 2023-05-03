@@ -36,6 +36,7 @@ socketIO.on('connect', () => {
                      });
               }
               else if (response == "connectionAuthorized") {
+
                      await Back.fetchQuizzList()
                             .then(value => {     /*     [0] = success || error,                  
                                                         [1] = quizzListTitles[] || error message
@@ -58,26 +59,7 @@ socketIO.on('connect', () => {
                                           return;
                                    }
                             });
-
-                     await Back.fetchStudentGroups()
-                            .then(value => {
-                                   if (value[0] == "error") {
-                                          Front.tempMessage('error', value[1], '#tempMessage');
-                                   }
-                                   else if (value[0] == "success" && value[1].length > 0) {
-                                          let liList = Front.displayStudentGroups(value, '#groupsList');
-                                          if (liList) {
-                                                 liList.forEach((groupInList) => {
-                                                        groupInList.addEventListener('click', () => {
-                                                               document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
-                                                               document.querySelector('#submitCreateSession').classList.remove('disabled');
-                                                        });
-                                                 });
-                                          }
-                                   } else {
-                                          Front.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
-                                   }
-                            });
+                     appendGroupListAndAddButton();
               }
        });
 });
@@ -235,4 +217,45 @@ function ableCreateSessionButton() {
        buttonDisplayQuizzList.classList.remove('disabled');
        buttonDisplayStudentGroup.classList.remove('disabled');
        buttonCreateSession.classList.remove('disabled');
+}
+
+async function appendGroupListAndAddButton() {
+       await Back.fetchStudentGroups()
+              .then(value => {
+                     if (value[0] == "error") {
+                            Front.tempMessage('error', value[1], '#tempMessage');
+                     }
+                     else if (value[0] == "success" && value[1].length > 0) {
+                            let liList = Front.displayStudentGroups(value, '#groupsList');
+                            if (liList) {
+                                   liList.forEach((groupInList) => {
+                                          groupInList.addEventListener('click', () => {
+                                                 document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
+                                                 document.querySelector('#submitCreateSession').classList.remove('disabled');
+                                          });
+                                   });
+                            }
+                     } else {
+                            Front.tempMessage('error', "Il n'y a pas de groupe enregistré", '#tempMessage');
+                     }
+              });
+
+       let createButton = Front.appendAddGroupButton('#groupsList');
+
+       if (createButton) {
+              createButton.addEventListener('click', (e) => {
+                     e.preventDefault();
+                     Back.createGroup(document.querySelector('#newGroupName').value)
+                            .then(value => {
+                                   if (value == "success") {
+                                          Front.tempMessage('success', "groupe ajouté", '#tempMessage');
+                                          document.querySelector('#newGroupName').value = "";
+                                          appendGroupListAndAddButton();
+                                   } else {
+                                          Front.tempMessage('error', value[1], '#tempMessage');
+                                   }
+                            });
+              });
+       }
+
 }

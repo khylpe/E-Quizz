@@ -77,12 +77,16 @@ export default class FrontGlobal {
                      hr.classList = "dropdown-divider groupsNameDivider";
                      groupsList.appendChild(hr);
               });
+              return document.querySelectorAll('#groupInList')
+       }
+
+       appendAddGroupButton(selector) {
+              let groupsList = document.querySelector(selector);
               let createGroup = document.createElement('li');
               groupsList.appendChild(createGroup);
               let div = document.createElement('div');
               div.classList = "dropdown-item d-flex justify-content-between align-items-center";
-              div.id = "groupInList";
-
+              
               let input = document.createElement('input');
               input.classList = "form-control";
               input.type = "text";
@@ -97,7 +101,7 @@ export default class FrontGlobal {
               div.appendChild(button);
               createGroup.appendChild(div);
 
-              return document.querySelectorAll('#groupInList')
+              return document.querySelector('#createGroup');
        }
 
        displayResults(questions, selector) {

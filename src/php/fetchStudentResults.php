@@ -1,4 +1,8 @@
+
 <?php
+
+// This file is used to fetch the results of a student for a teacher.
+// End user simply has to start typing in the text input and the results will be displayed in a table below.
 
 require('connectToDB.php');
 $mail = file_get_contents('php://input');
