@@ -10,11 +10,7 @@ alterSaveStatus("saved", '#saveStatus');
 Front.setCurrentSection('#createQuizz');
 
 Front.addQuestion(1, '', [], [], '#dataCreateQuizz');
-
-document.querySelector('#addQuestion').addEventListener('click', async (e) => {
-       e.preventDefault();
-       saveQuizz(false);
-});
+refreshListeners();
 
 document.querySelector('#confirmQuizzButton').addEventListener('click', (e) => {
        e.preventDefault();
@@ -32,6 +28,17 @@ document.querySelectorAll('input').forEach((input) => {
               alterSaveStatus("not saved", '#saveStatus');
        });
 });
+
+document.querySelector('#addQuestion').addEventListener('click', (e) => {
+       let questionNumber = document.querySelectorAll('.accordion-item').length + 1;
+       let question = '';
+       let answers = ['', '', '', ''];
+       let correctAnswers = [];
+       Front.addQuestion(questionNumber, question, answers, correctAnswers, "#dataCreateQuizz");
+       saveQuizz(false);
+       refreshListeners();
+});
+
 
 function saveQuizz(isQuizzFinished) {
        let finalQuestionsAndAnswers = [];
@@ -130,7 +137,7 @@ function saveQuizz(isQuizzFinished) {
               Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
               alterSaveStatus("saved", '#saveStatus');
 
-              if(isQuizzFinished) {
+              if (isQuizzFinished) {
                      Front.setCurrentSection("#quizzCreated");
               }
        }
@@ -144,4 +151,26 @@ function alterSaveStatus(status, selector) {
        } else {
               document.querySelector(selector).style.color = "orange";
        }
+}
+
+function refreshListeners(){
+       let deleteButtons = document.querySelectorAll('button[name="deleteQuestion"]')
+
+       deleteButtons.forEach((button, i) => {
+              button.addEventListener('click', (e) => {
+                     e.preventDefault();
+                     let temp = document.querySelectorAll('button[name="deleteQuestion"]')
+
+       
+                     if (temp.length <= 1) {
+                            Front.tempMessage("error", "Vous ne pouvez pas supprimer la dernière question", "#tempMessage");
+                            return;
+                     } else {
+                            button.parentElement.remove();
+                            Front.reindexQuestions();
+
+                     }
+                     
+              });
+       });
 }

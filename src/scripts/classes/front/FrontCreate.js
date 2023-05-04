@@ -8,8 +8,13 @@ export default class FrontCreate extends FrontGlobal {
 
        addQuestion(questionNumber, question, answers, correctAnswers, selector) {
               const test = this;
+
+              let divWithQuestionAndDeleteButton = document.createElement('div');
+              divWithQuestionAndDeleteButton.classList.add('d-flex', 'flex-row', 'justify-content-center', 'align-items-baseline');
+
+
               let accordionItem = document.createElement("div");
-              accordionItem.classList.add("accordion-item", "questions");
+              accordionItem.classList.add("accordion-item", "questions", "flex-fill");
               accordionItem.id = `question${questionNumber}`;
 
               let h2 = document.createElement("h2");
@@ -115,7 +120,16 @@ export default class FrontCreate extends FrontGlobal {
               collapseOne.appendChild(div);
               accordionItem.appendChild(h2);
               accordionItem.appendChild(collapseOne);
-              document.querySelector(selector).appendChild(accordionItem);
+
+              let buttonDeleteQuestion = document.createElement('button');
+              buttonDeleteQuestion.classList.add('btn', 'btn-danger', 'deleteQuestion', "ms-2");
+              buttonDeleteQuestion.innerHTML = '<i class="bi bi-trash"></i>';
+              buttonDeleteQuestion.setAttribute('type', 'button');
+              buttonDeleteQuestion.name = "deleteQuestion";
+              divWithQuestionAndDeleteButton.appendChild(accordionItem);
+
+              divWithQuestionAndDeleteButton.appendChild(buttonDeleteQuestion);
+              document.querySelector(selector).appendChild(divWithQuestionAndDeleteButton);
 
               if (!document.querySelector('#addQuestion')) {
                      let buttonAddQuestion = document.createElement('button');
@@ -130,14 +144,19 @@ export default class FrontCreate extends FrontGlobal {
                      buttonAddQuestion.appendChild(icon);
 
                      document.querySelector(selector).insertAdjacentElement('afterend', buttonAddQuestion);
-
-                     document.querySelector('#addQuestion').addEventListener('click', (e) => {
-                            let questionNumber = document.querySelectorAll('.accordion-item').length + 1;
-                            let question = '';
-                            let answers = ['', '', '', ''];
-                            let correctAnswers = [];
-                            test.addQuestion(questionNumber, question, answers, correctAnswers, selector);
-                     });
               }
+       }
+
+       reindexQuestions() {
+              let questions = document.querySelectorAll('.questions');
+              let questionNumber = 1;
+              questions.forEach(question => {
+                     question.id = `question${questionNumber}`;
+                     question.querySelector('h2').id = `heading${questionNumber}`;
+                     question.querySelector('button').setAttribute('data-bs-target', `#collapse${questionNumber}`);
+                     question.querySelector('button').innerHTML = `Question n°${questionNumber}`;
+                     question.querySelector('div.accordion-collapse').id = `collapse${questionNumber}`;
+                     questionNumber++;
+              });
        }
 }
