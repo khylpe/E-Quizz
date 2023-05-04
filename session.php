@@ -192,7 +192,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      <div class="accordion" id="accordionForResults">
                      </div>
                      <div class="text-center mt-5">
-                            <a type="submit" href="navigation.html" class="btn btn-warning" id="leaveSession">Quitter la session</a>
+                            <button type="submit" class="btn btn-warning" id="leaveSession">Quitter la session</button>
                      </div>
               </div>
        </section>
