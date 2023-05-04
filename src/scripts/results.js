@@ -15,6 +15,9 @@ Back.fetchQuizzList().then(array => {
                      liListe.forEach((nameInList) => {
                             nameInList.addEventListener('click', () => {
                                    document.querySelector('#dropdownButtonStudentGroup').classList.remove('disabled');
+                                   document.querySelector('#dropdownButtonDates').classList.add('disabled');
+                                   document.querySelector('#groupSelected').innerHTML = "Selectionner un groupe";
+                                   document.querySelector('#dateSelected').innerHTML = "Selectionner une date";
                                    document.querySelector('#quizzSelected').innerHTML = nameInList.innerHTML;
                                    Back.setQuizzName(nameInList.innerHTML);
 
@@ -29,6 +32,8 @@ Back.fetchQuizzList().then(array => {
                                                                liList.forEach((groupInList) => {
                                                                       groupInList.addEventListener('click', () => {
                                                                              document.querySelector('#groupSelected').innerHTML = groupInList.innerHTML;
+                                                                             document.querySelector('#dateSelected').innerHTML = "Selectionner une date";
+
                                                                              Back.setGroupName(groupInList.innerHTML);
                                                                              Back.fetchDatesOfQuizz()
                                                                                     .then(value => {
@@ -44,6 +49,7 @@ Back.fetchQuizzList().then(array => {
                                                                                                          liList.forEach((dateInList) => {
                                                                                                                 dateInList.addEventListener('click', () => {
                                                                                                                        document.querySelector('#submitSeeResults').classList.remove('disabled');
+                                                                                                                       document.querySelector('#exportAsCSV').classList.remove('disabled');
                                                                                                                        document.querySelector('#dateSelected').innerHTML = dateInList.innerHTML;
                                                                                                                 });
                                                                                                          });
@@ -70,9 +76,75 @@ Back.fetchQuizzList().then(array => {
        }
 });
 
-document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
-       let arrayToSend = [];
+document.querySelector('#submitSeeResults').addEventListener('click', (e) => {
        e.preventDefault();
+       test(false)
+});
+
+document.querySelector('#studentMail').addEventListener('input', async (e) => {
+       e.preventDefault();
+       document.querySelector('#accordionResult').innerHTML = "";
+       let searchValue = e.target.value;
+       await Back.fetchStudentResults(searchValue).then(array => {
+              if (array[0] == "error") {
+                     Front.tempMessage('error', array[1], '#tempMessage');
+              } else if (array[0] == "success" && array[1].length > 0) {
+                     Front.displayStudentResults(array, '#accordionResult');
+              } else {
+                     Front.tempMessage('error', "Aucun résultat trouvé", '#tempMessage');
+              }
+       });
+});
+
+document.querySelector('#seeResultsByStudentForm').addEventListener('submit', (e) => { e.preventDefault(); });
+
+document.querySelector('#exportAsCSV').addEventListener('click', (e) => {
+       e.preventDefault();
+       test(true)
+})
+
+function jsonToCsv(jsonData) {
+       let header = "Eleves";
+       let studentResults = {};
+
+       jsonData.forEach((question) => {
+              header += `;${question.question}`;
+
+              question.answers.forEach((answer) => {
+                     if (!studentResults[answer.studentMail]) {
+                            studentResults[answer.studentMail] = [];
+                     }
+
+                     studentResults[answer.studentMail].push(answer.result ? "JUSTE" : "FAUX");
+              });
+       });
+
+       let csvData = header + "\n";
+
+       for (const [studentMail, results] of Object.entries(studentResults)) {
+              csvData += `${studentMail};${results.join(";")}\n`;
+       }
+
+       return csvData;
+}
+
+function downloadCsv(csvData, fileName) {
+       const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+       const link = document.createElement("a");
+       const url = URL.createObjectURL(blob);
+
+       link.setAttribute("href", url);
+       link.setAttribute("download", fileName);
+       link.style.visibility = "hidden";
+
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+}
+
+
+function test(csv) {
+       let arrayToSend = [];
 
        Back.setQuizzName(document.querySelector('#quizzSelected').innerHTML);
        Back.setGroupName(document.querySelector('#groupSelected').innerHTML);
@@ -101,8 +173,12 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                                                         })
                                                  });
                                                  arrayToSend.push({ 'question': question[0], 'questionNumber': question[3], 'answers': answers });
-                                          });                                          
-                                          Front.displayResults(arrayToSend, '#accordionResult');
+                                          });
+                                          if (csv) {
+                                                 downloadCsv(jsonToCsv(arrayToSend), `${document.querySelector('#quizzSelected').innerHTML}_${document.querySelector('#groupSelected').innerHTML}_${document.querySelector('#dateSelected').innerHTML}.csv`);
+                                          } else {
+                                                 Front.displayResults(arrayToSend, '#accordionResult');
+                                          }
                                    }
                                    else {
                                           Front.tempMessage('error', "Ce quizz n'a jamais été fait à cette classe", '#tempMessage');
@@ -113,18 +189,4 @@ document.querySelector('#seeResultsForm').addEventListener('submit', (e) => {
                             Front.tempMessage('error', "Ce quizz n'a jamais été fait à cette classe", '#tempMessage');
                      }
               });
-});
-
-document.querySelector('#studentMail').addEventListener('input', async (e) => {
-       document.querySelector('#accordionResult').innerHTML = "";
-       let searchValue = e.target.value;
-       await Back.fetchStudentResults(searchValue).then(array => {
-              if (array[0] == "error") {
-                     Front.tempMessage('error', array[1], '#tempMessage');
-              } else if (array[0] == "success" && array[1].length > 0) {
-                     Front.displayStudentResults(array, '#accordionResult');
-              } else {
-                     Front.tempMessage('error', "Aucun résultat trouvé", '#tempMessage');
-              }
-       });
-});
+}

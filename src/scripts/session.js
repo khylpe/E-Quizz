@@ -202,6 +202,7 @@ document.querySelector('#seeResult').addEventListener('click', (e) => {
 document.querySelector('#leaveSession').addEventListener('click', (e) => {
        socketIO.emit('resetSession');
        Front.setCurrentSection('#sectionCreateSession');
+       window.location.replace('navigation.html');
 });
 
 function disableCreateSessionButton() {

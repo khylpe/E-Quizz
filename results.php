@@ -42,8 +42,8 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    </div>
                             </div>
                             <div class="navbar-nav col-6 justify-content-center">
-                            <div class="d-flex flex-column text-center">
-                                         <h1>
+                                   <div class="d-flex flex-column text-center">
+                                          <h1>
                                                  <span class="text-info">E</span>
                                                  <span class="">-</span>
                                                  <span class="text-warning">Q</span>
@@ -51,12 +51,12 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <span class="text-success">I</span>
                                                  <span class="text-primary">Z</span>
                                                  <span class="text-info">Z</span>
-                                          </h1>                                          
+                                          </h1>
                                           <div>
                                                  <h5 class="text-light">Consultation des résultats</h5>
                                           </div>
                                    </div>
-</div>
+                            </div>
                      </div>
               </nav>
        </div>
@@ -109,7 +109,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                                              </ul>
                                                                       </div>
                                                                </div>
-                                                               <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
+                                                               <div class="d-flex d-flex justify-content-evenly">
+                                                                      <button type="submit" class="btn btn-primary disabled" id="submitSeeResults">Accéder aux résultats du quizz</button>
+                                                                      <button class="ms-2 btn btn-primary disabled" id="exportAsCSV"><i class="bi bi-download"></i></button>
+                                                               </div>
                                                         </form>
                                                  </div>
                                           </div>
@@ -119,23 +122,22 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </section>
 
               <section id="searchEngine" class="col-4 mt-5">
-              <div class="row">
-                                   <div class="">
-                                          <div class="card text-center">
-                                                 <h5 class="card-header">Recherche par élève
-                                                 </h5>
-                                                 <div class="card-body">
-                                                        <form id="seeResultsForm">
-                                                               <div class="mb-3 d-flex flex-column">
-                                                                      <label for="studentMail" class="form-label">Adresse mail de l'élève</label>
-                                                                      <input type="text" class="form-control" id="studentMail" autocomplete="off">
-
-                                                               </div>                                                        
-                                                        </form>
-                                                 </div>
+                     <div class="row">
+                            <div class="">
+                                   <div class="card text-center">
+                                          <h5 class="card-header">Recherche par élève
+                                          </h5>
+                                          <div class="card-body">
+                                                 <form id="seeResultsByStudentForm">
+                                                        <div class="mb-3 d-flex flex-column">
+                                                               <label for="studentMail" class="form-label">Adresse mail de l'élève</label>
+                                                               <input type="text" class="form-control" id="studentMail" autocomplete="off">
+                                                        </div>
+                                                 </form>
                                           </div>
                                    </div>
                             </div>
+                     </div>
               </section>
        </div>
 

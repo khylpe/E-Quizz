@@ -51,6 +51,8 @@ export default class FrontCreate extends FrontGlobal {
               input.setAttribute("id", "question" + questionNumber);
               input.setAttribute("type", "text");
               input.setAttribute("value", "");
+              input.setAttribute("autocomplete", "off");
+
               input.value = question;
 
               input.addEventListener('input', (e) => {
@@ -99,6 +101,8 @@ export default class FrontCreate extends FrontGlobal {
                      input.setAttribute("id", "confirmAnswer" + i);
                      input.setAttribute("type", "text");
                      input.setAttribute("value", "");
+                     input.setAttribute("autocomplete", "off");
+
                      (answers[i - 1]) ? input.value = answers[i - 1] : input.value = '';
 
                      inputDiv.appendChild(input);
