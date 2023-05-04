@@ -86,7 +86,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <section class="container text-center col-6 text-center offset-3 mt-3" id="createQuizz">
               <div class="input-group input-group-lg">
                      <span class="input-group-text" id="inputGroup-sizing-lg">Titre du QCM</span>
-                     <input type="text" class="form-control" id="quizzTitle">
+                     <input type="text" class="form-control" id="quizzTitle" autocomplete="off">
               </div>
               <div class="accordion mt-5" id="dataCreateQuizz">
               </div>

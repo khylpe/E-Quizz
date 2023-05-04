@@ -79,7 +79,7 @@ export default class FrontGlobal {
               });
               return document.querySelectorAll('#groupInList')
        }
-
+       
        appendAddGroupButton(selector) {
               let groupsList = document.querySelector(selector);
               let createGroup = document.createElement('li');
@@ -304,7 +304,7 @@ export default class FrontGlobal {
                      card4Body.innerHTML = numberCorrestAnswers;
                      card4.appendChild(card4Body);
 
-                     if (numberOfAnswers < 0) {
+                     if (numberOfAnswers > 0) {
                             card5Body.innerHTML = numberCorrestAnswers / numberOfAnswers * 100 + '%';
                      }
                      else {
