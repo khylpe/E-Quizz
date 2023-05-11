@@ -105,7 +105,7 @@ io.on('connection', async function (client) { // Client socket connected
 
                      sessionStatus = "DisplayQuestions";
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
-
+                     console.log("hola")
                      io.to('teacher').emit('tempMessage',
                             {
                                    status: 'success',
@@ -126,8 +126,10 @@ io.on('connection', async function (client) { // Client socket connected
                                    status: "error",
                                    message: "There is no student registered"
                             });
+                            return;
                      }
-                     client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]);
+                     client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]); // envoie numero de question boitier
+
 
 
               });
