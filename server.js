@@ -6,7 +6,6 @@ const express = require('express'),
        { Server } = require("socket.io"),
        io = new Server(server);
 
-
 let quizzTitle = null;
 let groupName = null;
 let teacherMail = null;
@@ -18,7 +17,6 @@ let quizzResults = [];
 let numberOfRegisteredStudents = 0;
 let quizzTime = null;
 let questionNumber = 0;
-let isLasQuestion = false;
 
 // Enable access to the src folder :
 app.use(express.static('src'));
@@ -32,7 +30,6 @@ app.get('/', (dataFromClient, serverResponse) => {
 io.on('connection', async function (client) { // Client socket connected
        if (client.handshake.query.status == 'teacher') { // Client is a teacher
               /* things to do when a teacher connects */
-                     console.log(sessionStatus)
               client.on('checkSession', (mail, callback) => {
                      if (!checkMail(mail)) {
                             callback("anotherTeacherConnected")
@@ -45,7 +42,7 @@ io.on('connection', async function (client) { // Client socket connected
                      }
               });
               client.join("teacher");
-              client.emit('updateSessionStatus', getSession(isLasQuestion)); // send the session status to the teacher when he connects (in case he refreshed the page)
+              client.emit('updateSessionStatus', getSession()); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
               }
@@ -84,7 +81,6 @@ io.on('connection', async function (client) { // Client socket connected
               });
 
               client.on('startSession', (quizzData) => {
-                     console.log('on le fait')
                      quizzQuestionsAndAnswers = quizzData; // we get the quizz data from the teacher (questions and answers)
 
                      if (quizzQuestionsAndAnswers[1].length == 0) { // if there is no question
@@ -104,10 +100,8 @@ io.on('connection', async function (client) { // Client socket connected
 
                      quizzTime = getTime();
                      io.to('student').emit('sessionStarted');
-                     console.log("avant")
                      sessionStatus = "DisplayQuestions";
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
-                     console.log("hola")
                      io.to('teacher').emit('tempMessage',
                             {
                                    status: 'success',
@@ -116,35 +110,30 @@ io.on('connection', async function (client) { // Client socket connected
               });
 
               client.on('getFirstQuestion', (callback) => { // when the teacher clicks on the next question button
-                     isFirstQuestion = false;
-                     
                      if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            callback(getQuestion(false));
-                            questionNumber++;
+                            callback(getQuestion());
                      }
                      else {
                             client.emit('tempMessage', {
                                    status: "error",
                                    message: "There is no student registered"
                             });
-                            return;
                      }
-                     client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]); // envoie numero de question boitier
               });
-
 
               client.on('getNextQuestion', (callback) => { // when the teacher clicks on the next question button
                      if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
                             });
-                            callback(getQuestion(false));
                             questionNumber++;
+                            callback(getQuestion());
 
-                            io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
+                            io.to('boitier').emit('question number', getQuestion().currentQuestionNumber); // envoie numero de question boitier
+                            io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: getQuestion().currentQuestionNumber }, (err, responses) => {
                                    if (err) {
                                           io.to('teacher').emit('tempMessage',
                                                  {
@@ -152,28 +141,26 @@ io.on('connection', async function (client) { // Client socket connected
                                                         message: "An error occured while getting the student answers"
                                                  });
                                    }
-                                   else {
+                                   else {                                          
                                           quizzResults.push({
-                                                 question: quizzQuestionsAndAnswers[1][questionNumber - 2][0],
-                                                 questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                                 question: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][0],
+                                                 questionNumber: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][3],
                                                  answers: []
                                           });
 
                                           responses.forEach(response => {
-                                                 quizzResults[questionNumber - 2].answers.push({
+                                                 quizzResults[questionNumber - 1].answers.push({
                                                         'studentMail': response.studentMail,
-                                                        'studentAnswer': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
+                                                        'studentAnswer': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 1][1]),
                                                         'result': checkAnswers(response.answers,
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
-                                                               quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
+                                                               quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][1], // list of possible answers
+                                                               quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][2] // list of good answers
                                                         )
                                                  });
                                           })
                                    }
                                    ;
                             });
-                            client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]);
-
                      }
                      else {
                             client.emit('tempMessage', {
@@ -185,8 +172,7 @@ io.on('connection', async function (client) { // Client socket connected
 
               client.on('endOfQuizz', (callback) => {
                      questionNumber++;
-
-                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 2][3] }, (err, responses) => {
+                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -196,18 +182,18 @@ io.on('connection', async function (client) { // Client socket connected
                             }
                             else {
                                    quizzResults.push({
-                                          question: quizzQuestionsAndAnswers[1][questionNumber - 2][0],
-                                          questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 2][3],
+                                          question: quizzQuestionsAndAnswers[1][questionNumber - 1][0],
+                                          questionNumber: quizzQuestionsAndAnswers[1][questionNumber - 1][3],
                                           answers: []
                                    });
 
                                    responses.forEach(response => {
-                                          quizzResults[questionNumber - 2].answers.push({
+                                          quizzResults[questionNumber - 1].answers.push({
                                                  'studentMail': response.studentMail,
-                                                 'studentAnswer': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 2][1]),
+                                                 'studentAnswer': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 1][1]),
                                                  'result': checkAnswers(response.answers,
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][1], // list of possible answers
-                                                        quizzQuestionsAndAnswers[1][questionNumber - 2][2] // list of good answers
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 1][1], // list of possible answers
+                                                        quizzQuestionsAndAnswers[1][questionNumber - 1][2] // list of good answers
                                                  )
                                           });
                                    })
@@ -219,8 +205,7 @@ io.on('connection', async function (client) { // Client socket connected
                                           });
 
                                    sessionStatus = "DisplayResults";
-                                   io.to('teacher').emit('updateSessionStatus', getSession(false));
-                                   console.log(JSON.stringify(quizzResults, null, 2));
+                                   io.to('teacher').emit('updateSessionStatus', getSession());
                                    callback(quizzResults);
                             }
                      });
@@ -274,9 +259,7 @@ io.on('connection', async function (client) { // Client socket connected
 
                             client.on('answerChanged', (answer) => {
                                    quizzResults.forEach(question => {
-                                          console.log(question)
                                           if (question.questionNumber == answer.questionNumber) {
-                                                 console.log(quizzQuestionsAndAnswers[1][answer.questionNumber - 1][0]);
                                                  question.answers.forEach(studentAnswer => {
                                                         if (studentAnswer.studentMail == client.mail) {
                                                                studentAnswer.studentAnswer = getAnswersAsString(answer.answers, quizzQuestionsAndAnswers[1][answer.questionNumber - 1][1]),
@@ -309,9 +292,8 @@ io.on('connection', async function (client) { // Client socket connected
        }
        else if (client.handshake.query.status == 'boitier') {
               client.join('boitier');
-              client.emit('test', "bvgyuf")
+
               client.on('trameComplete', (trame) => {
-                     console.log(trame);
               })
        }
        else {  // Unknown client
@@ -328,7 +310,7 @@ function checkMail(mail) {
        return teacherMail == null || mail == teacherMail;
 }
 
-function getSession(isLastQuestion) {
+function getSession() {
        return {
               sessionStatus: sessionStatus,
               quizzTitle: quizzTitle,
@@ -337,7 +319,7 @@ function getSession(isLastQuestion) {
               quizzQuestionsAndAnswers: quizzQuestionsAndAnswers,
               quizzResults: quizzResults,
               quizzTime: quizzTime,
-              currentQuestion: getQuestion(isLastQuestion),
+              currentQuestion: getQuestion(),
               numberOfAnswers: getNumberOfAnswers()
        };
 }
@@ -438,36 +420,18 @@ function getTime() {
        return todayDate + ' ' + hours + ":" + minutes + ":" + seconds;
 }
 
-function getQuestion(previousQuestion) {
-       let questionToGet
-       let lastQuestionNumber;
-       let lastQuestion = new Boolean(false);
-
-       if (previousQuestion === true) {
-              questionToGet = questionNumber - 1;
-              lastQuestionNumber = questionNumber;
-
-       } else if (previousQuestion === false) {
-              questionToGet = questionNumber;
-              lastQuestionNumber = questionNumber + 1;
-       }
-       else {
+function getQuestion() {
+       if (quizzQuestionsAndAnswers == null || sessionStatus != "DisplayQuestions" || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length)
               return null;
-       }
 
-       if (quizzQuestionsAndAnswers == null || quizzQuestionsAndAnswers[1].length == 0 || questionNumber > quizzQuestionsAndAnswers[1].length) {
-              return null;
-       }
-       if (quizzQuestionsAndAnswers[1].length == lastQuestionNumber) {
-              lastQuestion = true;
-       }
+       let isLastQuestion = quizzQuestionsAndAnswers[1].length == questionNumber + 1;
 
        return {
-              currentQuestion: quizzQuestionsAndAnswers[1][questionToGet][0],
-              currentAnswers: quizzQuestionsAndAnswers[1][questionToGet][1],
-              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionToGet][3],
+              currentQuestion: quizzQuestionsAndAnswers[1][questionNumber][0],
+              currentAnswers: quizzQuestionsAndAnswers[1][questionNumber][1],
+              currentQuestionNumber: quizzQuestionsAndAnswers[1][questionNumber][3],
               numberOfQuestions: quizzQuestionsAndAnswers[1].length,
-              lastQuestion: lastQuestion
+              lastQuestion: isLastQuestion
        }
 }
 
