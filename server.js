@@ -1,3 +1,4 @@
+
 const express = require('express'),
        app = express(),
        http = require('http'),
@@ -17,6 +18,7 @@ let quizzResults = [];
 let numberOfRegisteredStudents = 0;
 let quizzTime = null;
 let questionNumber = 0;
+let isLasQuestion = false;
 
 // Enable access to the src folder :
 app.use(express.static('src'));
@@ -30,7 +32,7 @@ app.get('/', (dataFromClient, serverResponse) => {
 io.on('connection', async function (client) { // Client socket connected
        if (client.handshake.query.status == 'teacher') { // Client is a teacher
               /* things to do when a teacher connects */
-
+                     console.log(sessionStatus)
               client.on('checkSession', (mail, callback) => {
                      if (!checkMail(mail)) {
                             callback("anotherTeacherConnected")
@@ -43,7 +45,7 @@ io.on('connection', async function (client) { // Client socket connected
                      }
               });
               client.join("teacher");
-              client.emit('updateSessionStatus', getSession(true)); // send the session status to the teacher when he connects (in case he refreshed the page)
+              client.emit('updateSessionStatus', getSession(isLasQuestion)); // send the session status to the teacher when he connects (in case he refreshed the page)
 
               if (sessionStatus == "CreateSession") {
               }
@@ -102,7 +104,7 @@ io.on('connection', async function (client) { // Client socket connected
 
                      quizzTime = getTime();
                      io.to('student').emit('sessionStarted');
-
+                     console.log("avant")
                      sessionStatus = "DisplayQuestions";
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
                      console.log("hola")
@@ -114,6 +116,8 @@ io.on('connection', async function (client) { // Client socket connected
               });
 
               client.on('getFirstQuestion', (callback) => { // when the teacher clicks on the next question button
+                     isFirstQuestion = false;
+                     
                      if (getNumberOfRegisteredStudent() > 0) {
                             listOfStudents.forEach(student => {
                                    student.answerValidated = false;
@@ -129,9 +133,6 @@ io.on('connection', async function (client) { // Client socket connected
                             return;
                      }
                      client.to('boitier').emit('test', quizzQuestionsAndAnswers[1][questionNumber - 1][3]); // envoie numero de question boitier
-
-
-
               });
 
 
@@ -460,6 +461,7 @@ function getQuestion(previousQuestion) {
        if (quizzQuestionsAndAnswers[1].length == lastQuestionNumber) {
               lastQuestion = true;
        }
+
        return {
               currentQuestion: quizzQuestionsAndAnswers[1][questionToGet][0],
               currentAnswers: quizzQuestionsAndAnswers[1][questionToGet][1],
