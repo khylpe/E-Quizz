@@ -7,11 +7,10 @@ export default class FrontCreate extends FrontGlobal {
        }
 
        addQuestion(questionNumber, question, answers, correctAnswers, selector) {
-              const test = this;
+              if(!document.querySelector(selector)) return;
 
               let divWithQuestionAndDeleteButton = document.createElement('div');
               divWithQuestionAndDeleteButton.classList.add('d-flex', 'flex-row', 'justify-content-center', 'align-items-baseline');
-
 
               let accordionItem = document.createElement("div");
               accordionItem.classList.add("accordion-item", "questions", "flex-fill");
@@ -41,15 +40,13 @@ export default class FrontCreate extends FrontGlobal {
               div.classList.add("accordion-body");
 
               let questionDiv = document.createElement("div");
-              questionDiv.classList.add("mb-3");
+              questionDiv.classList.add("mb-3", "d-flex", "flex-column", "align-items-center");
+              questionDiv.setAttribute("id", "questionDiv");
 
               let label = document.createElement("label");
               label.classList.add("form-label");
               label.setAttribute("for", "question" + questionNumber);
               label.innerHTML = "Question";
-
-              let inputDiv = document.createElement("div");
-              inputDiv.classList.add("d-flex", "flex-row", "align-items-center");
 
               let input = document.createElement("input");
               input.classList.add("form-control", "me-3");
@@ -65,11 +62,11 @@ export default class FrontCreate extends FrontGlobal {
                      button.innerHTML = `Question n° ${questionNumber} : ${question}`;
               });
 
-              inputDiv.appendChild(input);
-
               questionDiv.appendChild(label);
-              questionDiv.appendChild(inputDiv);
+              questionDiv.appendChild(input);
               div.appendChild(questionDiv);
+
+              console.log(questionDiv)
 
               for (let i = 1; i <= 4; i++) {
                      let questionDiv = document.createElement("div");
@@ -154,8 +151,22 @@ export default class FrontCreate extends FrontGlobal {
                      question.id = `question${questionNumber}`;
                      question.querySelector('h2').id = `heading${questionNumber}`;
                      question.querySelector('button').setAttribute('data-bs-target', `#collapse${questionNumber}`);
-                     question.querySelector('button').innerHTML = `Question n°${questionNumber}`;
+
+                     let input = document.querySelector(`#question${questionNumber} #questionDiv input`);
+                     console.log(input.value);
+
+                     if(input.value == ''){
+                            question.querySelector('button').innerHTML = `Question n°${questionNumber}`;
+                     }
+                     else{
+                            question.querySelector('button').innerHTML = `Question n°${questionNumber} : ${input.value}`;
+                     }
+
+                     document.querySelector(`#question${questionNumber} #questionDiv label`).setAttribute('for', `question${questionNumber}`);
+                     input.id = `question${questionNumber}`;
                      question.querySelector('div.accordion-collapse').id = `collapse${questionNumber}`;
+                     question.querySelector('div.accordion-collapse').setAttribute('aria-labelledby', `heading${questionNumber}`);
+
                      questionNumber++;
               });
        }
