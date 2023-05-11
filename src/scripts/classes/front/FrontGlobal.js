@@ -12,13 +12,29 @@ export default class FrontGlobal {
                      return;
               }
 
-              let tempMessageDiv = document.querySelector(selector);
-              tempMessageDiv.innerHTML = message;
-              tempMessageDiv.classList = 'text-center container ' + type;
-              tempMessageDiv.style.display = "block";
-              setTimeout(() => {
-                     tempMessageDiv.style.display = "none";
-              }, 18000);
+              try {
+                     if(!document.querySelector(selector)){
+                            // Creating the div if it does not exist
+                            console.error("The selector " + selector + " does not exist in the DOM, creating it.");
+                            let tempMessageDiv = document.createElement('div');
+                            tempMessageDiv.classList = 'text-center container mt-5 ' + type;
+                            tempMessageDiv.style.display = "none";
+                            tempMessageDiv.id = "tempMessage";
+                            selector = "#" + tempMessageDiv.id;
+                            document.querySelector('body').insertAdjacentElement('afterbegin', tempMessageDiv);
+                     }
+
+                     let tempMessageDiv = document.querySelector(selector);
+                            tempMessageDiv.innerHTML = message;
+                            tempMessageDiv.classList = 'text-center container ' + type;
+                            tempMessageDiv.style.display = "block";
+                            setTimeout(() => {
+                                   tempMessageDiv.style.display = "none";
+                            }, 18000); 
+              }
+              catch(err){
+                     console.error(err);
+              }              
        }
 
        setCurrentSection(elementToDisplay) {
@@ -79,14 +95,14 @@ export default class FrontGlobal {
               });
               return document.querySelectorAll('#groupInList')
        }
-       
+
        appendAddGroupButton(selector) {
               let groupsList = document.querySelector(selector);
               let createGroup = document.createElement('li');
               groupsList.appendChild(createGroup);
               let div = document.createElement('div');
               div.classList = "dropdown-item d-flex justify-content-between align-items-center";
-              
+
               let input = document.createElement('input');
               input.classList = "form-control";
               input.type = "text";
@@ -285,7 +301,6 @@ export default class FrontGlobal {
                                                  numberOfAnswers++;
                                                  isAnswerCounted = true;
                                           }
-
 
                                           let studentAnswer = document.createElement('p');
                                           studentAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle w-25 align-self-center';
