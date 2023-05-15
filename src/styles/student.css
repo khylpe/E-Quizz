@@ -5,3 +5,7 @@ body{
 height:100%;
 margin:0;
 }
+
+.ok{
+width: fit-content(20em);
+}
