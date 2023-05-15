@@ -18,6 +18,7 @@ let numberOfRegisteredStudents = 0;
 let quizzTime = null;
 let questionNumber = 0;
 
+
 // Enable access to the src folder :
 app.use(express.static('src'));
 
@@ -47,7 +48,8 @@ io.on('connection', async function (client) { // Client socket connected
               if (sessionStatus == "CreateSession") {
               }
               else if (sessionStatus == "SessionStatus") {
-                     client.emit('updateStudentList', getStudentsInformations())
+                     client.emit('updateStudentList', getStudentsInformations());
+                     // console.log("coucou");
                      // send the number of connected students to the teacher
                      // send the number of registered students to the teacher
                      // send the list of students to the teacher
@@ -235,13 +237,19 @@ io.on('connection', async function (client) { // Client socket connected
                      else {
                             client.join('student');
                             client.mail = studentMail;
-
+                                                       
                             if (getSession(false).sessionStatus == "DisplayQuestions") {
                                    client.emit('sessionStarted');
                             }
 
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
+                            client.emit('test', getSessionUpdate());
+                            io.to('student').emit('capasse', {'quizzTitle': getSession().quizzTitle});
+                            
+                            // io.to('student').emit('updateStudentList', getSession());
+                            // client.emit // send all data
+                            // io.to student // only list of students
 
                             client.on('buttonValidateClicked', (value) => {
                                    listOfStudents.forEach(student => {
@@ -445,4 +453,14 @@ function getNumberOfAnswers() {
        return numberOfAnswers;
 }
 
+function getSessionUpdate(){
+       return{
+       numberOfRegisteredStudents: numberOfRegisteredStudents,
+       teacherMail: teacherMail,
+       quizzTitle: quizzTitle,
+       }
+}
+
+
 server.listen(8100);
+

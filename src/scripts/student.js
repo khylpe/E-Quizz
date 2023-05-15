@@ -28,10 +28,63 @@ let answers = [];
 let currentQuestion = 1;
 let isCurrentQuestion = true;
 let quizzCurrentQuestion = null;
-
 user.hidden = true;
-changeDivState('#test');
 answerQuestion.hidden = true;
+
+changeDivState('#test');
+
+socket.on('teacherNotConnected', () => {
+       waitingRoom.innerHTML = "Le prof n'est pas connecté";
+});
+
+socket.on('capasse', (data) => {
+       console.log("ça reçoit le signal ici");
+       console.log("le titre du quizz est : ", data.quizzTitle);
+});
+
+socket.on('test', (dat) => {
+       console.log(dat);
+});
+
+socket.on('sessionStarted', () => {
+       changeDivState('#answerQuestion');
+       currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
+});
+
+socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
+       quizzCurrentQuestion = jsonContainNumberQuestion['numberQuestion'];
+       callback({
+              answers: getAnswers(jsonContainNumberQuestion['numberQuestion'] - 1),
+              studentMail: studentMail
+       });
+       isCurrentQuestion = true;
+       currentQuestion = jsonContainNumberQuestion['numberQuestion'];
+
+       currentQuestionNumber.innerHTML = `Numéro de la question : ${jsonContainNumberQuestion['numberQuestion']}`;
+       newQuestion();
+});
+
+socket.on('sessionUpdated', (sessionStatus) => {
+       if (sessionStatus != 'sessionStarted') {
+              nameStudent.innerHTML = `Bienvenue ${inputMail.value}`;
+              changeDivState('#waitTeacherConnect');
+              if (sessionStatus === 'CreateSession') {
+                     waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
+              }
+              else if (sessionStatus === 'SessionStatus') {
+                     waitingRoom.innerHTML = "En attente d'élève supplémentaire"
+              }
+       } else {
+              changeDivState('#answerQuestion');
+       }
+});
+
+socket.on('endOfQuizzTeacher', () => {
+       changeDivState('#endOfQuizz');
+       messageEndQuizz.innerHTML = "fin";
+       timerReturnHome();
+
+});
 //front  
 btnAnswers.forEach((button, index) => {
        button.addEventListener('click', () => {
@@ -48,14 +101,12 @@ btnAnswers.forEach((button, index) => {
 socket.on('connect', () => {
        changeDivState('#formMail');
 
-       /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
        formulaireMail.addEventListener('submit', (e) => {
               e.preventDefault();
               let inputMail = document.querySelector('#mailAddress')
               studentMail = inputMail.value;
               socket.emit('studentTriesToRegister', studentMail, (response) => {
-                     console.log(response)
+                     console.log(response);
                      if (response.status == "accepted") {
                             user.hidden = false;
                             document.querySelector('#mail').innerHTML = `Mail: ${studentMail}`;
@@ -67,55 +118,11 @@ socket.on('connect', () => {
                                           waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
                                    }
                                    else if (response.sessionStatus === 'SessionStatus') {
-                                          waitingRoom.innerHTML = "En attente d'élève supplémentaire"
+                                          waitingRoom.innerHTML = "En attente d'élève supplémentaire";                                         
                                    }
                             } else {
                                    changeDivState('#answerQuestion');
-                            }
-
-                            socket.on('teacherNotConnected', () => {
-                                   waitingRoom.innerHTML = "Le prof n'est pas connecté";
-                            });
-
-                            socket.on('sessionStarted', () => {
-                                   changeDivState('#answerQuestion');
-                                   currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
-                            });
-
-                            socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
-                                   quizzCurrentQuestion = jsonContainNumberQuestion['numberQuestion'];
-                                   callback({
-                                          answers: getAnswers(jsonContainNumberQuestion['numberQuestion'] - 1),
-                                          studentMail: studentMail
-                                   });
-                                   isCurrentQuestion = true;
-                                   currentQuestion = jsonContainNumberQuestion['numberQuestion'];
-
-                                   currentQuestionNumber.innerHTML = `Numéro de la question : ${jsonContainNumberQuestion['numberQuestion']}`;
-                                   newQuestion();
-                            });
-
-                            socket.on('sessionUpdated', (sessionStatus) => {
-                                   if (sessionStatus != 'sessionStarted') {
-                                          nameStudent.innerHTML = `Bienvenue ${inputMail.value}`;
-                                          changeDivState('#waitTeacherConnect');
-                                          if (sessionStatus === 'CreateSession') {
-                                                 waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
-                                          }
-                                          else if (sessionStatus === 'SessionStatus') {
-                                                 waitingRoom.innerHTML = "En attente d'élève supplémentaire"
-                                          }
-                                   } else {
-                                          changeDivState('#answerQuestion');
-                                   }
-                            });
-
-                            socket.on('endOfQuizzTeacher', () => {
-                                   changeDivState('#endOfQuizz');
-                                   messageEndQuizz.innerHTML = "fin";
-                                   timerReturnHome();
-
-                            });
+                            }                           
 
                      } else if (response.status == "doublons") {
                             document.querySelector('#')
@@ -196,7 +203,7 @@ document.querySelector('#previousQuestion').addEventListener('click', () => {
               submitAnswer.hidden = true;
               btnModify.hidden = false;
        }
-})
+});
 
 document.querySelector('#nextQuestion').addEventListener('click', () => {
        if (currentQuestion < quizzCurrentQuestion) {
@@ -231,10 +238,9 @@ document.querySelector('#nextQuestion').addEventListener('click', () => {
                      });
                      submitAnswer.hidden = true;
                      btnModify.hidden = false;
-
               }
        }
-})
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 function getAnswers(questionNumber) {

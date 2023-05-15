@@ -10,7 +10,7 @@
 </head>
 
 <body>
-       <div class="container">
+       <header class="container">
               <nav class="navbar navbar-expand">
                      <div class="collapse navbar-collapse d-flex">
                             <div class="d-flex col-3 justify-content-start">
@@ -21,7 +21,7 @@
                                                  data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                  aria-expanded="false">
                                           </button>
-
+                                          
                                           <ul class="user dropdown-menu dropdown-menu-start">
                                                  <li class="dropdown-item"></li>
                                                  <li>
@@ -32,7 +32,7 @@
                                                         <button type="button" class="btn btn-outline-danger w-100"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#ModalDeconnexion">
-
+                                                               Deconnexion
                                                                <i class="bi bi-box-arrow-right"></i>
                                                         </button>
                                                  </li>
@@ -63,13 +63,24 @@
                                                  </div>
                                           </div>
                                    </div>
+
                             </div>
-                            <h1 class="navbar-nav col-6 justify-content-center">
-                                   E-Quizz
-                            </h1>
+                            <div class="navbar-nav col-6 justify-content-center">
+                                   <div class="d-flex flex-column text-center">
+                                          <h1>
+                                                 <span class="text-info">E</span>
+                                                 <span class="">-</span>
+                                                 <span class="text-warning">Q</span>
+                                                 <span class="text-danger">U</span>
+                                                 <span class="text-success">I</span>
+                                                 <span class="text-primary">Z</span>
+                                                 <span class="text-info">Z</span>
+                                          </h1>
+                                   </div>
+                            </div>
                      </div>
               </nav>
-       </div>
+       </header>
        <hr class="container">
        <div class="container-fluid bg-dark d-flex">
               <div class="col" id="allParts">
@@ -128,9 +139,28 @@
                      </div>
 
                      <div class="part" id="waitTeacherConnect">
-                            <h1 id="nameStudent"></h1>
-                            <h2 id="waiting"></h2>
+                            <div class="accordion" id="accordionExample">
+                                   <div class="accordion-item">
+                                     <h2 class="accordion-header">
+                                       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                         Information sur la session
+                                       </button>
+                                     </h2>
+                                     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                       <div class="accordion-body">
+                                         <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                       </div>
+                                     </div>
+                                   </div>
+
+
+                            
+                                   <h2 id="nameStudent"></h2>
+                                   <h3 id="waiting"></h3>
+                               
+
                      </div>
+                     
 
                      <div class="part" id="endOfQuizz">
                             <h1 id="End"></h1>
