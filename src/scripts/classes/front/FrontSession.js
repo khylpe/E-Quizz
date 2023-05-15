@@ -81,6 +81,16 @@ export default class Teacher extends FrontGlobal {
        }
 
        setQuestion(question, answers, questionNumber, numberOfQuestions, selectorForQuestion, selectorForAnswers) {
+              
+              answers.forEach((answer, index) => {
+                     if (answer == "" || answer == " " || answer == null || answer == undefined) {
+                            answers.splice(index, 1);
+                     }
+              });
+
+              console.log('array of possible answers : ', answers);
+              console.log('length of array of possible answers : ', answers.length);
+       
               document.querySelector(selectorForAnswers).innerHTML = "";
 
               if (!question.includes("?") && !question.includes(" ?")) {
@@ -111,7 +121,6 @@ export default class Teacher extends FrontGlobal {
               firstAnswer.appendChild(firstAnswerLetter);
               firstAnswer.appendChild(firstAnswerSpan);
 
-
               secondDiv.appendChild(firstAnswer);
 
               let secondAnswer = document.createElement('p');
@@ -129,8 +138,6 @@ export default class Teacher extends FrontGlobal {
               secondAnswer.appendChild(secondAnswerSpan);
 
               secondDiv.appendChild(secondAnswer);
-
-
 
               if (answers.length > 2 && answers[2] != "") {
                      let thirdDiv = document.createElement('div');

@@ -90,6 +90,26 @@ function saveQuizz(isQuizzFinished) {
                             return;
                      }
 
+                     // if the corret answer is empty, we don't save the quizz
+                     let isThereAnEmptyCorrectAnswer = false;
+                     document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]`).forEach((element, indexOfCorrectAnswer) => {
+                            let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
+                            let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
+                            
+                            console.log('valueOfTheCorrectAnswer', valueOfTheCorrectAnswer);
+                            console.log(indexOfCorrectAnswer)
+                            if (valueOfTheCorrectAnswer == '' && element.checked) {
+                                   isThereAnEmptyCorrectAnswer = true;
+                            }
+                     });
+
+                     if (isThereAnEmptyCorrectAnswer) {
+                            isQuizzValid = false;
+                            Front.tempMessage("error", `Veuillez remplir les réponses correctes à la question n°${index + 1}`, "#tempMessage");
+                            alterSaveStatus("not saved", '#saveStatus');
+                            return;
+                     }
+
                      let questAndAns = { question: questionValue, answers: [], correctAnswers: [] };
 
                      allPossibleAnswersForThisQuestion.forEach((element) => {
@@ -138,7 +158,7 @@ function saveQuizz(isQuizzFinished) {
               alterSaveStatus("saved", '#saveStatus');
 
               if (isQuizzFinished) {
-                     Front.setCurrentSection("#quizzCreated");
+                    // Front.setCurrentSection("#quizzCreated");
               }
        }
 }
