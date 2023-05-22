@@ -19,15 +19,17 @@ if (isset($_SESSION['sessionStatus']) && $_SESSION['sessionStatus'] == 'connecte
 <body>
        <div class="container-fluid">
               <div class="d-flex flex-column text-center">
-                     <h1>
-                            <span class="text-info">E</span>
-                            <span class="">-</span>
-                            <span class="text-warning">Q</span>
-                            <span class="text-danger">U</span>
-                            <span class="text-success">I</span>
-                            <span class="text-primary">Z</span>
-                            <span class="text-info">Z</span>
-                     </h1>
+                     <a href="navigation.html" class="text-decoration-none">
+                            <h1>
+                                   <span class="text-info">E</span>
+                                   <span class="">-</span>
+                                   <span class="text-warning">Q</span>
+                                   <span class="text-danger">U</span>
+                                   <span class="text-success">I</span>
+                                   <span class="text-primary">Z</span>
+                                   <span class="text-info">Z</span>
+                            </h1>
+                     </a>
                      <div>
                             <h5 class="text-light">Connexion</h5>
                      </div>
