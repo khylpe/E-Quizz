@@ -66,8 +66,6 @@ export default class FrontCreate extends FrontGlobal {
               questionDiv.appendChild(input);
               div.appendChild(questionDiv);
 
-              console.log(questionDiv)
-
               for (let i = 1; i <= 4; i++) {
                      let questionDiv = document.createElement("div");
                      questionDiv.classList.add("mb-3");

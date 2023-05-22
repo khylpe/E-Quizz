@@ -36,10 +36,10 @@ document.querySelector('#addQuestion').addEventListener('click', (e) => {
        let correctAnswers = [];
        Front.addQuestion(questionNumber, question, answers, correctAnswers, "#dataCreateQuizz");
        saveQuizz(false);
-       refreshListeners();
+       refreshListeners();             
 });
 
-document.querySelector('#scrollToTop').addEventListener('click', (e) => {
+document.querySelector('#scrollButton').addEventListener('click', (e) => {
        e.preventDefault();
        Front.scrollToLocation('#createQuizz');
 });

@@ -35,7 +35,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
+                                                        <a href="create.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
                                                  </li>
                                                  <li class="mt-1">
                                                         <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats des QCM</button></a>
