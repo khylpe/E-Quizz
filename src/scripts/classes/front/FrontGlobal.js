@@ -330,4 +330,9 @@ export default class FrontGlobal {
                      document.querySelector(selector).appendChild(questionDiv);
               })
        }
+
+       scrollToLocation(selector) {
+              let element = document.querySelector(selector);
+              element.scrollIntoView();
+       }
 }

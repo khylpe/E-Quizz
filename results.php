@@ -14,6 +14,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
+       <link rel="stylesheet" href="src/styles/main.css">
 </head>
 
 <body>
@@ -145,6 +146,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div id="accordionResult" class="accordion container">
               </div>
        </section>
+
+       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
+              <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
+       </div>
 
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
               <i class="bi bi-heart-fill text-white"></i>

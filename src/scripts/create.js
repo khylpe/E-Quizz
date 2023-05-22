@@ -39,6 +39,10 @@ document.querySelector('#addQuestion').addEventListener('click', (e) => {
        refreshListeners();
 });
 
+document.querySelector('#scrollToTop').addEventListener('click', (e) => {
+       e.preventDefault();
+       Front.scrollToLocation('#createQuizz');
+});
 
 function saveQuizz(isQuizzFinished) {
        let finalQuestionsAndAnswers = [];

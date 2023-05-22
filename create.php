@@ -20,6 +20,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
        <!-- Styles links -->
+       <link rel="stylesheet" href="src/styles/main.css">
        <link rel="stylesheet" href="src/styles/createQuizz.css">
 </head>
 
@@ -102,6 +103,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      <a href="session.php"><button class="btn btn-primary mt-5">Démarer une session</button></a>
               </div>
        </section>
+
+       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
+              <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
+       </div>
 
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
               <i class="bi bi-heart-fill text-white"></i>
