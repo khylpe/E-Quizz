@@ -20,7 +20,7 @@ Install a local development environments aka a local server, such as Laragon or 
 Clone the project in the "www" folder (or equivalent)
 
 ```bash
-  git clone -b server_teacher_db https://github.com/Tristan13R/E-Quizz
+  git clone -b web-server https://github.com/khylpe/E-Quizz
 ```
 Start the server and access it :
 ```bash
