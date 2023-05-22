@@ -98,28 +98,24 @@ export default class Teacher extends FrontGlobal {
 
 
               let divContainingAnswers = document.createElement('div');
-              divContainingAnswers.classList = "d-flex flex-column";
+              divContainingAnswers.classList = "d-flex flex-column justify-content-center align-items-start";
               document.querySelector(selectorForAnswers).appendChild(divContainingAnswers);
 
               answers.forEach((answer, index) => {
-                     let answerDiv = document.createElement('div');
-                     answerDiv.classList = "d-flex flex-row justify-content-evenly align-items-center";
-                     divContainingAnswers.appendChild(answerDiv);
-
                      let answerP = document.createElement('p');
                      answerP.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
 
                      let answerLetter = document.createElement('span');
-                     answerLetter.classList = `fs-2 text-primary`;
+                     answerLetter.classList = `fs-1 text-info`;
                      answerLetter.innerText = `${String.fromCharCode(65 + index)}. `;
                      answerP.appendChild(answerLetter);
 
                      let answerSpan = document.createElement('span');
-                     answerSpan.classList = `fs-3`;
+                     answerSpan.classList = `fs-1`;
                      answerSpan.innerText = `${answer}`;
                      answerP.appendChild(answerSpan);
 
-                     answerDiv.appendChild(answerP);
+                     divContainingAnswers.appendChild(answerP);
               });              
        }
 }

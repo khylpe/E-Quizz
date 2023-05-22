@@ -182,13 +182,13 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <section id="sectionDisplayQuestions">
               <div class="container col-8 mt-5" id="displayQuestions">
                      <div class="card text-center list-group">
-                            <span class="card-header list-group-item list-group-item-primary border border-primary-subtle fs-1" id="question"></span>
-                            <div class="card-body" id="possibleAnswers">
+                            <span class="card-header list-group-item list-group-item-primary border text-info fs-1" id="question"></span>
+                            <div class="card-body d-flex justify-content-center" id="possibleAnswers">
                             </div>
                      </div>
 
                      <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-primary" id="nextQuestion">Question suivante</button>
+                            <button type="submit" class="btn btn-primary mb-5" id="nextQuestion">Question suivante</button>
                             <button type="submit" class="btn btn-success" id="seeResult">Accéder aux résultats</button>
                      </div>
 
