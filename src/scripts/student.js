@@ -22,7 +22,7 @@ let modal = document.querySelector('#ModalDeconnexion');
 let logout = document.querySelector('#deco');
 let btnModalConfirmer = document.querySelector('#modalButtonConfirm');
 let user = document.querySelector('#user');
-let statusSessionWaitRoom = document.querySelector('#statusSessionWaitRoom');
+
 
 let studentMail = null;
 let answers = [];
@@ -39,11 +39,14 @@ socket.on('teacherNotConnected', () => {
 });
 
 socket.on('capasse', (data) => {
-       console.log("nom du quizz", data.quizzTitle);
-       console.log("nombre de personnes enregistrés : ", data.numberOfRegisteredStudents);
-       console.log("le nom du professeur est : ", data.teacherMail);
-       console.log("le nom du groupe est : ", data.groupName);
-       statusSessionWaitRoom.innerHTML = `Nom du quizz : ${data.quizzTitle}`
+              // document.querySelector('#nameOfQuizz').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
+       document.querySelector('#nameOfTeacher').innerHTML = `Nom du professeur : ${data.teacherMail}`;
+       document.querySelector('#statusSessionWaitRoom').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
+       document.querySelector('#numberOfStudentRegistered').innerHTML = `Nombre d'élèves enregistrés : ${data.numberOfRegisteredStudents}`;
+       document.querySelector('#nameOfGroup').innerHTML = `Nom du groupe : ${data.groupName}`;
+       
+
+
 });
 
 socket.on('test', (dat) => {
@@ -70,7 +73,7 @@ socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
 
 socket.on('sessionUpdated', (sessionStatus) => {
        if (sessionStatus != 'sessionStarted') {
-              nameStudent.innerHTML = `Bienvenue ${inputMail.value}`;
+              nameStudent.innerHTML = `Bienvenue ${studentMail}`;
               changeDivState('#waitTeacherConnect');
               if (sessionStatus === 'CreateSession') {
                      waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
@@ -113,7 +116,7 @@ socket.on('connect', () => {
                      console.log(response);
                      if (response.status == "accepted") {
                             user.hidden = false;
-                            document.querySelector('#mail').innerHTML = `Mail: ${studentMail}`;
+                            document.querySelector('#mail').innerHTML = studentMail;
 
                             if (response.sessionStatus != 'sessionStarted') {
                                    nameStudent.innerHTML = `Bienvenue ${studentMail}`;
@@ -130,7 +133,6 @@ socket.on('connect', () => {
                             }                           
 
                      } else if (response.status == "doublons") {
-                            document.querySelector('#')
                             formulaireMail.innerHTML = "DOUBLONS";
                      }
               });

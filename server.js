@@ -64,6 +64,7 @@ io.on('connection', async function (client) { // Client socket connected
                      resetSession();
                      io.disconnectSockets();
                      client.emit('updateSessionStatus', getSession(false));
+                     io.to('student').emit('sessionUpdated', getSession().sessionStatus);
                      io.to('teacher').emit('teacherNotConnectedAnymore');
               });
 
@@ -75,6 +76,7 @@ io.on('connection', async function (client) { // Client socket connected
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     io.to('student').emit('sessionUpdated', getSession().sessionStatus);
                      client.emit('tempMessage',
                             {
                                    status: 'success',
@@ -244,6 +246,7 @@ io.on('connection', async function (client) { // Client socket connected
 
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
+
                             io.to('student').emit('capasse', {
                                    quizzTitle : getSession().quizzTitle,
                                    numberOfRegisteredStudents : getNumberOfRegisteredStudent(),
@@ -457,14 +460,4 @@ function getNumberOfAnswers() {
        return numberOfAnswers;
 }
 
-function getSessionUpdate() {
-       return {
-              numberOfRegisteredStudents: numberOfRegisteredStudents,
-              teacherMail: teacherMail,
-              quizzTitle: quizzTitle,
-       }
-}
-
-
 server.listen(8100);
-
