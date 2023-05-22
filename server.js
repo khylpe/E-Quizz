@@ -143,7 +143,7 @@ io.on('connection', async function (client) { // Client socket connected
                                                         message: "An error occured while getting the student answers"
                                                  });
                                    }
-                                   else {                                          
+                                   else {
                                           quizzResults.push({
                                                  question: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][0],
                                                  questionNumber: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][3],
@@ -237,16 +237,20 @@ io.on('connection', async function (client) { // Client socket connected
                      else {
                             client.join('student');
                             client.mail = studentMail;
-                                                       
-                            if (getSession(false).sessionStatus == "DisplayQuestions") {
+
+                            if (getSession().sessionStatus == "DisplayQuestions") {
                                    client.emit('sessionStarted');
                             }
 
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
-                            client.emit('test', getSessionUpdate());
-                            io.to('student').emit('capasse', {'quizzTitle': getSession().quizzTitle});
-                            
+                            io.to('student').emit('capasse', {
+                                   quizzTitle : getSession().quizzTitle,
+                                   numberOfRegisteredStudents : getNumberOfRegisteredStudent(),
+                                   teacherMail : getSession().teacher,
+                                   groupName : getSession().groupName,
+                            });
+
                             // io.to('student').emit('updateStudentList', getSession());
                             // client.emit // send all data
                             // io.to student // only list of students
@@ -285,7 +289,7 @@ io.on('connection', async function (client) { // Client socket connected
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
                             });
-                            callback({ status: "accepted", sessionStatus: getSession(false).sessionStatus })
+                            callback({ status: "accepted", sessionStatus: getSession().sessionStatus })
                      }
               });
 
@@ -351,7 +355,7 @@ function resetSession() {
        quizzQuestionsAndAnswers = null;
        questionNumber = 0;
        quizzResults = [];
-       quizzTime = 0;
+       quizzTime = null;
 }
 
 function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
@@ -453,11 +457,11 @@ function getNumberOfAnswers() {
        return numberOfAnswers;
 }
 
-function getSessionUpdate(){
-       return{
-       numberOfRegisteredStudents: numberOfRegisteredStudents,
-       teacherMail: teacherMail,
-       quizzTitle: quizzTitle,
+function getSessionUpdate() {
+       return {
+              numberOfRegisteredStudents: numberOfRegisteredStudents,
+              teacherMail: teacherMail,
+              quizzTitle: quizzTitle,
        }
 }
 

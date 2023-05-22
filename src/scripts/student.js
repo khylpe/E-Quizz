@@ -22,6 +22,7 @@ let modal = document.querySelector('#ModalDeconnexion');
 let logout = document.querySelector('#deco');
 let btnModalConfirmer = document.querySelector('#modalButtonConfirm');
 let user = document.querySelector('#user');
+let statusSessionWaitRoom = document.querySelector('#statusSessionWaitRoom');
 
 let studentMail = null;
 let answers = [];
@@ -38,8 +39,11 @@ socket.on('teacherNotConnected', () => {
 });
 
 socket.on('capasse', (data) => {
-       console.log("ça reçoit le signal ici");
-       console.log("le titre du quizz est : ", data.quizzTitle);
+       console.log("nom du quizz", data.quizzTitle);
+       console.log("nombre de personnes enregistrés : ", data.numberOfRegisteredStudents);
+       console.log("le nom du professeur est : ", data.teacherMail);
+       console.log("le nom du groupe est : ", data.groupName);
+       statusSessionWaitRoom.innerHTML = `Nom du quizz : ${data.quizzTitle}`
 });
 
 socket.on('test', (dat) => {
@@ -113,6 +117,7 @@ socket.on('connect', () => {
 
                             if (response.sessionStatus != 'sessionStarted') {
                                    nameStudent.innerHTML = `Bienvenue ${studentMail}`;
+                                   
                                    changeDivState('#waitTeacherConnect');
                                    if (response.sessionStatus === 'CreateSession') {
                                           waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
