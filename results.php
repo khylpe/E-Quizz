@@ -39,7 +39,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li class="mt-1">
                                                         <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
                                                  </li>
-                                                 
+
                                                  <li class="mt-1">
                                                         <a href="navigation.html"><button class="btn border border-light w-100 text-white">Page de navigation</button></a>
                                                  </li>
@@ -69,13 +69,15 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </nav>
        </div>
+
+       <!-- divider -->
        <hr class="container">
 
        <div id="tempMessage" role="alert">
        </div>
 
-       <div class="container-fluid d-flex justify-content-center flex-row">
-              <section id="sectionSelectQuizz" class="col-4 mt-5">
+       <section id="sectionSelectQuizzOrStudent" class="container-fluid d-flex justify-content-center flex-row">
+              <div class="col-4 mt-5">
                      <div class="container text-center">
                             <div class="row">
                                    <div class="">
@@ -128,9 +130,9 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    </div>
                             </div>
                      </div>
-              </section>
+              </div>
 
-              <section id="searchEngine" class="col-4 mt-5">
+              <div  class="col-4 mt-5">
                      <div class="row">
                             <div class="">
                                    <div class="card text-center">
@@ -147,14 +149,15 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                    </div>
                             </div>
                      </div>
-              </section>
-       </div>
+              </div>
+       </section>
 
        <section id="sectionDisplayResults" class="mt-5 mb-5">
               <div id="accordionResult" class="accordion container">
               </div>
        </section>
 
+       <!-- Button to scroll to the top of the page -->
        <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
               <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
        </div>

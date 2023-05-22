@@ -192,9 +192,7 @@ function refreshListeners(){
                      } else {
                             button.parentElement.remove();
                             Front.reindexQuestions();
-
-                     }
-                     
+                     }                     
               });
        });
 }

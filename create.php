@@ -111,6 +111,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </section>
 
+       <!-- Button to scroll to the top of the page -->
        <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
               <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
        </div>

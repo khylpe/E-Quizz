@@ -13,7 +13,7 @@ export default class FrontGlobal {
               }
 
               try {
-                     if(!document.querySelector(selector)){
+                     if (!document.querySelector(selector)) {
                             // Creating the div if it does not exist
                             console.error("The selector " + selector + " does not exist in the DOM, creating it.");
                             let tempMessageDiv = document.createElement('div');
@@ -25,24 +25,37 @@ export default class FrontGlobal {
                      }
 
                      let tempMessageDiv = document.querySelector(selector);
-                            tempMessageDiv.innerHTML = message;
-                            tempMessageDiv.classList = 'text-center container ' + type;
-                            tempMessageDiv.style.display = "block";
-                            setTimeout(() => {
-                                   tempMessageDiv.style.display = "none";
-                            }, 18000); 
+                     tempMessageDiv.innerHTML = message;
+                     tempMessageDiv.classList = 'text-center container ' + type;
+                     tempMessageDiv.style.display = "block";
+                     setTimeout(() => {
+                            tempMessageDiv.style.display = "none";
+                     }, 18000);
               }
-              catch(err){
+              catch (err) {
                      console.error(err);
-              }              
+              }
        }
 
-       setCurrentSection(elementToDisplay) {
-              document.querySelectorAll('section').forEach((section) => {
+       // This function will hide all the sections of the page, and then display the section given as argument.
+
+setCurrentSection(elementToDisplay) {
+       const sections = document.querySelectorAll('section');
+       if (sections) {
+              sections.forEach((section) => {
                      section.style.display = "none";
               });
-              document.querySelector(elementToDisplay).style.display = "block";
+
+              const element = document.querySelector(elementToDisplay);
+              if (element) {
+                     element.style.display = "block";
+              } else {
+                     console.error('Error in the setCurrentSection method : ', `Given element doesn't exist (${elementToDisplay})`);
+              }
+       } else {
+              console.error('Error in the setCurrentSection method : ', `There is no section in the DOM`);
        }
+}
 
        getCurrentSection() {
               return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188

@@ -70,10 +70,13 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </nav>
        </div>
+
+       <!-- divider -->
        <hr class="container">
 
        <div id="tempMessage" role="alert">
        </div>
+       
        <div class="d-flex flex-row justify-content-evenly" id="infosAndNumberAnswers">
               <div class="accordion-item text-center mt-5" id="sessionInfo">
                      <div class="">
