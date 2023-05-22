@@ -4,16 +4,18 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        die();
 }
 ?>
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
 <head>
        <meta charset="UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>Document</title>
+       <title>E-Quizz - Enseignant | Consultation des résultats</title>
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
+       <link rel="stylesheet" href="src/styles/main.css">
 </head>
 
 <body>
@@ -26,32 +28,39 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                           </button>
 
-                                          <ul class="user dropdown-menu dropdown-menu-start">
+                                          <ul class="pb-0 user dropdown-menu dropdown-menu-start">
                                                  <li class="dropdown-item disabled" id="mail"><?php echo $_SESSION['mail']; ?></li>
                                                  <li>
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
-                                                 </li>
-                                                 <li>
                                                         <a href="create.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
                                                  </li>
+                                                 <li class="mt-1">
+                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
+                                                 </li>
+                                                 
+                                                 <li class="mt-1">
+                                                        <a href="navigation.html"><button class="btn border border-light w-100 text-white">Page de navigation</button></a>
+                                                 </li>
+
                                                  <li class="mt-1" id="logout"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
                             </div>
                             <div class="navbar-nav col-6 justify-content-center">
                                    <div class="d-flex flex-column text-center">
-                                          <h1>
-                                                 <span class="text-info">E</span>
-                                                 <span class="">-</span>
-                                                 <span class="text-warning">Q</span>
-                                                 <span class="text-danger">U</span>
-                                                 <span class="text-success">I</span>
-                                                 <span class="text-primary">Z</span>
-                                                 <span class="text-info">Z</span>
-                                          </h1>
+                                          <a href="navigation.html" class="text-decoration-none">
+                                                 <h1>
+                                                        <span class="text-info">E</span>
+                                                        <span class="">-</span>
+                                                        <span class="text-warning">Q</span>
+                                                        <span class="text-danger">U</span>
+                                                        <span class="text-success">I</span>
+                                                        <span class="text-primary">Z</span>
+                                                        <span class="text-info">Z</span>
+                                                 </h1>
+                                          </a>
                                           <div>
                                                  <h5 class="text-light">Consultation des résultats</h5>
                                           </div>
@@ -145,6 +154,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div id="accordionResult" class="accordion container">
               </div>
        </section>
+
+       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
+              <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
+       </div>
 
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
               <i class="bi bi-heart-fill text-white"></i>

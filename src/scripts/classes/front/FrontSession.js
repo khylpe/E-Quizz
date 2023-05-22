@@ -87,9 +87,6 @@ export default class Teacher extends FrontGlobal {
                             answers.splice(index, 1);
                      }
               });
-
-              console.log('array of possible answers : ', answers);
-              console.log('length of array of possible answers : ', answers.length);
        
               document.querySelector(selectorForAnswers).innerHTML = "";
 
@@ -99,84 +96,26 @@ export default class Teacher extends FrontGlobal {
                      document.querySelector(selectorForQuestion).innerHTML = question + ` (${questionNumber}/${numberOfQuestions})`;
               }
 
-              let firstDiv = document.createElement('div');
-              firstDiv.classList = "d-flex flex-column";
-              document.querySelector(selectorForAnswers).appendChild(firstDiv);
 
-              let secondDiv = document.createElement('div');
-              secondDiv.classList = 'list-group d-flex flex-row justify-content-evenly align-items-center';
-              firstDiv.appendChild(secondDiv);
+              let divContainingAnswers = document.createElement('div');
+              divContainingAnswers.classList = "d-flex flex-column justify-content-center align-items-start";
+              document.querySelector(selectorForAnswers).appendChild(divContainingAnswers);
 
-              let firstAnswer = document.createElement('p');
-              firstAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
+              answers.forEach((answer, index) => {
+                     let answerP = document.createElement('p');
+                     answerP.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
 
-              let firstAnswerLetter = document.createElement('span');
-              firstAnswerLetter.classList = `text-primary`;
-              firstAnswerLetter.innerText = `A. `;
+                     let answerLetter = document.createElement('span');
+                     answerLetter.classList = `fs-1 text-info`;
+                     answerLetter.innerText = `${String.fromCharCode(65 + index)}. `;
+                     answerP.appendChild(answerLetter);
 
-              let firstAnswerSpan = document.createElement('span');
-              firstAnswerSpan.innerText = `${answers[0]}`;
-              firstAnswer.appendChild(firstAnswerSpan);
+                     let answerSpan = document.createElement('span');
+                     answerSpan.classList = `fs-1`;
+                     answerSpan.innerText = `${answer}`;
+                     answerP.appendChild(answerSpan);
 
-              firstAnswer.appendChild(firstAnswerLetter);
-              firstAnswer.appendChild(firstAnswerSpan);
-
-              secondDiv.appendChild(firstAnswer);
-
-              let secondAnswer = document.createElement('p');
-              secondAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-
-              let secondAnswerLetter = document.createElement('span');
-              secondAnswerLetter.classList = `text-primary`;
-              secondAnswerLetter.innerText = `B. `;
-
-              let secondAnswerSpan = document.createElement('span');
-              secondAnswerSpan.innerText = `${answers[1]}`;
-              secondAnswer.appendChild(secondAnswerSpan);
-
-              secondAnswer.appendChild(secondAnswerLetter);
-              secondAnswer.appendChild(secondAnswerSpan);
-
-              secondDiv.appendChild(secondAnswer);
-
-              if (answers.length > 2 && answers[2] != "") {
-                     let thirdDiv = document.createElement('div');
-                     thirdDiv.classList = 'list-group d-flex flex-row justify-content-evenly align-items-center';
-                     firstDiv.appendChild(thirdDiv);
-
-                     let thirdAnswer = document.createElement('p');
-                     thirdAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-
-
-                     let thirdAnswerLetter = document.createElement('span');
-                     thirdAnswerLetter.classList = `text-primary`;
-                     thirdAnswerLetter.innerText = `C. `;
-
-                     let thirdAnswerSpan = document.createElement('span');
-                     thirdAnswerSpan.innerText = `${answers[2]}`;
-                     thirdAnswer.appendChild(thirdAnswerSpan);
-
-                     thirdAnswer.appendChild(thirdAnswerLetter);
-                     thirdAnswer.appendChild(thirdAnswerSpan);
-
-                     thirdDiv.appendChild(thirdAnswer);
-                     if (answers.length == 4 && answers[3] != "") {
-                            let fourthAnswer = document.createElement('p');
-                            fourthAnswer.classList = 'list-group-item border rounded-end rounded-start border-primary-subtle';
-
-                            let fourthAnswerLetter = document.createElement('span');
-                            fourthAnswerLetter.classList = `text-primary`;
-                            fourthAnswerLetter.innerText = `D. `;
-
-                            let fourthAnswerSpan = document.createElement('span');
-                            fourthAnswerSpan.innerText = `${answers[3]}`;
-                            fourthAnswer.appendChild(fourthAnswerSpan);
-
-                            fourthAnswer.appendChild(fourthAnswerLetter);
-                            fourthAnswer.appendChild(fourthAnswerSpan);
-
-                            thirdDiv.appendChild(fourthAnswer);
-                     }
-              }
+                     divContainingAnswers.appendChild(answerP);
+              });              
        }
 }

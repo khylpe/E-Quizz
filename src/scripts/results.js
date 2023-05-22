@@ -76,9 +76,11 @@ Back.fetchQuizzList().then(array => {
        }
 });
 
-document.querySelector('#submitSeeResults').addEventListener('click', (e) => {
+document.querySelector('#submitSeeResults').addEventListener('click', async (e) => {
        e.preventDefault();
-       test(false)
+       await getResulstsAndDisplaySeletedQuizz(false);
+       Front.scrollToLocation('#sectionDisplayResults');
+
 });
 
 document.querySelector('#studentMail').addEventListener('input', async (e) => {
@@ -100,7 +102,7 @@ document.querySelector('#seeResultsByStudentForm').addEventListener('submit', (e
 
 document.querySelector('#exportAsCSV').addEventListener('click', (e) => {
        e.preventDefault();
-       test(true)
+       getResulstsAndDisplaySeletedQuizz(true)
 })
 
 function jsonToCsv(jsonData) {
@@ -143,20 +145,20 @@ function downloadCsv(csvData, fileName) {
 }
 
 
-function test(csv) {
+async function getResulstsAndDisplaySeletedQuizz(isForCSVFormat) {
        let arrayToSend = [];
 
        Back.setQuizzName(document.querySelector('#quizzSelected').innerHTML);
        Back.setGroupName(document.querySelector('#groupSelected').innerHTML);
        Back.setQuizzTime(document.querySelector('#dateSelected').innerHTML);
 
-       Back.fetchQuestionsAndAnswers()
-              .then(questionsReturned => {
+       await Back.fetchQuestionsAndAnswers()
+              .then(async (questionsReturned) => {
                      if (questionsReturned[0] == "error") {
                             Front.tempMessage('error', questionsReturned[1], '#tempMessage');
                      }
                      else if (questionsReturned[0] == "success" && questionsReturned[1].length > 0) {
-                            Back.fetchQuizzResults().then(resultsReturned => {
+                            await Back.fetchQuizzResults().then(resultsReturned => {
                                    const arr = Object.values(resultsReturned[1]);
 
                                    if (resultsReturned[0] == "error") {
@@ -174,7 +176,7 @@ function test(csv) {
                                                  });
                                                  arrayToSend.push({ 'question': question[0], 'questionNumber': question[3], 'answers': answers });
                                           });
-                                          if (csv) {
+                                          if (isForCSVFormat) {
                                                  downloadCsv(jsonToCsv(arrayToSend), `${document.querySelector('#quizzSelected').innerHTML}_${document.querySelector('#groupSelected').innerHTML}_${document.querySelector('#dateSelected').innerHTML}.csv`);
                                           } else {
                                                  Front.displayResults(arrayToSend, '#accordionResult');

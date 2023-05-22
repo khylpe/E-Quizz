@@ -36,9 +36,13 @@ document.querySelector('#addQuestion').addEventListener('click', (e) => {
        let correctAnswers = [];
        Front.addQuestion(questionNumber, question, answers, correctAnswers, "#dataCreateQuizz");
        saveQuizz(false);
-       refreshListeners();
+       refreshListeners();             
 });
 
+document.querySelector('#scrollButton').addEventListener('click', (e) => {
+       e.preventDefault();
+       Front.scrollToLocation('#createQuizz');
+});
 
 function saveQuizz(isQuizzFinished) {
        let finalQuestionsAndAnswers = [];

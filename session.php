@@ -13,10 +13,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <meta charset="UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>E-Quizz - Enseignant</title>
+       <title>E-Quizz - Enseignant | Session d'évalutaion</title>
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-       <link rel="stylesheet" href="src/styles/teacher.css">
+       <link rel="stylesheet" href="src/styles/session.css">
 </head>
 
 <body>
@@ -29,32 +29,39 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                           <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                           </button>
 
-                                          <ul class="user dropdown-menu dropdown-menu-start">
+                                          <ul class="pb-0 user dropdown-menu dropdown-menu-start">
                                                  <li class="dropdown-item disabled" id="mail"><?php echo $_SESSION['mail']; ?></li>
                                                  <li>
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats des Quizz</button></a>
-                                                 </li>
-                                                 <li>
                                                         <a href="create.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
                                                  </li>
+                                                 <li class="mt-1">
+                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats des QCM</button></a>
+                                                 </li>
+                                                 
+                                                 <li class="mt-1">
+                                                        <a href="navigation.html"><button class="btn border border-light w-100 text-white">Page de navigation</button></a>
+                                                 </li>
+
                                                  <li class="mt-1" id="logout"><a href="src/php/logout.php"><button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right"></i></button></a></li>
                                           </ul>
                                    </div>
                             </div>
                             <div class="navbar-nav col-6 justify-content-center">
                                    <div class="d-flex flex-column text-center">
-                                          <h1>
-                                                 <span class="text-info">E</span>
-                                                 <span class="">-</span>
-                                                 <span class="text-warning">Q</span>
-                                                 <span class="text-danger">U</span>
-                                                 <span class="text-success">I</span>
-                                                 <span class="text-primary">Z</span>
-                                                 <span class="text-info">Z</span>
-                                          </h1>
+                                          <a href="navigation.html" class="text-decoration-none">
+                                                 <h1>
+                                                        <span class="text-info">E</span>
+                                                        <span class="">-</span>
+                                                        <span class="text-warning">Q</span>
+                                                        <span class="text-danger">U</span>
+                                                        <span class="text-success">I</span>
+                                                        <span class="text-primary">Z</span>
+                                                        <span class="text-info">Z</span>
+                                                 </h1>
+                                          </a>
                                           <div>
                                                  <h5 class="text-light">Session d'évalutation</h5>
                                           </div>
@@ -175,13 +182,13 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <section id="sectionDisplayQuestions">
               <div class="container col-8 mt-5" id="displayQuestions">
                      <div class="card text-center list-group">
-                            <h5 class="card-header list-group-item list-group-item-primary border border-primary-subtle" id="question"></h5>
-                            <div class="card-body" id="possibleAnswers">
+                            <span class="card-header list-group-item list-group-item-primary border text-info fs-1" id="question"></span>
+                            <div class="card-body d-flex justify-content-center" id="possibleAnswers">
                             </div>
                      </div>
 
                      <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-primary" id="nextQuestion">Question suivante</button>
+                            <button type="submit" class="btn btn-primary mb-5" id="nextQuestion">Question suivante</button>
                             <button type="submit" class="btn btn-success" id="seeResult">Accéder aux résultats</button>
                      </div>
 
