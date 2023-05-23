@@ -103,7 +103,12 @@ document.querySelector('#seeResultsByStudentForm').addEventListener('submit', (e
 document.querySelector('#exportAsCSV').addEventListener('click', (e) => {
        e.preventDefault();
        getResulstsAndDisplaySeletedQuizz(true)
-})
+});
+
+document.querySelector('#scrollButton').addEventListener('click', (e) => {
+       e.preventDefault();
+       Front.scrollToLocation('#sectionSelectQuizzOrStudent');
+});
 
 function jsonToCsv(jsonData) {
        let header = "Eleves";

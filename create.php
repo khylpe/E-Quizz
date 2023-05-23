@@ -42,10 +42,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
+                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Évaluer</button></a>
                                                  </li>
                                                  <li class="mt-1">
-                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats des QCM</button></a>
+                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats</button></a>
                                                  </li>
                                                  
                                                  <li class="mt-1">
@@ -99,7 +99,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div class="accordion mt-5" id="dataCreateQuizz">
               </div>
               <div>
-                     <button id="confirmQuizzButton" class="btn btn-success mt-5 mb-5">Enregistrer le QCM</button>
+                     <button id="confirmQuizzButton" class="z-100 btn btn-success mt-5 mb-5">Enregistrer le QCM</button>
               </div>
        </section>
 
@@ -112,11 +112,11 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        </section>
 
        <!-- Button to scroll to the top of the page -->
-       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
+       <div class="z-1 container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
               <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
        </div>
 
-       <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
+       <div class="z-1 container-fluid d-flex flex-row-reverse fixed-bottom">
               <i class="bi bi-heart-fill text-white"></i>
        </div>
 

@@ -39,26 +39,32 @@ export default class FrontGlobal {
 
        // This function will hide all the sections of the page, and then display the section given as argument.
 
-setCurrentSection(elementToDisplay) {
-       const sections = document.querySelectorAll('section');
-       if (sections) {
-              sections.forEach((section) => {
-                     section.style.display = "none";
-              });
+       setCurrentSection(elementToDisplay) {
+              const sections = document.querySelectorAll('section');
+              if (sections) {
+                     sections.forEach((section) => {
+                            section.style.display = "none";
+                     });
 
-              const element = document.querySelector(elementToDisplay);
-              if (element) {
-                     element.style.display = "block";
+                     const element = document.querySelector(elementToDisplay);
+                     if (element) {
+                            element.style.display = "block";
+                     } else {
+                            console.error('Error in the setCurrentSection method : ', `Given element doesn't exist (${elementToDisplay})`);
+                     }
               } else {
-                     console.error('Error in the setCurrentSection method : ', `Given element doesn't exist (${elementToDisplay})`);
+                     console.error('Error in the setCurrentSection method : ', `There is no section in the DOM`);
               }
-       } else {
-              console.error('Error in the setCurrentSection method : ', `There is no section in the DOM`);
        }
-}
 
        getCurrentSection() {
-              return document.querySelector('section:not([style*="display: none"])'); // https://stackoverflow.com/a/39813096/19601188
+              const sections = document.querySelectorAll('section'); // https://stackoverflow.com/a/39813096/19601188
+              for (const section of sections) {
+                     if (section.style.display !== 'none') {
+                            return section;
+                     }
+              }
+              throw new Error('No visible section found');
        }
 
        displayQuizzList(data, selector) { /* [0] = error or success, [1] = quizzListTitles[] || error message */
@@ -344,8 +350,24 @@ setCurrentSection(elementToDisplay) {
               })
        }
 
+       // Scrolls to a location on the page, given a selector.
+       //selector: A CSS selector for the element to scroll to
+       // If no element is found, prints an error to the console.
+
        scrollToLocation(selector) {
-              let element = document.querySelector(selector);
-              element.scrollIntoView();
+              try {
+                     let element = document.querySelector(selector);
+                     if (element) {
+                            element.scrollIntoView({
+                                   behavior: "smooth",
+                                   block: "start",
+                                   inline: "nearest"
+                            });
+                     } else {
+                            console.error(`Could not find ${selector}`);
+                     }
+              } catch (error) {
+                     console.error(`Could not scroll to ${selector}: ${error}`);
+              }
        }
 }

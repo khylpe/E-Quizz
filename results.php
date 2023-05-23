@@ -34,10 +34,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="create.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
+                                                        <a href="create.php"><button class="btn border border-info w-100 text-info">Créer QCM</button></a>
                                                  </li>
                                                  <li class="mt-1">
-                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Démarrer une session</button></a>
+                                                        <a href="session.php"><button class="btn border border-info w-100 text-info">Évaluer</button></a>
                                                  </li>
 
                                                  <li class="mt-1">
@@ -158,8 +158,8 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        </section>
 
        <!-- Button to scroll to the top of the page -->
-       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5">
-              <i id="scrollButton" class="bi bi-arrow-up-square-fill" style="font-size: 3rem; color: white;"></i>
+       <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5 position-relative">
+              <i id="scrollButton" class="bi bi-arrow-up-square-fill z-100 position-relative" style="font-size: 3rem; color: white;"></i>
        </div>
 
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">

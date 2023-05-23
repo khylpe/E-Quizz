@@ -31,7 +31,7 @@ if (isset($_SESSION['sessionStatus']) && $_SESSION['sessionStatus'] == 'connecte
                             </h1>
                      </a>
                      <div>
-                            <h5 class="text-light">Connexion</h5>
+                            <h5 class="text-light">Accueil</h5>
                      </div>
               </div>
        </div>

@@ -35,10 +35,10 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li>
-                                                        <a href="create.php"><button class="btn border border-info w-100 text-info">Créer un QCM</button></a>
+                                                        <a href="create.php"><button class="btn border border-info w-100 text-info">Créer QCM</button></a>
                                                  </li>
                                                  <li class="mt-1">
-                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats des QCM</button></a>
+                                                        <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats</button></a>
                                                  </li>
                                                  
                                                  <li class="mt-1">
@@ -63,7 +63,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  </h1>
                                           </a>
                                           <div>
-                                                 <h5 class="text-light">Session d'évalutation</h5>
+                                                 <h5 class="text-light">Session d'évaluation</h5>
                                           </div>
                                    </div>
                             </div>

@@ -128,7 +128,7 @@ export default class FrontCreate extends FrontGlobal {
 
               if (!document.querySelector('#addQuestion')) {
                      let buttonAddQuestion = document.createElement('button');
-                     buttonAddQuestion.classList.add('btn', 'btn-info', 'mt-5');
+                     buttonAddQuestion.classList.add('btn', 'btn-info', 'mt-5', 'z-100');
                      buttonAddQuestion.id = 'addQuestion';
                      let icon = document.createElement('i');
                      icon.classList.add('bi', 'bi-plus-circle-dotted');
