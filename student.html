@@ -16,9 +16,13 @@
                             <div class="d-flex col-3 justify-content-start">
                                    <div id="user" class="btn-group">
                                           <button class="btn btn-outline-light">
-                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person d-flex align-item-center justify-content-center" viewBox="0 0 16 16">
-                                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-                                                      </svg>
+                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor"
+                                                        class="bi bi-person d-flex align-item-center justify-content-center"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                               d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
+                                                 </svg>
                                           </button>
                                           <button type="button"
                                                  class="btn btn-outline-light dropdown-toggle dropdown-toggle-split"
@@ -150,14 +154,22 @@
                             </div>
 
                             <div class="part" id="waitTeacherConnect">
-                                   <h2><span class="badge bg-secondary" id="nameStudent"></span></h2>
-                                   <h3 id="waiting"></h3>
-
+                                   <div class="alert alert-info" role="alert">
+                                          <div class="alert alert-info" role="alert">
+                                                 <h4 id="waiting"></h4>
+                                                 
+                                          </div>
+                                          <h4 id="nameStudent"></h4>
+                                   </div>
                                    <div class="accordion flex-row justify-content-evenly d-flex" id="accordionExample">
                                           <div class="accordion-item text-center mt-5" style="display: block;">
                                                  <h2 class="accordion-header">
-                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                               <h5 class="card-header w-100 text-center">Informations de la session</h5>
+                                                        <button class="accordion-button collapsed" type="button"
+                                                               data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                               aria-expanded="false" aria-controls="collapseOne">
+                                                               <h5 class="card-header w-100 text-center">Informations de
+                                                                      la session</h5>
+
                                                         </button>
                                                  </h2>
                                                  <div id="collapseOne" class="accordion-collapse collapse"
