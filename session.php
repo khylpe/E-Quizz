@@ -115,6 +115,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </div>
 
+       <!-- Default section, used to create the session (quizz and group) -->
        <section id="sectionCreateSession">
               <div class="container text-center mt-5" id="createSession">
                      <div class="row">
@@ -157,6 +158,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </section>
 
+       <!-- when session is created, we are waiting for everyone to register before starting the quizz -->
        <section id="sectionSessionStatus">
               <div class="container mt-5" id="sessionStatus">
                      <div class="row">
@@ -182,6 +184,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </section>
 
+       <!-- session is started, here we display questions and possible answers -->
        <section id="sectionDisplayQuestions">
               <div class="container col-8 mt-5" id="displayQuestions">
                      <div class="card text-center list-group">
@@ -197,6 +200,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        </section>
 
+       <!-- session is finished, we display results -->
        <section id="sectionDisplayResults">
               <div class="container col-8 mt-5">
                      <div class="accordion" id="accordionForResults">
@@ -206,6 +210,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                      </div>
               </div>
        </section>
+
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
               <i class="bi bi-heart-fill text-white"></i>
        </div>

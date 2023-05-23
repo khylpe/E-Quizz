@@ -76,6 +76,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <div id="tempMessage" role="alert">
        </div>
 
+       <!-- Select quizz or student to see results -->
        <section id="sectionSelectQuizzOrStudent" class="container-fluid d-flex justify-content-center flex-row">
               <div class="col-4 mt-5">
                      <div class="container text-center">
@@ -152,6 +153,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
        </section>
 
+       <!-- displaying results -->
        <section id="sectionDisplayResults" class="mt-5 mb-5">
               <div id="accordionResult" class="accordion container">
               </div>

@@ -27,11 +27,11 @@ export default class BackCreate extends BackGlobal {
                      body: JSON.stringify({ mail: this.mail, quizzTitle: quizzName, questionsAndAnswers: questionsAndAnswers, quizzNumber : quizzNumber })
               })
                      .then(result => result.json())
-                     .then(array => {
-                            return Array(array[0], array[1]);
+                     .then(typeAndMessage => { // typeAndMessage = [type, message] // type = 'success' or 'error'
+                            return typeAndMessage;
                      })
-                     .catch(err => {
-                            return Array('error', err);
+                     .catch(errValue => {
+                            return Array('error', errValue);
                      });
        }
 
