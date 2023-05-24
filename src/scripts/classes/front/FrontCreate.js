@@ -125,21 +125,6 @@ export default class FrontCreate extends FrontGlobal {
 
               divWithQuestionAndDeleteButton.appendChild(buttonDeleteQuestion);
               document.querySelector(selector).appendChild(divWithQuestionAndDeleteButton);
-
-              if (!document.querySelector('#addQuestion')) {
-                     let buttonAddQuestion = document.createElement('button');
-                     buttonAddQuestion.classList.add('btn', 'btn-info', 'mt-5', 'z-100');
-                     buttonAddQuestion.id = 'addQuestion';
-                     let icon = document.createElement('i');
-                     icon.classList.add('bi', 'bi-plus-circle-dotted');
-                     let span = document.createElement('span');
-                     span.classList.add('ms-3');
-                     span.textContent = 'Ajouter une question au QCM';
-                     icon.appendChild(span);
-                     buttonAddQuestion.appendChild(icon);
-
-                     document.querySelector(selector).insertAdjacentElement('afterend', buttonAddQuestion);
-              }
        }
 
        reindexQuestions() {

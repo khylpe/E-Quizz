@@ -17,26 +17,14 @@ document.querySelector('#confirmQuizzButton').addEventListener('click', (e) => {
        saveQuizz(true);
 });
 
-document.querySelectorAll('input').forEach((input) => {
-       input.addEventListener('change', (e) => {
-              alterSaveStatus("not saved", '#saveStatus');
-       });
-});
-
-document.querySelectorAll('input').forEach((input) => {
-       input.addEventListener('input', (e) => {
-              alterSaveStatus("not saved", '#saveStatus');
-       });
-});
-
 document.querySelector('#addQuestion').addEventListener('click', (e) => {
        let questionNumber = document.querySelectorAll('.accordion-item').length + 1;
        let question = '';
        let answers = ['', '', '', ''];
        let correctAnswers = [];
        Front.addQuestion(questionNumber, question, answers, correctAnswers, "#dataCreateQuizz");
-       saveQuizz(false);
-       refreshListeners();             
+       alterSaveStatus("not saved", '#saveStatus');
+       refreshListeners();
 });
 
 document.querySelector('#scrollButton').addEventListener('click', (e) => {
@@ -44,7 +32,12 @@ document.querySelector('#scrollButton').addEventListener('click', (e) => {
        Front.scrollToLocation('#createQuizz');
 });
 
-function saveQuizz(isQuizzFinished) {
+document.querySelector('#leaveQuizzCreation').addEventListener('click', (e) => {
+       e.preventDefault();
+       window.location.href = "/navigation.html";
+});
+
+function saveQuizz() {
        let finalQuestionsAndAnswers = [];
        let numberOfPossibleAnswers = 0;
        let allQuestionsAndAnswers = document.querySelectorAll('.questions');
@@ -58,77 +51,76 @@ function saveQuizz(isQuizzFinished) {
 
               let questionValue = document.querySelector('#' + allQuestionsAndAnswersID + ' input[type="text"]').value;
 
-              if (isQuizzFinished || (!isQuizzFinished && index + 1 != allQuestionsAndAnswers.length)) {
-                     allPossibleAnswersForThisQuestion.forEach((element) => {
-                            if (element.value != "")
-                                   numberOfPossibleAnswers++;
-                     });
+              allPossibleAnswersForThisQuestion.forEach((element) => {
+                     if (element.value != "")
+                            numberOfPossibleAnswers++;
+              });
 
-                     if (document.querySelector('#quizzTitle').value == '') {
-                            isQuizzValid = false;
-                            Front.tempMessage("error", "Veuillez saisir un titre à votre quizz", "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return;
-                     }
+              if (document.querySelector('#quizzTitle').value == '') {
+                     isQuizzValid = false;
+                     Front.tempMessage("error", "Veuillez saisir un titre à votre quizz", "#tempMessage");
+                     alterSaveStatus("not saved", '#saveStatus');
+                     return;
+              }
 
-                     // if there is less than 2 possible answers, we don't save the quizz
-                     if (numberOfPossibleAnswers < 2) {
-                            isQuizzValid = false;
-                            Front.tempMessage("error", `Veuillez saisir au moins 2 réponses possibles à la question n°${index + 1}`, "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return;
-                     }
+              // if there is less than 2 possible answers, we don't save the quizz
+              if (numberOfPossibleAnswers < 2) {
+                     isQuizzValid = false;
+                     Front.tempMessage("error", `Veuillez saisir au moins 2 réponses possibles à la question n°${index + 1}`, "#tempMessage");
+                     alterSaveStatus("not saved", '#saveStatus');
+                     return;
+              }
 
-                     if (questionValue == '') {
-                            isQuizzValid = false;
-                            Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return
-                     }
-                     // if there is no correct answer, we don't save the quizz
-                     if (document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]:checked`).length == 0) {
-                            isQuizzValid = false;
-                            console.log(document.querySelectorAll(`#${allQuestionsAndAnswersID}`));
-                            Front.tempMessage("error", `Veuillez sélectionner au moins une bonne réponse à la question n°${index + 1}`, "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return;
-                     }
+              if (questionValue == '') {
+                     isQuizzValid = false;
+                     Front.tempMessage("warning", `Veuillez remplir l'intitulé de la question n°${index + 1}`, "#tempMessage");
+                     alterSaveStatus("not saved", '#saveStatus');
+                     return
+              }
+              // if there is no correct answer, we don't save the quizz
+              if (document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]:checked`).length == 0) {
+                     isQuizzValid = false;
+                     console.log(document.querySelectorAll(`#${allQuestionsAndAnswersID}`));
+                     Front.tempMessage("error", `Veuillez sélectionner au moins une bonne réponse à la question n°${index + 1}`, "#tempMessage");
+                     alterSaveStatus("not saved", '#saveStatus');
+                     return;
+              }
 
-                     // if the corret answer is empty, we don't save the quizz
-                     let isThereAnEmptyCorrectAnswer = false;
-                     document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]`).forEach((element, indexOfCorrectAnswer) => {
+              // if the corret answer is empty, we don't save the quizz
+              let isThereAnEmptyCorrectAnswer = false;
+              document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]`).forEach((element, indexOfCorrectAnswer) => {
+                     let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
+                     let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
+
+                     console.log('valueOfTheCorrectAnswer', valueOfTheCorrectAnswer);
+                     console.log(indexOfCorrectAnswer)
+                     if (valueOfTheCorrectAnswer == '' && element.checked) {
+                            isThereAnEmptyCorrectAnswer = true;
+                     }
+              });
+
+              if (isThereAnEmptyCorrectAnswer) {
+                     isQuizzValid = false;
+                     Front.tempMessage("error", `Veuillez remplir les réponses correctes à la question n°${index + 1}`, "#tempMessage");
+                     alterSaveStatus("not saved", '#saveStatus');
+                     return;
+              }
+
+              let questAndAns = { question: questionValue, answers: [], correctAnswers: [] };
+
+              allPossibleAnswersForThisQuestion.forEach((element) => {
+                     questAndAns.answers.push(element.value);
+              });
+
+              allCorrectAnswersForThisQuestion.forEach((element, indexOfCorrectAnswer) => {
+                     if (element.checked) {
                             let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
                             let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
-                            
-                            console.log('valueOfTheCorrectAnswer', valueOfTheCorrectAnswer);
-                            console.log(indexOfCorrectAnswer)
-                            if (valueOfTheCorrectAnswer == '' && element.checked) {
-                                   isThereAnEmptyCorrectAnswer = true;
-                            }
-                     });
-
-                     if (isThereAnEmptyCorrectAnswer) {
-                            isQuizzValid = false;
-                            Front.tempMessage("error", `Veuillez remplir les réponses correctes à la question n°${index + 1}`, "#tempMessage");
-                            alterSaveStatus("not saved", '#saveStatus');
-                            return;
+                            questAndAns.correctAnswers.push(valueOfTheCorrectAnswer);
                      }
+              });
+              finalQuestionsAndAnswers.push(questAndAns);
 
-                     let questAndAns = { question: questionValue, answers: [], correctAnswers: [] };
-
-                     allPossibleAnswersForThisQuestion.forEach((element) => {
-                            questAndAns.answers.push(element.value);
-                     });
-
-                     allCorrectAnswersForThisQuestion.forEach((element, indexOfCorrectAnswer) => {
-                            if (element.checked) {
-                                   let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
-                                   let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
-                                   questAndAns.correctAnswers.push(valueOfTheCorrectAnswer);
-                            }
-                     });
-                     finalQuestionsAndAnswers.push(questAndAns);
-              }
        });
 
        if (!isQuizzValid) return;
@@ -142,11 +134,7 @@ function saveQuizz(isQuizzFinished) {
                                           Back.createQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
                                    });
                                    Front.tempMessage("success", "Quizz créé", "#tempMessage");
-                                   alterSaveStatus("saved", '#saveStatus');
-
-                                   if (isQuizzFinished) {
-                                          Front.setCurrentSection("#quizzCreated");
-                                   }
+                                   alterSaveStatus("saved", '#saveStatus');                                   
                             } else {
                                    Front.tempMessage("error", "Quizz non sauvegardé : " + response[1], "#tempMessage");
                                    alterSaveStatus("not saved", '#saveStatus');
@@ -160,10 +148,6 @@ function saveQuizz(isQuizzFinished) {
               Back.modifyQuizz(document.querySelector('#quizzTitle').value, finalQuestionsAndAnswers, quizzNumber)
               Front.tempMessage("success", "Quizz sauvegardé", "#tempMessage");
               alterSaveStatus("saved", '#saveStatus');
-
-              if (isQuizzFinished) {
-                    // Front.setCurrentSection("#quizzCreated");
-              }
        }
 }
 
@@ -177,7 +161,7 @@ function alterSaveStatus(status, selector) {
        }
 }
 
-function refreshListeners(){
+function refreshListeners() { // this code in addQuestion so that the listeners are added to the new questions
        let deleteButtons = document.querySelectorAll('button[name="deleteQuestion"]')
 
        deleteButtons.forEach((button, i) => {
@@ -185,14 +169,26 @@ function refreshListeners(){
                      e.preventDefault();
                      let temp = document.querySelectorAll('button[name="deleteQuestion"]')
 
-       
+
                      if (temp.length <= 1) {
                             Front.tempMessage("error", "Vous ne pouvez pas supprimer la dernière question", "#tempMessage");
                             return;
                      } else {
                             button.parentElement.remove();
                             Front.reindexQuestions();
-                     }                     
+                     }
+              });
+       });
+
+       document.querySelectorAll('input').forEach((input) => {
+              input.addEventListener('change', (e) => {
+                     alterSaveStatus("not saved", '#saveStatus');
+              });
+       });
+       
+       document.querySelectorAll('input').forEach((input) => {
+              input.addEventListener('input', (e) => {
+                     alterSaveStatus("not saved", '#saveStatus');
               });
        });
 }

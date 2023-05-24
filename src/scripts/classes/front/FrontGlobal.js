@@ -28,6 +28,7 @@ export default class FrontGlobal {
                      tempMessageDiv.innerHTML = message;
                      tempMessageDiv.classList = 'text-center container ' + type;
                      tempMessageDiv.style.display = "block";
+                     this.scrollToLocation(selector);
                      setTimeout(() => {
                             tempMessageDiv.style.display = "none";
                      }, 18000);

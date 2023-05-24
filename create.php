@@ -47,7 +47,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li class="mt-1">
                                                         <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats</button></a>
                                                  </li>
-                                                 
+
                                                  <li class="mt-1">
                                                         <a href="navigation.html"><button class="btn border border-light w-100 text-white">Page de navigation</button></a>
                                                  </li>
@@ -78,7 +78,6 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
                             <div class="d-flex col-3 justify-content-end">
                                    <i id="saveStatus" class="bi bi-cloud-arrow-up" style="font-size: 4rem;"></i>
-
                             </div>
                      </div>
               </nav>
@@ -98,16 +97,13 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               </div>
               <div class="accordion mt-5" id="dataCreateQuizz">
               </div>
-              <div>
+              <div class="d-flex flex-row justify-content-evenly align-items-center">
+                     <button class="btn btn-info z-100" id="addQuestion"><i class="bi bi-plus-circle-dotted"><span class="ms-3">Ajouter une question au QCM</span></i></button>
                      <button id="confirmQuizzButton" class="z-100 btn btn-success mt-5 mb-5">Enregistrer le QCM</button>
               </div>
-       </section>
 
-       <!-- Section to display when the quizz is finished -->
-       <section class="container text-center" id="quizzCreated">
-              <div class="col-6 text-center offset-3">
-                     <h1 class="mt-5">Votre QCM a bien été créé !</h1>
-                     <a href="session.php"><button class="btn btn-primary mt-5">Démarer une session</button></a>
+              <div class="d-flex justify-content-center">
+                     <button id="leaveQuizzCreation" class="z-100 btn btn-warning mt-5 mb-5">Quitter</button>
               </div>
        </section>
 
