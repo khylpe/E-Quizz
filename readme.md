@@ -1,9 +1,8 @@
 # E-Quizz Web Server
 This branch is about the web server and the technologies we are using.
 ## Tech Stack
-**Client:** HTML, CSS, Bootstrap, JavaScript, Socket.io
+HTML, CSS (SCSS), Bootstrap, Bootstrap-icons, JavaScript, Fetch API, Socket.io, PHP, SQL, MySQL
 
-**Server:** PHP, SQL, Fetch API
 ## Versions
 ![Apache version](https://img.shields.io/badge/Apache-2.4.54-purple)
 ![PHP version](https://img.shields.io/badge/PHP-8.1.10-blue)
