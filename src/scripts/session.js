@@ -1,10 +1,7 @@
 /* Description: This file contains the javascript code for the teacher page */
 document.querySelector('#studentList').style.minHeight = document.querySelector('#numberOfConnectedStudents').offsetHeight + "px";
-document.querySelector('#sectionSessionStatus').style.display = "none";
-document.querySelector('#tempMessage').style.display = "none";
 document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
 document.querySelector('#infosAndNumberAnswers').style.display = "none";
-document.querySelector('#sectionDisplayQuestions').style.display = "none";
 document.querySelector('#seeResult').style.display = "none";
 document.querySelector('#leaveSession').style.display = "none";
 
@@ -13,6 +10,8 @@ import FrontSession from "./classes/front/FrontSession.js";
 
 const Back = new BackSession(document.querySelector('#mail').innerText);
 const Front = new FrontSession();
+
+Front.setCurrentSection('#connectionError');
 
 let socketIO = io('http://192.168.0.254:8100', {
        transports:
@@ -26,8 +25,8 @@ socketIO.on('connect', () => {
        /* if checkSession event returns anotherTeacherConnected event, all events are being removed */
        socketIO.emit('checkSession', Back.mail, async (response) => {
               if (response == 'anotherTeacherConnected') {
-                     Front.tempMessage('error', `Un autre professeur est connecté. <br>`, '#tempMessage');
-                     Front.setCurrentSection('#sectionCreateSession');
+                     Front.setCurrentSection('#connectionError');
+                     document.querySelector('#errorMessage').innerHTML = "Un autre enseignant est connecté, veuillez patienter";
                      disableCreateSessionButton();
 
                      socketIO.on('teacherNotConnectedAnymore', (data) => {
@@ -36,7 +35,7 @@ socketIO.on('connect', () => {
                      });
               }
               else if (response == "connectionAuthorized") {
-
+                     Front.setCurrentSection('#sectionCreateSession');
                      await Back.fetchQuizzList()
                             .then(value => {     /*     [0] = success || error,                  
                                                         [1] = quizzListTitles[] || error message
@@ -124,6 +123,40 @@ socketIO.on('tempMessage', (data) => {
        Front.tempMessage(data.status, data.message, '#tempMessage');
 });
 
+socketIO.on('disconnect', () => {
+       socketIO.emit('resetSession');
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = "Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter...</span>";
+});
+
+socketIO.io.on("error", (error) => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+});
+
+socketIO.on("connect_error", (error) => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+     });
+socketIO.io.on("reconnect", (attempt) => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
+});
+
+socketIO.io.on("reconnect_attempt", (attempt) => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
+});
+
+socketIO.io.on("reconnect_error", (error) => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+});
+
+socketIO.io.on("reconnect_failed", () => {
+       Front.setCurrentSection('#connectionError');
+       document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI`;
+});
 //////////////////////////////////////////////////////////////////////////////
 
 document.querySelector('#logout').addEventListener('click', () => {
@@ -203,6 +236,10 @@ document.querySelector('#leaveSession').addEventListener('click', (e) => {
        socketIO.emit('resetSession');
        Front.setCurrentSection('#sectionCreateSession');
        window.location.replace('navigation.html');
+});
+
+document.querySelector('#refreshPage').addEventListener('click', (e) => {
+       window.location.reload();
 });
 
 function disableCreateSessionButton() {

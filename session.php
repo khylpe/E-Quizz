@@ -16,6 +16,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
        <title>E-Quizz - Enseignant | Session d'évalutaion</title>
        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+       <link rel="stylesheet" href="src/styles/main.css">
        <link rel="stylesheet" href="src/styles/session.css">
 </head>
 
@@ -40,7 +41,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                                                  <li class="mt-1">
                                                         <a href="results.php"><button class="btn border border-info w-100 text-info">Résultats</button></a>
                                                  </li>
-                                                 
+
                                                  <li class="mt-1">
                                                         <a href="navigation.html"><button class="btn border border-light w-100 text-white">Page de navigation</button></a>
                                                  </li>
@@ -76,7 +77,26 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <div id="tempMessage" role="alert">
        </div>
-       
+
+       <!-- section to display when there is somehting wrong -->
+       <section id="connectionError" class="container">
+              <div class="row">
+                     <div class="col-lg-6 offset-lg-3">
+                            <div class="card text-center">
+                                   <h5 class="card-header fs-2">Erreur</h5>
+                                   <div class="card-body">
+                                          <i class="bi bi-exclamation-triangle-fill text-warning-emphasis" style="font-size: 6rem;"></i>
+                                          <p class="card-text fs-3" id="errorMessage">Connexion en cours...</p>
+                                          <div class="d-flex justify-content-center align-items-center"> 
+                                                 <span>Vous pouvez égelement essayer de rafrachir la page.</span> 
+                                                 <i id="refreshPage" class="bi hover-pointer bi-arrow-clockwise" style="font-size: 3rem;"></i>
+                                          </div>
+                                   </div>
+                            </div>
+                     </div>
+              </div>
+       </section>
+
        <div class="d-flex flex-row justify-content-evenly" id="infosAndNumberAnswers">
               <div class="accordion-item text-center mt-5" id="sessionInfo">
                      <div class="">

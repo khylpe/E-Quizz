@@ -161,7 +161,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
 
        <!-- Button to scroll to the top of the page -->
        <div class="container-flex d-flex flex-row-reverse fixed-bottom mb-5 me-5 position-relative">
-              <i id="scrollButton" class="bi bi-arrow-up-square-fill z-100 position-relative" style="font-size: 3rem; color: white;"></i>
+              <i id="scrollButton" class="hover-pointer bi bi-arrow-up-square-fill z-100 position-relative" style="font-size: 3rem; color: white;"></i>
        </div>
 
        <div class="container-fluid d-flex flex-row-reverse fixed-bottom">
