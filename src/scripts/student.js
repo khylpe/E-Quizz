@@ -73,7 +73,7 @@ socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
 
 socket.on('sessionUpdated', (sessionStatus) => {
        if (sessionStatus != 'sessionStarted') {
-              nameStudent.innerHTML = `Bienvenue ${studentMail}`;
+              nameStudent.innerHTML = `Bonjour ${studentMail}`;
               changeDivState('#waitTeacherConnect');
               if (sessionStatus === 'CreateSession') {
                      waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
@@ -119,7 +119,7 @@ socket.on('connect', () => {
                             document.querySelector('#mail').innerHTML = studentMail;
 
                             if (response.sessionStatus != 'sessionStarted') {
-                                   nameStudent.innerHTML = `Bienvenue ${studentMail}`;
+                                   nameStudent.innerHTML = `Bonjour ${studentMail}`;
                                    
                                    changeDivState('#waitTeacherConnect');
                                    if (response.sessionStatus === 'CreateSession') {

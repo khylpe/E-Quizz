@@ -33,7 +33,7 @@
                                           <ul class="user dropdown-menu dropdown-menu-start">
                                                  <li class="dropdown-item"></li>
                                                  <li>
-                                                        <h5 id="mail"></h5>
+                                                        <p id="mail"></p>
                                                         <hr class="dropdown-divider">
                                                  </li>
                                                  <li class="mt-1" id="logout">
@@ -85,7 +85,7 @@
                                                  <span class="text-info">Z</span>
                                           </h1>
                                           <div>
-                                                 <h5 class="text-light">Création d'un QCM</h5>
+                                                 <h5 class="text-light">Evaluation de l'élève</h5>
                                           </div>
                                    </div>
                             </div>
@@ -111,21 +111,25 @@
                                           <h1 id="numberQuestion" class="text-center"></h1>
                                           <div class="col">
                                                  <div class="d-flex flex-row">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                               style="color: cornflowerblue;" width="4rem" height="4rem"
-                                                               fill="currentColor" id="previousQuestion"
-                                                               class="bi bi-arrow-left-square" viewBox="0 0 16 16">
-                                                               <path fill-rule="evenodd"
-                                                                      d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
-                                                        </svg>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="4rem"
-                                                               height="4rem" fill="currentColor"
-                                                               class="bi bi-arrow-right-square mt-5"
-                                                               style="color: cornflowerblue;" id="nextQuestion"
-                                                               viewBox="0 0 16 16">
-                                                               <path fill-rule="evenodd"
-                                                                      d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
-                                                        </svg>
+                                                        <div class="align-items-center">
+                                                               <div class="d-flex flex-column gap-2">
+                                                                      <svg xmlns="http://www.w3.org/2000/svg" width="85"
+                                                                             height="85" fill="currentColor"
+                                                                             class="bi bi-caret-up-square-fill"
+                                                                             id="previousQuestion" viewBox="0 0 16 16">
+                                                                             <path
+                                                                                    d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4 9h8a.5.5 0 0 0 .374-.832l-4-4.5a.5.5 0 0 0-.748 0l-4 4.5A.5.5 0 0 0 4 11z" />
+                                                                      </svg>
+                                                                      <svg xmlns="http://www.w3.org/2000/svg" width="85"
+                                                                             height="85" fill="currentColor"
+                                                                             class="bi bi-caret-down-square-fill"
+                                                                             id="nextQuestion" viewBox="0 0 16 16">
+                                                                             <path
+                                                                                    d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4 4a.5.5 0 0 0-.374.832l4 4.5a.5.5 0 0 0 .748 0l4-4.5A.5.5 0 0 0 12 6H4z" />
+                                                                      </svg>
+
+                                                               </div>
+                                                        </div>
                                                  </div>
                                           </div>
                                           <div class="col" id="divButtons">
@@ -144,23 +148,54 @@
                                                         <input type="checkbox" id="stateBtnD" hidden>
                                                  </div>
                                           </div>
-                                          <div class="col">
-                                                 <button id="btnModify" type="button"
-                                                        class="btn btn-danger">CORRIGER</button>
-                                                 <button id="btnValidate" type="button"
-                                                        class="btn btn-success">Valider</button>
+
+
+                                          <div class="col d-flex justify-content-center">
+                                                        <div class="d-flex align-items-start">
+                                                               <button id="btnModify" type="button"
+                                                                      class="btn btn-danger">CORRIGER</button>
+                                                        </div>
+                                                        <div class="d-flex align-items-end">
+                                                               <button id="btnValidate" type="button"
+                                                                      class="btn btn-success">Valider</button>
+                                                        </div>
+
                                           </div>
                                    </div>
                             </div>
 
                             <div class="part" id="waitTeacherConnect">
-                                   <div class="alert alert-info" role="alert">
-                                          <div class="alert alert-info" role="alert">
-                                                 <h4 id="waiting"></h4>
-                                                 
+                                   <p>
+                                          <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                                                 data-bs-target=".multi-collapse" aria-expanded="false">Status de la
+                                                 session</button>
+                                   </p>
+                                   <div class="row">
+                                          <div class="col">
+                                                 <div class="collapse multi-collapse" id="multiCollapse1">
+                                                        <div class="card card-body">
+                                                               <div>
+                                                                      <h4 id="nameStudent"></h4>
+                                                               </div>
+                                                               Ce quizz permet au professeur de vous évaluer sur vos
+                                                               connaissances, les résultats seront stockés et vous aurez
+                                                               la possibilité de consulter vos résultats à la fin du
+                                                               quizz en sollicitant le professeur.
+                                                        </div>
+                                                 </div>
                                           </div>
-                                          <h4 id="nameStudent"></h4>
+                                          <div class="col">
+                                                 <div class="collapse multi-collapse" id="multiCollapse2">
+                                                        <div class="card card-body">
+                                                               <h4>status :</h4>
+                                                               <div id="waiting">
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </div>
                                    </div>
+
+                                   <!-- Accordeon information de la session -->
                                    <div class="accordion flex-row justify-content-evenly d-flex" id="accordionExample">
                                           <div class="accordion-item text-center mt-5" style="display: block;">
                                                  <h2 class="accordion-header">
