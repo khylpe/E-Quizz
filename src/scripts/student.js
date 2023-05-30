@@ -171,6 +171,7 @@ socket.on('connect', () => {
               btnAnswers.forEach((element) => {
                      element.classList += " disabled";
               });
+              console.log("lorsque l on clique sur valider")
               console.log(answers)
        });
 

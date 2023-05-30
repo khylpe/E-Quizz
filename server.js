@@ -49,7 +49,6 @@ io.on('connection', async function (client) { // Client socket connected
               }
               else if (sessionStatus == "SessionStatus") {
                      client.emit('updateStudentList', getStudentsInformations());
-                     // console.log("coucou");
                      // send the number of connected students to the teacher
                      // send the number of registered students to the teacher
                      // send the list of students to the teacher
@@ -151,6 +150,8 @@ io.on('connection', async function (client) { // Client socket connected
                                                  questionNumber: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][3],
                                                  answers: []
                                           });
+                                          
+                                          // console.log(quizzResults);
 
                                           responses.forEach(response => {
                                                  quizzResults[questionNumber - 1].answers.push({
@@ -210,6 +211,17 @@ io.on('connection', async function (client) { // Client socket connected
 
                                    sessionStatus = "DisplayResults";
                                    io.to('teacher').emit('updateSessionStatus', getSession());
+                                   // console.log("resultat du quizz")
+                                   // console.log(quizzResults.answers)
+                                   quizzResults.forEach(question => {
+                                   question.answers.forEach(answer => {
+                                                 if(answer.studentAnswer[0] == null && answer.studentAnswer[1] == null && answer.studentAnswer[2] == null && answer.studentAnswer[3] == null){
+                                                        console.log("Mail de l'étudiant",answer.studentMail)
+                                                        quizzResults.sp
+                                                        answer.studentMail.
+                                                 }
+                                   })
+                                    })
                                    callback(quizzResults);
                             }
                      });
@@ -313,7 +325,7 @@ io.on('connection', async function (client) { // Client socket connected
        }
        else {  // Unknown client
               /* things to do when an unknown user connects */
-              console.log("Unknown user connected");
+              // console.log("Unknown user connected");
               client.removeAllListeners();
               client.disconnect();
               return;
