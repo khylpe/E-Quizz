@@ -38,7 +38,7 @@ socket.on('teacherNotConnected', () => {
        waitingRoom.innerHTML = "Le prof n'est pas connecté";
 });
 
-socket.on('capasse', (data) => {
+socket.on('informationSession', (data) => {
               // document.querySelector('#nameOfQuizz').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
        document.querySelector('#nameOfTeacher').innerHTML = `Nom du professeur : ${data.teacherMail}`;
        document.querySelector('#statusSessionWaitRoom').innerHTML = `Nom du quizz : ${data.quizzTitle}`;

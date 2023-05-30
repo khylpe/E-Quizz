@@ -247,7 +247,7 @@ io.on('connection', async function (client) { // Client socket connected
                             alterStudentList("add", studentMail);
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
 
-                            io.to('student').emit('capasse', {
+                            io.to('student').emit('informationSession', {
                                    quizzTitle : getSession().quizzTitle,
                                    numberOfRegisteredStudents : getNumberOfRegisteredStudent(),
                                    teacherMail : getSession().teacher,
