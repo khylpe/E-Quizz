@@ -150,7 +150,7 @@ io.on('connection', async function (client) { // Client socket connected
                                                  questionNumber: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][3],
                                                  answers: []
                                           });
-                                          
+
                                           // console.log(quizzResults);
 
                                           responses.forEach(response => {
@@ -201,7 +201,7 @@ io.on('connection', async function (client) { // Client socket connected
                                                         quizzQuestionsAndAnswers[1][questionNumber - 1][2] // list of good answers
                                                  )
                                           });
-                                   })
+                                   });
 
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -210,18 +210,30 @@ io.on('connection', async function (client) { // Client socket connected
                                           });
 
                                    sessionStatus = "DisplayResults";
+
+                                   listOfStudents.forEach((student) => {
+                                          let tempsMail = student.mail
+                                          let numero = 0;
+                                          quizzResults.forEach(question => {
+                                                 question.answers.forEach(answer => {
+                                                        if (answer.studentMail === tempsMail) {
+                                                               numero++;
+                                                        }
+                                                 });
+                                          });
+
+                                          if (numero != quizzResults.length) {
+                                                 quizzResults.forEach((question, i) => {
+                                                        question.answers.forEach((answer, index) => {
+                                                               if (answer.studentMail === tempsMail) {
+                                                                      quizzResults[i].answers.splice(index, 1)
+                                                               }
+                                                        });
+                                                 });
+                                          }
+                                   });
+
                                    io.to('teacher').emit('updateSessionStatus', getSession());
-                                   // console.log("resultat du quizz")
-                                   // console.log(quizzResults.answers)
-                                   quizzResults.forEach(question => {
-                                   question.answers.forEach(answer => {
-                                                 if(answer.studentAnswer[0] == null && answer.studentAnswer[1] == null && answer.studentAnswer[2] == null && answer.studentAnswer[3] == null){
-                                                        console.log("Mail de l'étudiant",answer.studentMail)
-                                                        quizzResults.sp
-                                                        answer.studentMail.
-                                                 }
-                                   })
-                                    })
                                    callback(quizzResults);
                             }
                      });
@@ -260,10 +272,10 @@ io.on('connection', async function (client) { // Client socket connected
                             io.to('teacher').emit('updateStudentList', getStudentsInformations());
 
                             io.to('student').emit('informationSession', {
-                                   quizzTitle : getSession().quizzTitle,
-                                   numberOfRegisteredStudents : getNumberOfRegisteredStudent(),
-                                   teacherMail : getSession().teacher,
-                                   groupName : getSession().groupName,
+                                   quizzTitle: getSession().quizzTitle,
+                                   numberOfRegisteredStudents: getNumberOfRegisteredStudent(),
+                                   teacherMail: getSession().teacher,
+                                   groupName: getSession().groupName,
                             });
 
                             // io.to('student').emit('updateStudentList', getSession());
