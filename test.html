@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+       <meta charset="UTF-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Document</title>
+       <style>
+              #container {
+                     display: flex;
+                     justify-content: space-around;
+                     margin: 30px;
+              }
+
+              #actions {
+                     width: 40%;
+              }
+
+              #log {
+                     width: 50%;
+                     height: 500px;
+                     overflow: auto;
+                     border: 1px solid #000;
+                     padding: 10px;
+              }
+       </style>
+</head>
+
+<body>
+       <div id="container">
+              <div id="actions">
+                     <button id="register">S'inscrire</button>
+                     <!-- Envoyer une réponse aléatoire avec un numéro de question aléatoire -->
+                     <div id="answerDiv">
+                            <span for="answer">Répondre à une question  aléatoire avec des réponses aléatoires
+                                   :</span>
+                            <button id="answer">Répondre</button>
+                     </div>
+
+                     <button id="validateOrCorrect">Corriger</button>
+                     <button>Quitter</button>
+              </div>
+              <pre id="log"></pre>
+       </div>
+       <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+       <script src="script.js"></script>
+</body>
+
+</html>
