@@ -39,12 +39,12 @@ socket.on('teacherNotConnected', () => {
 });
 
 socket.on('informationSession', (data) => {
-              // document.querySelector('#nameOfQuizz').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
+       // document.querySelector('#nameOfQuizz').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
        document.querySelector('#nameOfTeacher').innerHTML = `Nom du professeur : ${data.teacherMail}`;
        document.querySelector('#statusSessionWaitRoom').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
        document.querySelector('#numberOfStudentRegistered').innerHTML = `Nombre d'élèves enregistrés : ${data.numberOfRegisteredStudents}`;
        document.querySelector('#nameOfGroup').innerHTML = `Nom du groupe : ${data.groupName}`;
-       
+
 
 
 });
@@ -85,10 +85,10 @@ socket.on('sessionUpdated', (sessionStatus) => {
               changeDivState('#answerQuestion');
        }
 });
-
+// A modifier
 socket.on('endOfQuizzTeacher', () => {
-       changeDivState('#endOfQuizz');
-       messageEndQuizz.innerHTML = "fin";
+       changeDivState('#endOfTheQcm');
+       // messageEndQuizz.innerHTML = "fin";
        timerReturnHome();
 
 });
@@ -120,17 +120,17 @@ socket.on('connect', () => {
 
                             if (response.sessionStatus != 'sessionStarted') {
                                    nameStudent.innerHTML = `Bonjour ${studentMail}`;
-                                   
+
                                    changeDivState('#waitTeacherConnect');
                                    if (response.sessionStatus === 'CreateSession') {
                                           waitingRoom.innerHTML = "Le prof n'a pas encore créé la session";
                                    }
                                    else if (response.sessionStatus === 'SessionStatus') {
-                                          waitingRoom.innerHTML = "En attente d'élève supplémentaire";                                         
+                                          waitingRoom.innerHTML = "En attente d'élève supplémentaire";
                                    }
                             } else {
                                    changeDivState('#answerQuestion');
-                            }                           
+                            }
 
                      } else if (response.status == "doublons") {
                             formulaireMail.innerHTML = "DOUBLONS";
@@ -296,7 +296,10 @@ function returnHome() {
        modal.style.display = "none";
 }
 
-function timerReturnHome() {  ///// A TESTER
-       let monTimer = setTimeout(returnHome(), 3000);
-       clearTimeout(monTimer);
+function timerReturnHome() {
+       let monTimer = setTimeout(() => {
+              returnHome();
+       },
+              10000);
+       user.hidden = true;
 }
