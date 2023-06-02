@@ -186,6 +186,7 @@ socket.on('connect', () => {
        btnModalConfirmer.addEventListener('click', () => {
               socket.emit('studentDisconnect', () => {
               });
+              user.hidden = true;
               returnHome();
 
        });
