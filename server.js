@@ -245,7 +245,7 @@ io.on('connection', async function (client) { // Client socket connected
                                    io.to('teacher').emit('tempMessage',
                                           {
                                                  status: "success",
-                                                 message: "The quizz is over"
+                                                 message: "Le quizz est terminé"
                                           });
 
                                    sessionStatus = "DisplayResults";
