@@ -40,32 +40,22 @@ parser.on('data', (data) => {
 	let trameComplete = "";
 
 	let traduit = hex2a(data);
-
-	if (traduit[0] == "$") {
-		trameComplete = traduit;
-	}
-	else {
-		trameComplete += traduit;
-	}
-
-	if (trameComplete.includes("!")) {
-		console.log("truc ajouté : ", traitertrame(trameComplete))
-		studentsAnswers.push(traitertrame(trameComplete));
-	}
+       let startOfTrame = traduit.indexOf("$");
+       traduit = traduit.slice(startOfTrame+1, traduit.length);
+       console.log("trame traduite propre : ", traduit);
+       traitertrame(traduit);
 });
 
 /////////////////////////////////////////////////////////////////
 function traitertrame(trame) {
 
-	let numBoitier = trame[1] + trame[2];
-	let numQuestion = trame[3] + trame[4];
+	let numBoitier = trame[0] + trame[1];
+	let numQuestion = trame[2] + trame[3];
 
-	let choixDeReponse = trame[5];
+	let choixDeReponse = trame[4];
 
-	let i = 6;
-	while (trame[i] != "!") {
+	for (let i = 5 ; i < trame.length ; i++) {
 		choixDeReponse += trame[i];
-		i++;
 	}
 
 	console.log("Trame complète", trame);
