@@ -9,7 +9,7 @@ $mail = file_get_contents('php://input');
 $mail = '%' . $mail . '%';
 $arrayResult = array();
 try {
-       $fetchQuizzList = $db->prepare("SELECT * FROM results WHERE teacher = :uid AND `student mail` LIKE :studentMail");
+       $fetchQuizzList = $db->prepare("SELECT * FROM results WHERE teacher = :uid AND `studentMailOrNumber` LIKE :studentMail");
        $fetchQuizzList->execute(array(':uid' => $_SESSION['uid'], ':studentMail' => $mail));
 
        $results = $fetchQuizzList->fetchAll(PDO::FETCH_ASSOC);
@@ -17,13 +17,13 @@ try {
 
        // Iterate through the fetched results
        foreach ($results as $result) {
-              $studentMail = $result['student mail'];
+              $studentMail = $result['studentMailOrNumber'];
               $quizzTitle = $result['quizz title'];
               $questionResult = $result['question result'];
               $date = $result['date'];
               $groupName = $result['student group'];
               
-              // Check if the student mail already exists in the final array
+              // Check if the studentMailOrNumber already exists in the final array
               $found = false;
               foreach ($finalArray as &$student) {
                      if ($student['studentMail'] === $studentMail) {
@@ -54,7 +54,7 @@ try {
                      }
               }
 
-              // If the student mail is not found, add a new student entry to the final array
+              // If the studentMailOrNumber is not found, add a new student entry to the final array
               if (!$found) {
                      $finalArray[] = array(
                             'studentMail' => $studentMail,

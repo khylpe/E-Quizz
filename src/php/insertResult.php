@@ -16,7 +16,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                      `date`,
                      `teacher`,
                      `student group`,
-                     `student mail`,
+                     `studentMailOrNumber`,
                      `question number`,
                      `answer submitted 1`,
                      `answer submitted 2`,

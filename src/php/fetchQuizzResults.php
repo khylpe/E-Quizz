@@ -16,7 +16,7 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                  AND `teacher` = :uid
                                                  AND `student group` = :studentGroup
                                                  AND `date` = :dates
-                                                 ORDER BY `question number`, `student mail`
+                                                 ORDER BY `question number`, `studentMailOrNumber`
                                           ");
 
               $fetchQuizzList->execute(array(
@@ -32,8 +32,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
               foreach ($fetchResult as $value) {
                      $questionNumber = $value['question number'];
 
-                     $results[$questionNumber][$value['student mail']] = array(
-                            'studentMail' => $value['student mail'],
+                     $results[$questionNumber][$value['studentMailOrNumber']] = array(
+                            'studentMail' => $value['studentMailOrNumber'],
                             'answerSubmitted' => array(
                                    $value['answer submitted 1'],
                                    $value['answer submitted 2'],
