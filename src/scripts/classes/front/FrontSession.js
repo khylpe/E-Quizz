@@ -5,45 +5,6 @@ export default class FrontSession extends FrontGlobal {
               super();
        }
 
-       setSessionStatus(sessionInformation) {
-              if (this.getCurrentSection().id == "sectionCreateSession") {
-                     document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "none";
-                     return;
-              }
-              else{
-                     document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "flex";
-                     document.querySelector('#numberOfAnswer').style.display = "block";
-
-              }
-
-              let status;
-
-              switch (sessionInformation.sessionStatus) {
-                     case "CreateSession":
-                            status = "Pas connecté";
-                            break;
-                     case "SessionStatus":
-                            status = "Session créée, en attente de démarrage";
-                            break;
-                     case "DisplayQuestions":
-                            status = "Session démarrée";
-                            break;
-                     case "DisplayResults":
-                            status = "Session terminée, affichage des résultats";
-                            break;
-                     default:
-                            status = "Inconnue";
-                            break;
-              }
-
-              document.querySelector('#sessionStatusInfo').innerHTML = `Status de la session : ${status}`;
-              document.querySelector('#teacherInfo').innerHTML = `Enseignant : ${sessionInformation.teacher}`;
-              document.querySelector('#quizzInfo').innerHTML = `Quizz : ${sessionInformation.quizzTitle}`;
-              document.querySelector('#groupInfo').innerHTML = `Groupe : ${sessionInformation.groupName}`;
-       }
-
        setStudentList(studentName, status, numberOfRegisteredStudents) {
               document.querySelector('#studentListTitle').innerHTML = `Liste des étudiants prêts et enregistrés (${numberOfRegisteredStudents})`;
 

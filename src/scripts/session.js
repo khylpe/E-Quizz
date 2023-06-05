@@ -85,17 +85,29 @@ socketIO.on('updateSessionStatus', (data) => {
        Back.setQuizzTime(data.quizzTime);
 
        Front.setCurrentSection(`#section${data.sessionStatus}`);
-       Front.setSessionStatus(data);
+
+       if (data.sessionStatus != "CreateSession") {
+              document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "flex";
+              document.querySelector('#numberOfAnswer').style.display = "block";
+       }
+
+       let status;
 
        switch (data.sessionStatus) {
-              case 'CreateSession':
+              case "CreateSession":
+                     status = "Pas connecté";
+                     document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+                     document.querySelector('#infosAndNumberAnswers').style.display = "none";
                      break;
 
-              case 'SessionStatus':
+              case "SessionStatus":
+                     status = "Session créée, en attente de démarrage";
                      document.querySelector('#numberOfAnswer').style.display = "none";
                      break;
 
-              case 'DisplayQuestions':
+              case "DisplayQuestions":
+                     status = "Session démarrée";
                      if (data.currentQuestion.lastQuestion === true) {
                             document.querySelector('#seeResult').style.display = "inline-block";
                             document.querySelector('#nextQuestion').style.display = "none";
@@ -103,18 +115,25 @@ socketIO.on('updateSessionStatus', (data) => {
                      Front.setQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
                      break;
 
-              case 'DisplayResults':
+              case "DisplayResults":
+                     status = "Session terminée, affichage des résultats";
                      document.querySelector('#leaveSession').style.display = "inline-block";
                      document.querySelector('#numberOfAnswer').style.display = "none";
                      Front.displayResults(data.quizzResults, '#accordionForResults');
                      break;
 
               default:
+                     status = "Inconnue";
                      Front.setCurrentSection('#connectionError');
                      document.querySelector('#errorMessage').innerHTML = "Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : sessionStatus inconnu</span>";
                      Front.tempMessage('error', "Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : sessionStatus inconnu</span>", '#tempMessage');
                      break;
        }
+
+       document.querySelector('#sessionStatusInfo').innerHTML = `Status de la session : ${status}`;
+       document.querySelector('#teacherInfo').innerHTML = `Enseignant : ${data.teacher}`;
+       document.querySelector('#quizzInfo').innerHTML = `Quizz : ${data.quizzTitle}`;
+       document.querySelector('#groupInfo').innerHTML = `Groupe : ${data.groupName}`;
 });
 
 socketIO.on('tempMessage', (data) => {
