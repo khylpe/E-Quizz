@@ -123,7 +123,8 @@ socket.on('connect', () => {
                             }
 
                      } else if (response.status == "doublons") {
-                            formulaireMail.innerHTML = "DOUBLONS";
+                            changeDivState("#errorMessage");
+                            document.querySelector('#errorMessage').innerHTML = `Le mail "${studentMail}" est déjà utilisé, veuillez re-saisir un mail différent`;
                      }
               });
 
@@ -255,6 +256,7 @@ socket.on("connect_error", (error) => {
        changeDivState("#errorMessage");
        document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
 });
+
 socket.io.on("reconnect", (attempt) => {
        changeDivState("#errorMessage");
        document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
@@ -274,6 +276,8 @@ socket.io.on("reconnect_failed", () => {
        changeDivState("#errorMessage");
        document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI`;
 });
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
