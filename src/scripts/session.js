@@ -87,41 +87,35 @@ socketIO.on('updateSessionStatus', (data) => {
 
        Front.setCurrentSection(`#section${data.sessionStatus}`);
 
-       switch (data.sessionStatus) {
-              case 'CreateSession':
-                     Front.setSessionStatus(data);
-                     // if (data.sessionStatus != 'SessionStatus') {
-                            Back.setQuizzTime(data.quizzTime);
-                     // }
-                     break;
+       if (data.sessionStatus != 'CreateSession') {
+              Front.setSessionStatus(data);
+              if (data.sessionStatus != 'SessionStatus') {
+                     Back.setQuizzTime(data.quizzTime);
+              }
+       }
+       if (data.sessionStatus == 'SessionStatus') {
+              document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "flex";
 
-              case 'SessionStatus':
-                     document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "flex";
-                     document.querySelector('#numberOfAnswer').style.display = "none";
-                     break;
+              document.querySelector('#numberOfAnswer').style.display = "none";
+       }
+       if (data.sessionStatus == 'DisplayQuestions') {
+              if (data.currentQuestion.lastQuestion === true) {
+                     document.querySelector('#seeResult').style.display = "inline-block";
+                     document.querySelector('#nextQuestion').style.display = "none";
+              }
 
-              case 'DisplayQuestions':
-                     if (data.currentQuestion.lastQuestion === true) {
-                            document.querySelector('#seeResult').style.display = "inline-block";
-                            document.querySelector('#nextQuestion').style.display = "none";
-                     }
-
-                     document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "flex";
-                     document.querySelector('#numberOfAnswer').style.display = "block";
-                     Front.setQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
-                     break;
-
-              case 'DisplayResults':
-                     document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "none";
-                     document.querySelector('#leaveSession').style.display = "inline-block";
-                     Front.displayResults(data.quizzResults, '#accordionForResults');
-                     break;
-
-              default:
-
+              document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "flex";
+              document.querySelector('#numberOfAnswer').style.display = "block";
+              console.log(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions);
+              Front.setQuestion(data.currentQuestion.currentQuestion, data.currentQuestion.currentAnswers, data.currentQuestion.currentQuestionNumber, data.currentQuestion.numberOfQuestions, '#question', '#possibleAnswers');
+       }
+       if (data.sessionStatus == 'DisplayResults') {
+              document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+              document.querySelector('#infosAndNumberAnswers').style.display = "none";
+              document.querySelector('#leaveSession').style.display = "inline-block";
+              Front.displayResults(data.quizzResults, '#accordionForResults')
        }
 });
 
@@ -143,7 +137,7 @@ socketIO.io.on("error", (error) => {
 socketIO.on("connect_error", (error) => {
        Front.setCurrentSection('#connectionError');
        document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
-});
+     });
 socketIO.io.on("reconnect", (attempt) => {
        Front.setCurrentSection('#connectionError');
        document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
