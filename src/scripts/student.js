@@ -195,7 +195,7 @@ document.querySelector('#previousQuestion').addEventListener('click', () => {
                      }
 
               });
-              currentQuestionNumber.innerHTML = currentQuestion;
+              currentQuestionNumber.innerHTML = `Numéro de la question : ${currentQuestion}`;
               btnAnswers.forEach((button, index) => {
                      button.classList.add("disabled");
               });
