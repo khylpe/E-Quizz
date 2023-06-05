@@ -35,7 +35,6 @@ socketIO.on('connect', () => {
                      });
               }
               else if (response == "connectionAuthorized") {
-                     Front.setCurrentSection('#sectionCreateSession');
                      await Back.fetchQuizzList()
                             .then(value => {     /*     [0] = success || error,                  
                                                         [1] = quizzListTitles[] || error message
