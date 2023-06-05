@@ -1,48 +1,58 @@
-////////////////////
-//Execution :		node exemple2.js
-//////////////////////////
+import { io } from "socket.io-client";
+import { SerialPort } from "serialport";
+import { ReadlineParser } from '@serialport/parser-readline'
+const port = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 });
+
 const socket = io("http://192.168.0.254:8100", {
 	transports:
 		["websocket"],
 	query: {
 		status: 'boitier'
 	}
-})
-import { io } from "socket.io-client";
-import { SerialPort } from "serialport";
+});
 
-const port = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 });
+const parser = port.pipe(new ReadlineParser({ delimiter: '!' }));
 
+let studentsAnswers = [];
 
 socket.on("connect", () => {
 	// Quand on recoie des données : 
-	let trameComplete = "";
-
-	port.on('data', (data) => {
-		// ICI ON FAIT CE QU'ON VEUT
-		let traduit = hex2a(data);
-
-		if (traduit[0] == "$") {
-			trameComplete = traduit;
-		}
-		else {
-			trameComplete += traduit;
-		}
-
-		if (trameComplete.includes("!")) {
-			socket.emit("trameComplete", traitertrame(trameComplete));
-
-		}
-
-	});
-// Envoyer des données : 
-	socket.on('test', data => {
-		console.log(data);
-		port.write(`${data}\n`);
-
-	})
+	console.log("connected");
 });
 
+socket.on("disconnect", () => {
+	// Quand on recoie des données : 
+	console.log("disconnected");
+});
+
+socket.on('getStudentsAnswers', (callback) => {
+	console.log("students answers before sending it (should be the same than after): ");
+	callback(studentsAnswers);
+});
+
+socket.on("questionNumber", (questionNumber) => {
+	// port.write({ questionNumber: questionNumber });
+	console.log("Question number is : ", questionNumber);
+});
+
+parser.on('data', (data) => {
+       console.log('Data:', data);
+	let trameComplete = "";
+
+	let traduit = hex2a(data);
+
+	if (traduit[0] == "$") {
+		trameComplete = traduit;
+	}
+	else {
+		trameComplete += traduit;
+	}
+
+	if (trameComplete.includes("!")) {
+		console.log("truc ajouté : ", traitertrame(trameComplete))
+		studentsAnswers.push(traitertrame(trameComplete));
+	}
+});
 
 /////////////////////////////////////////////////////////////////
 function traitertrame(trame) {
