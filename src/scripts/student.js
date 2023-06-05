@@ -34,24 +34,14 @@ answerQuestion.hidden = true;
 
 changeDivState('#test');
 
-socket.on('teacherNotConnected', () => {
-       waitingRoom.innerHTML = "Le prof n'est pas connecté";
-});
-
+// Get information session when student registered
 socket.on('informationSession', (data) => {
-       // document.querySelector('#nameOfQuizz').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
        document.querySelector('#nameOfTeacher').innerHTML = `Nom du professeur : ${data.teacherMail}`;
        document.querySelector('#statusSessionWaitRoom').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
        document.querySelector('#numberOfStudentRegistered').innerHTML = `Nombre d'élèves enregistrés : ${data.numberOfRegisteredStudents}`;
        document.querySelector('#nameOfGroup').innerHTML = `Nom du groupe : ${data.groupName}`;
-
-
-
 });
 
-socket.on('test', (dat) => {
-       console.log(dat);
-});
 
 socket.on('sessionStarted', () => {
        changeDivState('#answerQuestion');
@@ -85,10 +75,10 @@ socket.on('sessionUpdated', (sessionStatus) => {
               changeDivState('#answerQuestion');
        }
 });
-// A modifier
+
+// Page end of quizz
 socket.on('endOfQuizzTeacher', () => {
        changeDivState('#endOfTheQcm');
-       // messageEndQuizz.innerHTML = "fin";
        timerReturnHome();
 
 });
@@ -107,7 +97,6 @@ btnAnswers.forEach((button, index) => {
 
 socket.on('connect', () => {
        changeDivState('#formMail');
-
        formulaireMail.addEventListener('submit', (e) => {
               e.preventDefault();
               let inputMail = document.querySelector('#mailAddress')
@@ -294,6 +283,13 @@ function returnHome() {
        changeDivState('#formMail');
        newQuestion();
        modal.style.display = "none";
+}
+
+function informationSession(data) {
+       document.querySelector('#nameOfTeacher').innerHTML = `Nom du professeur : ${data.teacherMail}`;
+       document.querySelector('#statusSessionWaitRoom').innerHTML = `Nom du quizz : ${data.quizzTitle}`;
+       document.querySelector('#numberOfStudentRegistered').innerHTML = `Nombre d'élèves enregistrés : ${data.numberOfRegisteredStudents}`;
+       document.querySelector('#nameOfGroup').innerHTML = `Nom du groupe : ${data.groupName}`;
 }
 
 function timerReturnHome() {
