@@ -46,6 +46,7 @@ socket.on('informationSession', (data) => {
 socket.on('sessionStarted', () => {
        changeDivState('#answerQuestion');
        currentQuestionNumber.innerHTML = `Numéro de la question : 1`;
+
 });
 
 socket.on('getStudentAnswer', (jsonContainNumberQuestion, callback) => {
@@ -239,6 +240,41 @@ document.querySelector('#nextQuestion').addEventListener('click', () => {
               }
        }
 });
+
+socket.on('disconnect', () => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = "Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter...</span>";
+});
+
+socket.io.on("error", (error) => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+});
+
+socket.on("connect_error", (error) => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Une erreur s'est produite. <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+});
+socket.io.on("reconnect", (attempt) => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
+});
+
+socket.io.on("reconnect_attempt", (attempt) => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Vous avez été déconnecté, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Nous tentons de vous reconnecter... Tentative n°${attempt}</span>`;
+});
+
+socket.io.on("reconnect_error", (error) => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI <br> <span class'fs-5 mt-5'>Erreur : ${error}</span>`;
+});
+
+socket.io.on("reconnect_failed", () => {
+       changeDivState("#errorMessage");
+       document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI`;
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 function getAnswers(questionNumber) {
