@@ -80,7 +80,6 @@ function saveQuizz() {
               // if there is no correct answer, we don't save the quizz
               if (document.querySelectorAll(`#${allQuestionsAndAnswersID} input[type="checkbox"]:checked`).length == 0) {
                      isQuizzValid = false;
-                     console.log(document.querySelectorAll(`#${allQuestionsAndAnswersID}`));
                      Front.tempMessage("error", `Veuillez sélectionner au moins une bonne réponse à la question n°${index + 1}`, "#tempMessage");
                      alterSaveStatus("not saved", '#saveStatus');
                      return;
@@ -92,8 +91,6 @@ function saveQuizz() {
                      let numberOfTheCorrectAnswer = indexOfCorrectAnswer + 1;
                      let valueOfTheCorrectAnswer = document.querySelector('#' + allQuestionsAndAnswersID + " input[type='text']#confirmAnswer" + numberOfTheCorrectAnswer).value;
 
-                     console.log('valueOfTheCorrectAnswer', valueOfTheCorrectAnswer);
-                     console.log(indexOfCorrectAnswer)
                      if (valueOfTheCorrectAnswer == '' && element.checked) {
                             isThereAnEmptyCorrectAnswer = true;
                      }

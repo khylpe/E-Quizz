@@ -1,21 +1,26 @@
 export default class FrontGlobal {
        tempMessage(type, message, selector) { // type = "error" or "success"
               if (!message) return;
-              if (type == "error") {
-                     type = "alert alert-danger";
-              } else if (type == "success") {
-                     type = "alert alert-success";
-              } else if (type == "warning") {
-                     type = "alert alert-warning";
-              }
-              else {
-                     return;
+
+              switch (type) {
+                     case "error":
+                            type = "alert alert-danger";
+                            break;
+
+                     case "success":
+                            type = "alert alert-success";
+                            break;
+
+                     case "warning":
+                            type = "alert alert-warning";
+
+                     default:
+                            return;
               }
 
               try {
                      if (!document.querySelector(selector)) {
                             // Creating the div if it does not exist
-                            console.error("The selector " + selector + " does not exist in the DOM, creating it.");
                             let tempMessageDiv = document.createElement('div');
                             tempMessageDiv.classList = 'text-center container mt-5 ' + type;
                             tempMessageDiv.style.display = "none";
@@ -46,13 +51,19 @@ export default class FrontGlobal {
                      sections.forEach((section) => {
                             section.style.display = "none";
                      });
+                     try {
+                            const element = document.querySelector(elementToDisplay);
 
-                     const element = document.querySelector(elementToDisplay);
-                     if (element) {
-                            element.style.display = "block";
-                     } else {
-                            console.error('Error in the setCurrentSection method : ', `Given element doesn't exist (${elementToDisplay})`);
+                            if (element) {
+                                   element.style.display = "block";
+                            } else {
+                                   console.error('Error in the setCurrentSection method : ', `Given element doesn't exist (${elementToDisplay})`);
+                            }
                      }
+                     catch (err) {
+                            console.error(err);
+                     }
+
               } else {
                      console.error('Error in the setCurrentSection method : ', `There is no section in the DOM`);
               }
@@ -287,7 +298,6 @@ export default class FrontGlobal {
 
                      question.answers.forEach(studentAnswers => {
                             totalAnswers++;
-                            console.log(totalAnswers)
                             let liStudent = document.createElement('li');
                             if (studentAnswers.result == true) {
                                    liStudent.classList = 'list-group-item list-group-item-action list-group-item-success collapsed';
@@ -352,7 +362,7 @@ export default class FrontGlobal {
        }
 
        // Scrolls to a location on the page, given a selector.
-       //selector: A CSS selector for the element to scroll to
+       // selector: A CSS selector for the element to scroll to
        // If no element is found, prints an error to the console.
 
        scrollToLocation(selector) {

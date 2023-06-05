@@ -136,7 +136,6 @@ export default class FrontCreate extends FrontGlobal {
                      question.querySelector('button').setAttribute('data-bs-target', `#collapse${questionNumber}`);
 
                      let input = document.querySelector(`#question${questionNumber} #questionDiv input`);
-                     console.log(input.value);
 
                      if(input.value == ''){
                             question.querySelector('button').innerHTML = `Question n°${questionNumber}`;

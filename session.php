@@ -213,7 +213,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
                             </div>
                      </div>
 
-                     <div class="text-center mt-5">
+                     <div class="text-center mt-5 mb-5">
                             <button type="submit" class="btn btn-primary mb-5" id="nextQuestion">Question suivante</button>
                             <button type="submit" class="btn btn-success" id="seeResult">Accéder aux résultats</button>
                      </div>
@@ -225,7 +225,7 @@ if (!isset($_SESSION['sessionStatus']) || $_SESSION['sessionStatus'] != 'connect
               <div class="container col-8 mt-5">
                      <div class="accordion" id="accordionForResults">
                      </div>
-                     <div class="text-center mt-5">
+                     <div class="text-center mt-5 mb-5">
                             <button type="submit" class="btn btn-warning" id="leaveSession">Quitter la session</button>
                      </div>
               </div>
