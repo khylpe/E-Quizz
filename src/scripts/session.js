@@ -88,19 +88,22 @@ socketIO.on('updateSessionStatus', (data) => {
 
        switch (data.sessionStatus) {
               case 'CreateSession':
-                     Front.setSessionStatus(data);
+                     document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
+                     document.querySelector('#infosAndNumberAnswers').style.display = "none";
                      // if (data.sessionStatus != 'SessionStatus') {
                             Back.setQuizzTime(data.quizzTime);
                      // }
                      break;
 
               case 'SessionStatus':
+                     Front.setSessionStatus(data);
                      document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
                      document.querySelector('#infosAndNumberAnswers').style.display = "flex";
                      document.querySelector('#numberOfAnswer').style.display = "none";
                      break;
 
               case 'DisplayQuestions':
+                     Front.setSessionStatus(data);
                      if (data.currentQuestion.lastQuestion === true) {
                             document.querySelector('#seeResult').style.display = "inline-block";
                             document.querySelector('#nextQuestion').style.display = "none";
@@ -113,8 +116,10 @@ socketIO.on('updateSessionStatus', (data) => {
                      break;
 
               case 'DisplayResults':
-                     document.querySelector('#infosAndNumberAnswers').classList.remove('d-flex');
-                     document.querySelector('#infosAndNumberAnswers').style.display = "none";
+                     Front.setSessionStatus(data);
+                     document.querySelector('#infosAndNumberAnswers').classList.add('d-flex');
+                     document.querySelector('#infosAndNumberAnswers').style.display = "flex";
+                     numberOfAnswer.style.display = "none";
                      document.querySelector('#leaveSession').style.display = "inline-block";
                      Front.displayResults(data.quizzResults, '#accordionForResults');
                      break;
