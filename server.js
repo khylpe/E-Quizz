@@ -418,7 +418,7 @@ function resetSession() {
        questionNumber = 0;
        quizzResults = [];
        quizzTime = null;
-       socket.disconnect();
+       io.disconnectSockets();
 }
 
 function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
