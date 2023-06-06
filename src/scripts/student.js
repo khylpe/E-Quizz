@@ -80,7 +80,12 @@ socket.on('sessionUpdated', (sessionStatus) => {
 // Page end of quizz
 socket.on('endOfQuizzTeacher', () => {
        changeDivState('#endOfTheQcm');
-       timerReturnHome();
+       let messVariable = setTimeout(() => {
+              messageEndQuizz.hidden = true;
+       },
+              5000);
+       
+       timerReturnHome(10000);
 
 });
 //front  
@@ -124,7 +129,8 @@ socket.on('connect', () => {
 
                      } else if (response.status == "doublons") {
                             changeDivState("#errorMessage");
-                            document.querySelector('#errorMessage').innerHTML = `Le mail "${studentMail}" est déjà utilisé, veuillez re-saisir un mail différent`;
+                            document.querySelector('#errorMessage').innerHTML = `Le mail "${studentMail}" est déjà utilisé, veuillez re-saisir un mail différent, vous-allez être redirigé vers la page de connexion`;
+                            timerReturnHome(5000);
                      }
               });
 
@@ -332,10 +338,10 @@ function informationSession(data) {
        document.querySelector('#nameOfGroup').innerHTML = `Nom du groupe : ${data.groupName}`;
 }
 
-function timerReturnHome() {
+function timerReturnHome(time) {
        let monTimer = setTimeout(() => {
               returnHome();
        },
-              10000);
+              time);
        user.hidden = true;
 }

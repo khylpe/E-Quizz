@@ -61,7 +61,7 @@ io.on('connection', async function (client) { // Client socket connected
               /* events from teacher */
               client.on('resetSession', () => {
                      resetSession();
-                     io.disconnectSockets();
+                     
                      client.emit('updateSessionStatus', getSession(false));
                      io.to('student').emit('sessionUpdated', getSession().sessionStatus);
                      io.to('teacher').emit('teacherNotConnectedAnymore');
@@ -285,6 +285,7 @@ io.on('connection', async function (client) { // Client socket connected
        else if (client.handshake.query.status == 'student') { // Client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
+               
 
               /* events from student */
               client.on('studentTriesToRegister', (studentMail, callback) => {
@@ -411,14 +412,13 @@ function resetSession() {
        groupName = null;
        teacherMail = null;
        sessionStatus = "CreateSession";
-       numberOfConnectedStudents = 0;
+       io.in('student').disconnectSockets();
        numberOfRegisteredStudents = 0;
        listOfStudents = [];
        quizzQuestionsAndAnswers = null;
        questionNumber = 0;
        quizzResults = [];
        quizzTime = null;
-       io.disconnectSockets();
 }
 
 function checkAnswers(studentAnswers, possibleAnswers, correctAnswers) {
