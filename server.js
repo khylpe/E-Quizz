@@ -39,7 +39,6 @@ io.on('connection', async function (client) { // Client socket connected
                             return;
                      } else {
                             callback("connectionAuthorized");
-                            numberOfRegisteredStudents = 0;
                             teacherMail = mail;
                      }
               });
@@ -71,7 +70,6 @@ io.on('connection', async function (client) { // Client socket connected
                      //we get the quizz data from the teacher (title, teacher, group name)
                      quizzTitle = data.quizzName;
                      groupName = data.groupName;
-
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
@@ -83,13 +81,6 @@ io.on('connection', async function (client) { // Client socket connected
                             teacherMail: getSession().teacher,
                             groupName: getSession().groupName,
                      });
-
-
-
-
-
-
-
 
                      client.emit('tempMessage',
                             {
@@ -151,6 +142,14 @@ io.on('connection', async function (client) { // Client socket connected
                             callback(getQuestion());
 
                             io.to('boitier').emit('questionNumber', getQuestion().currentQuestionNumber); // envoie numero de question boitier
+                            io.to('boitier').emit('getStudentsAnswers', (err, responses) => {
+       
+                                          responses.forEach(trame => {
+
+                                          });
+                                   });      
+                                   
+                                   
                             io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: getQuestion().currentQuestionNumber }, (err, responses) => {
                                    if (err) {
                                           io.to('teacher').emit('tempMessage',
@@ -165,8 +164,6 @@ io.on('connection', async function (client) { // Client socket connected
                                                  questionNumber: quizzQuestionsAndAnswers[1][getQuestion().currentQuestionNumber - 2][3],
                                                  answers: []
                                           });
-
-                                          // console.log(quizzResults);
 
                                           responses.forEach(response => {
                                                  quizzResults[questionNumber - 1].answers.push({
@@ -193,8 +190,9 @@ io.on('connection', async function (client) { // Client socket connected
               client.on('endOfQuizz', (callback) => {
                      questionNumber++;
                      io.to('boitier').emit('getStudentsAnswers', (err, responses) => {
-                          
-                                   console.log("resp getstudentsanswers", responses);
+                                   responses.forEach(trame => {
+                                          consonle.log(trame.numQuestion)
+                                   });
                                    // responses.forEach(trame => {
                                    //        console.log("trame du boitier :", trame)
 
@@ -285,7 +283,6 @@ io.on('connection', async function (client) { // Client socket connected
        else if (client.handshake.query.status == 'student') { // Client is a student
               /* things to do when a student connects */
               io.to('teacher').emit('numberOfConnectedStudentChanged', ++numberOfConnectedStudents);
-               
 
               /* events from student */
               client.on('studentTriesToRegister', (studentMail, callback) => {
@@ -352,23 +349,29 @@ io.on('connection', async function (client) { // Client socket connected
                             client.on('disconnecting', () => { // Remove student from the list when he disconnects & update teacher's list
                                    alterStudentList("remove", client.mail);
                                    io.to('teacher').emit('updateStudentList', getStudentsInformations());
+
                             });
                             callback({ status: "accepted", sessionStatus: getSession().sessionStatus })
                      }
               });
 
-              client.on('studentDisconnect', () => { // Remove student from the list when he disconnects & update teacher's list
+              client.on('studentDisconnect', () => { // Remove student from the list when he disconnects whith modal & update teacher's list
                      alterStudentList("remove", client.mail);
                      io.to('teacher').emit('updateStudentList', getStudentsInformations());
+
               });
 
-              client.on('disconnect', () => { // Update the number of connected students when a student disconnects
+              client.on('disconnect', () => { // Update the number of connected students when a student refrech this page
                      io.to('teacher').emit('numberOfConnectedStudentChanged', --numberOfConnectedStudents)
               });
        }
        else if (client.handshake.query.status == 'boitier') {
               client.join('boitier');
               io.to('boitier').emit('questionNumber', {number : 5});
+
+
+
+
 
        }
        else {  // Unknown client
@@ -395,7 +398,7 @@ function getSession() {
               quizzResults: quizzResults,
               quizzTime: quizzTime,
               currentQuestion: getQuestion(),
-              numberOfAnswers: getNumberOfAnswers()
+              numberOfAnswers: getNumberOfAnswers(),
        };
 }
 
