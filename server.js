@@ -39,6 +39,7 @@ io.on('connection', async function (client) { // Client socket connected
                             return;
                      } else {
                             callback("connectionAuthorized");
+                            numberOfRegisteredStudents = 0;
                             teacherMail = mail;
                      }
               });
@@ -61,7 +62,6 @@ io.on('connection', async function (client) { // Client socket connected
               /* events from teacher */
               client.on('resetSession', () => {
                      resetSession();
-                     
                      client.emit('updateSessionStatus', getSession(false));
                      io.to('student').emit('sessionUpdated', getSession().sessionStatus);
                      io.to('teacher').emit('teacherNotConnectedAnymore');
@@ -357,8 +357,8 @@ io.on('connection', async function (client) { // Client socket connected
                      }
               });
 
-              client.on('studentDisconnect', (student) => { // Remove student from the list when he disconnects & update teacher's list
-                     alterStudentList("remove", student.mail);
+              client.on('studentDisconnect', () => { // Remove student from the list when he disconnects & update teacher's list
+                     alterStudentList("remove", client.mail);
                      io.to('teacher').emit('updateStudentList', getStudentsInformations());
               });
 
