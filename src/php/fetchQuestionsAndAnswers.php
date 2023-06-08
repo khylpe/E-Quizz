@@ -21,7 +21,8 @@ if ($_SESSION['sessionStatus'] != "connected" || !isset($_SESSION['mail']) || em
                                                         `question number`
                                                         FROM `quizz` 
                                                         WHERE `title` = :quizzTitle
-                                                        AND `author` = :uid");
+                                                        AND `author` = :uid
+                                                        ORDER BY `question number` ASC");
 
               $fetchQuizzList->execute(array(
                      ':quizzTitle' => $data['quizzName'],
