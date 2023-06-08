@@ -108,7 +108,6 @@ socket.on('connect', () => {
               let inputMail = document.querySelector('#mailAddress')
               studentMail = inputMail.value;
               socket.emit('studentTriesToRegister', studentMail, (response) => {
-                     console.log(response);
                      if (response.status == "accepted") {
                             user.hidden = false;
                             document.querySelector('#mail').innerHTML = studentMail;
@@ -168,8 +167,6 @@ socket.on('connect', () => {
               btnAnswers.forEach((element) => {
                      element.classList += " disabled";
               });
-              console.log("lorsque l on clique sur valider")
-              console.log(answers)
        });
 
        btnModify.addEventListener('click', () => { //bouton corriger QCM
@@ -228,7 +225,6 @@ document.querySelector('#nextQuestion').addEventListener('click', () => {
 
               });
               currentQuestionNumber.innerHTML = `Numéro de la question : ${currentQuestion}`;
-              console.log(currentQuestion, quizzCurrentQuestion)
               if (quizzCurrentQuestion == currentQuestion) {
                      isCurrentQuestion = true;
 
@@ -281,8 +277,6 @@ socket.io.on("reconnect_failed", () => {
        changeDivState("#errorMessage");
        document.querySelector('#errorMessage').innerHTML = `Nous n'avons pas réussi à vous reconnecter, veuillez vérifier votre connexion (WiFi) au Raspberry PI`;
 });
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -205,16 +205,13 @@ io.on('connection', async function (client) { // Client socket connected
                                    //                      quizzQuestionsAndAnswers[1][questionNumber - 1][2] // list of good answers
                                    //               )
                                    //        });
-
-
-
                                    // });
                             
                             // traiter le tableau de ahmed avec toutes les réponses.
                             // push dans quizzResults
                      });
 
-                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] }, (err, responses) => {
+                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] + 1  }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
