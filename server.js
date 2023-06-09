@@ -73,8 +73,8 @@ io.on('connection', async function (client) { // Client socket connected
                      sessionStatus = "SessionStatus";
 
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
-                     io.to('student').emit('sessionUpdated',  getSession().sessionStatus);
-                            
+                     io.to('student').emit('sessionUpdated', getSession().sessionStatus);
+
                      io.to('student').emit('informationSession', {
                             quizzTitle: getSession().quizzTitle,
                             numberOfRegisteredStudents: getNumberOfRegisteredStudent(),
@@ -111,6 +111,9 @@ io.on('connection', async function (client) { // Client socket connected
                      io.to('student').emit('sessionStarted');
                      sessionStatus = "DisplayQuestions";
                      client.emit('updateSessionStatus', getSession(false)); // send the session status to the teacher when he connects (in case he refreshed the page)
+                     client.to("boitier").emit('sessionStarted'); // send the session time to the boitier
+                     client.to("boitier").emit('questionNumber', getQuestion().currentQuestionNumber); // send the session time to the boitier
+
                      io.to('teacher').emit('tempMessage',
                             {
                                    status: 'success',
@@ -141,15 +144,7 @@ io.on('connection', async function (client) { // Client socket connected
                             questionNumber++;
                             callback(getQuestion());
 
-                            io.to('boitier').emit('questionNumber', getQuestion().currentQuestionNumber); // envoie numero de question boitier
-                            io.to('boitier').emit('getStudentsAnswers', (err, responses) => {
-       
-                                          responses.forEach(trame => {
-
-                                          });
-                                   });      
-                                   
-                                   
+                            io.to('boitier').emit('questionNumber', getQuestion().currentQuestionNumber); // envoie numero de question boitier                                   
                             io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: getQuestion().currentQuestionNumber }, (err, responses) => {
                                    if (err) {
                                           io.to('teacher').emit('tempMessage',
@@ -189,29 +184,10 @@ io.on('connection', async function (client) { // Client socket connected
 
               client.on('endOfQuizz', (callback) => {
                      questionNumber++;
-                     io.to('boitier').emit('getStudentsAnswers', (err, responses) => {
-                                   responses.forEach(trame => {
-                                          consonle.log(trame.numQuestion)
-                                   });
-                                   // responses.forEach(trame => {
-                                   //        console.log("trame du boitier :", trame)
 
+                     io.to('boitier').emit('questionNumber', quizzQuestionsAndAnswers[1][questionNumber - 1][3] + 1); // envoie numero de question boitier
 
-                                   //        quizzResults[questionNumber - 1].answers.push({
-                                   //               'studentMail': response.//id du boitier,
-                                   //        'studentAnswer': getAnswersAsString(response.answers, quizzQuestionsAndAnswers[1][questionNumber - 1][1]),
-                                   //               'result': checkAnswers(response.answers,
-                                   //                      quizzQuestionsAndAnswers[1][questionNumber - 1][1], // list of possible answers
-                                   //                      quizzQuestionsAndAnswers[1][questionNumber - 1][2] // list of good answers
-                                   //               )
-                                   //        });
-                                   // });
-                            
-                            // traiter le tableau de ahmed avec toutes les réponses.
-                            // push dans quizzResults
-                     });
-
-                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] + 1  }, (err, responses) => {
+                     io.timeout(5000).to('student').emit('getStudentAnswer', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] + 1 }, (err, responses) => {
                             if (err) {
                                    io.to('teacher').emit('tempMessage',
                                           {
@@ -269,12 +245,43 @@ io.on('connection', async function (client) { // Client socket connected
                                    });
 
                                    io.to('teacher').emit('updateSessionStatus', getSession());
-                                   callback(quizzResults);
                             }
                      });
 
-                     io.to('student').emit('endOfQuizzTeacher');
-                     sessionStatus = "DisplayResults";
+                     io.timeout(5000).to('boitier').emit('getStudentsAnswers', { numberQuestion: quizzQuestionsAndAnswers[1][questionNumber - 1][3] + 1 }, (err, responses) => {
+                            let temp = JSON.parse(responses);
+
+                            console.log("responses1", typeof responses);
+                            console.log("responses2 josn", temp[5]);
+
+                            temp.forEach(response => {
+                                   quizzResults.forEach((question, index) => {
+                                          if (question.questionNumber == response.numQuestion) {
+                                                 console.log('we enter in the if');
+                                                 console.log("type of answers ", typeof response.answers);
+
+                                                 // encrytpe the answers to json
+
+                                                 let ecrypted = JSON.stringify(response.answers);
+                                                 let tempAnswers = JSON.parse(ecrypted);   
+                                                 console.log("tempAnswers", tempAnswers);                                            
+                                                 
+                                                 quizzResults[index].answers.push({
+                                                        'studentMail': response.numBoitier,
+                                                        'studentAnswer': getAnswersAsString(tempAnswers, quizzQuestionsAndAnswers[1][response.numQuestion - 1][1]),
+                                                        'result': checkAnswers(tempAnswers,
+                                                               quizzQuestionsAndAnswers[1][response.numQuestion - 1][1], // list of possible answers
+                                                               quizzQuestionsAndAnswers[1][response.numQuestion - 1][2] // list of good answers
+                                                        )
+                                                 });
+                                          }
+                                   });
+                            });
+                            console.log("quizzResults", quizzResults);
+                            callback(quizzResults);
+                            io.to('student').emit('endOfQuizzTeacher');
+                            sessionStatus = "DisplayResults";
+                     });                    
               })
        }
        else if (client.handshake.query.status == 'student') { // Client is a student
@@ -364,12 +371,12 @@ io.on('connection', async function (client) { // Client socket connected
        }
        else if (client.handshake.query.status == 'boitier') {
               client.join('boitier');
-              io.to('boitier').emit('questionNumber', {number : 5});
+              client.on('answers', (responses) => {
+                     console.log("responses from boitier", responses)
 
+              })
 
-
-
-
+              console.log(quizzResults);
        }
        else {  // Unknown client
               /* things to do when an unknown user connects */
@@ -462,6 +469,7 @@ function getAnswersAsString(answersStudent, answersPossibility) {
                      tab[i] = null;
               }
        }
+       console.log("tab", tab)
        return tab;
 }
 
