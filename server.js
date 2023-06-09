@@ -244,7 +244,6 @@ io.on('connection', async function (client) { // Client socket connected
                                           }
                                    });
 
-                                   io.to('teacher').emit('updateSessionStatus', getSession());
                             }
                      });
 
@@ -281,6 +280,7 @@ io.on('connection', async function (client) { // Client socket connected
                             callback(quizzResults);
                             io.to('student').emit('endOfQuizzTeacher');
                             sessionStatus = "DisplayResults";
+                            io.to('teacher').emit('updateSessionStatus', getSession());
                      });                    
               })
        }
