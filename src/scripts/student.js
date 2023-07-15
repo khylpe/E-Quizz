@@ -1,4 +1,4 @@
-const socket = io("http://192.168.0.254:8100", {
+const socket = io("http://localhost:8100", {
        transports:
               ["websocket"],
        query: {

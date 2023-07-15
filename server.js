@@ -256,9 +256,6 @@ io.on('connection', async function (client) { // Client socket connected
                             temp.forEach(response => {
                                    quizzResults.forEach((question, index) => {
                                           if (question.questionNumber == response.numQuestion) {
-                                                 console.log('we enter in the if');
-                                                 console.log("type of answers ", typeof response.answers);
-
                                                  // encrytpe the answers to json
 
                                                  let ecrypted = JSON.stringify(response.answers);
