@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+       <meta charset="UTF-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>E-Quizz - Eleve</title>
+       <link rel="stylesheet" href="/styles/student.css">
+</head>
+
+<body>
+       <header class="container">
+              <nav class="navbar navbar-expand">
+                     <div class="collapse navbar-collapse d-flex">
+                            <div class="d-flex col-3 justify-content-start">
+                                   <div id="user" class="btn-group">
+                                          <button class="btn btn-outline-light">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor"
+                                                        class="bi bi-person d-flex align-item-center justify-content-center"
+                                                        viewBox="0 0 16 16">
+                                                        <path
+                                                               d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
+                                                 </svg>
+                                          </button>
+                                          <button type="button"
+                                                 class="btn btn-outline-light dropdown-toggle dropdown-toggle-split"
+                                                 data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                 aria-expanded="false">
+                                          </button>
+
+                                          <ul class="user dropdown-menu dropdown-menu-start">
+                                                 <li id="mail" class="dropdown-item"></li>
+                                                 <li class="dropdown-divider"></li>
+                                                 <li class="mt-1" id="logout">
+                                                        <button type="button" class="btn btn-outline-danger w-100"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#ModalDeconnexion">
+                                                               <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                      height="16" fill="currentColor"
+                                                                      class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                                                      <path fill-rule="evenodd"
+                                                                             d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+                                                                      <path fill-rule="evenodd"
+                                                                             d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                                                               </svg>
+                                                               <i class="bi bi-box-arrow-right"></i>
+                                                        </button>
+                                                 </li>
+                                          </ul>
+                                          <div class="modal fade" tabindex="-1" id="ModalDeconnexion">
+                                                 <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                               <div class="modal-header">
+                                                                      <h5 class="modal-title">Deconnexion</h5>
+                                                                      <button type="button"
+                                                                             class="btn-close modalButtonClose"
+                                                                             data-bs-dismiss="modal"
+                                                                             aria-label="Close"></button>
+
+                                                               </div>
+                                                               <div class="modal-body">
+                                                                      <p>Voulez-vous vraiment vous déconnecter ?</p>
+                                                               </div>
+                                                               <div class="modal-footer">
+                                                                      <button type="button"
+                                                                             class="btn btn-secondary modalButtonClose"
+                                                                             data-bs-dismiss="modal">Fermer</button>
+                                                                      <button type="button" class="btn btn-primary"
+                                                                             data-bs-dismiss="modal"
+                                                                             id="modalButtonConfirm">Confirmer</button>
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </div>
+                                   </div>
+
+                            </div>
+                            <div class="navbar-nav col-6 justify-content-center">
+                                   <div class="d-flex flex-column text-center">
+                                          <h1>
+                                                 <span class="text-info">E</span>
+                                                 <span class="">-</span>
+                                                 <span class="text-warning">Q</span>
+                                                 <span class="text-danger">U</span>
+                                                 <span class="text-success">I</span>
+                                                 <span class="text-primary">Z</span>
+                                                 <span class="text-info">Z</span>
+                                          </h1>
+                                          <div>
+                                                 <h5 class="text-light">Evaluation de l'élève</h5>
+                                          </div>
+                                   </div>
+                            </div>
+                     </div>
+              </nav>
+              </div>
+              <hr class="container">
+              <div class="container-fluid bg-dark d-flex">
+                     <div class="col" id="allParts">
+                            <div class="part" id="formMail">
+                                   <form id="formulaireMail" class="container text-center col-sm-3 col-form-label">
+                                          <input type="email" id="mailAddress" class="form-control align-bottom"
+                                                 autocomplete="on" placeholder="Veuillez renseigner votre mail"
+                                                 autofocus required />
+                                          <br>
+                                          <button id="btnSend"
+                                                 class="btn btn-primary justify-content-center">Envoyer</button>
+                                   </form>
+                            </div>
+
+                            <div class="part" id="answerQuestion">
+                                   <div class="row">
+                                          <h1 id="numberQuestion" class="text-center"></h1>
+                                          <div class="col">
+                                                 <div class="d-flex flex-row">
+                                                        <div class="align-items-center">
+                                                               <div class="d-flex flex-column gap-2">
+                                                                      <svg xmlns="http://www.w3.org/2000/svg" width="85"
+                                                                             height="85" fill="currentColor"
+                                                                             class="bi bi-caret-up-square-fill"
+                                                                             id="nextQuestion" viewBox="0 0 16 16">
+                                                                             <path
+                                                                                    d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4 9h8a.5.5 0 0 0 .374-.832l-4-4.5a.5.5 0 0 0-.748 0l-4 4.5A.5.5 0 0 0 4 11z" />
+                                                                      </svg>
+                                                                      <svg xmlns="http://www.w3.org/2000/svg" width="85"
+                                                                             height="85" fill="currentColor"
+                                                                             class="bi bi-caret-down-square-fill"
+                                                                             id="previousQuestion" viewBox="0 0 16 16">
+                                                                             <path
+                                                                                    d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4 4a.5.5 0 0 0-.374.832l4 4.5a.5.5 0 0 0 .748 0l4-4.5A.5.5 0 0 0 12 6H4z" />
+                                                                      </svg>
+
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </div>
+                                          <div class="col" id="divButtons">
+                                                 <div id="btnAnswers" class="text-center row">
+                                                        <button id="btnA" type="button"
+                                                               class="btn btn-outline-primary p-4">A</button>
+                                                        <input type="checkbox" id="stateBtnA" hidden>
+                                                        <button id="btnB" type="button"
+                                                               class="btn btn-outline-primary p-4">B</button>
+                                                        <input type="checkbox" id="stateBtnB" hidden>
+                                                        <button id="btnC" type="button"
+                                                               class="btn btn-outline-primary p-4">C</button>
+                                                        <input type="checkbox" id="stateBtnC" hidden>
+                                                        <button id="btnD" type="button"
+                                                               class="btn btn-outline-primary p-4">D</button>
+                                                        <input type="checkbox" id="stateBtnD" hidden>
+                                                 </div>
+                                          </div>
+
+
+                                          <div class="col d-flex justify-content-center">
+                                                 <div class="d-flex align-items-start">
+                                                        <button id="btnModify" type="button"
+                                                               class="btn btn-danger">CORRIGER</button>
+                                                 </div>
+                                                 <div class="d-flex align-items-end">
+                                                        <button id="btnValidate" type="button"
+                                                               class="btn btn-success">Valider</button>
+                                                 </div>
+
+                                          </div>
+                                   </div>
+                            </div>
+
+                            <div class="part" id="waitTeacherConnect">
+                                   <p class="d-flex justify-content-center">
+                                          <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                                                 data-bs-target=".multi-collapse" aria-expanded="false">Voir status de
+                                                 la
+                                                 session</button>
+                                   </p>
+                                   <div class="row">
+                                          <div class="col">
+                                                 <div class="collapse multi-collapse" id="multiCollapse1">
+                                                        <div class="card card-body">
+                                                               <div>
+                                                                      <h4 id="nameStudent"></h4>
+                                                               </div>
+                                                               Ce quizz permet au professeur de vous évaluer sur vos
+                                                               connaissances, les résultats seront stockés et vous aurez
+                                                               la possibilité de consulter vos résultats à la fin du
+                                                               quizz en sollicitant le professeur.
+                                                        </div>
+                                                 </div>
+                                          </div>
+                                          <div class="col">
+                                                 <div class="collapse multi-collapse" id="multiCollapse2">
+                                                        <div class="card card-body">
+                                                               <h4>status :</h4>
+                                                               <div id="waiting">
+                                                               </div>
+                                                        </div>
+                                                 </div>
+                                          </div>
+                                   </div>
+
+                                   <!-- Accordeon information de la session -->
+                                   <div class="accordion flex-row justify-content-evenly d-flex" id="accordionExample">
+                                          <div class="accordion-item text-center mt-5" style="display: block;">
+                                                 <h2 class="accordion-header">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                               data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                               aria-expanded="false" aria-controls="collapseOne">
+                                                               <h5 class="card-header w-100 text-center">Informations de
+                                                                      la session</h5>
+
+                                                        </button>
+                                                 </h2>
+                                                 <div id="collapseOne" class="accordion-collapse collapse"
+                                                        data-bs-parent="#accordionExample" aria-labelledby="headingOne">
+                                                        <div class="accordion-body">
+                                                               <ui class="list-group">
+                                                                      <li class="list-group-item list-group-item-info"
+                                                                             id="statusSessionWaitRoom"></li>
+                                                                      <li class="list-group-item list-group-item-info"
+                                                                             id="nameOfTeacher"></li>
+                                                                      <li class="list-group-item list-group-item-info"
+                                                                             id="numberOfStudentRegistered"></li>
+                                                                      <li class="list-group-item list-group-item-info"
+                                                                             id="nameOfGroup"></li>
+                                                               </ui>
+                                                        </div>
+                                                 </div>
+                                          </div>
+
+
+
+
+
+
+                                   </div>
+
+
+                                   <div class="part" id="test">Socket not connected</div>
+                            </div>
+
+                            <div class="part" id="endOfTheQcm">
+                                   <div class="alert alert-info transition" id="End" role="alert">
+                                          <h4>Le QCM est terminé, vous allez être redirigé vers la page de
+                                                 connexion</h4>
+                                   </div>
+                                   Nous vous remercions d'avoir participé à ce QCM, pour consulter vos résultats, veuillez faire la demande au près de votre professeur.
+                            </div>
+
+                            <div class="part" id="errorMessage">
+                            </div>
+                            
+
+                     </div>
+                     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+                     <script src="/socket.io/socket.io.js"></script>
+                     <script type="module" src="/scripts/student.js"></script>
+</body>
+
+</html>

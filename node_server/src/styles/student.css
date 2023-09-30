@@ -1,0 +1,11 @@
+@import "/bootstrap/css/bootstrap.css";
+
+body{
+/* background-color: #2d303e; */
+height:100%;
+margin:0;
+}
+
+.ok{
+width: fit-content(20em);
+}
